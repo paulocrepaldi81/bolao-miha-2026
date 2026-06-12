@@ -326,7 +326,7 @@ function renderPrize(){
 
 // ---- Classificação escalável (busca + filtro pagas/café + colapso) ----
 let lbFilter='all', lbSearch='', lbExpanded=false;
-const LB_LIMIT=15;
+const LB_LIMIT=7;   // mostra o Top 7 (zona de prêmio + perseguidores); o resto expande
 function renderLeaderboard(){
   const all=[...DATA.participants].sort((a,b)=>a.rank-b.rank);
   const total=all.length, paidN=all.filter(p=>p.paid).length, freeN=total-paidN;
@@ -348,14 +348,15 @@ function renderLeaderboard(){
   } else {
     el.innerHTML = view.map(p=>{
       const isFirst=p.rank===1, isLast=p.rank===maxRank;
-      const cls=isFirst?'first':(isLast?'last':'');
+      const cls = isFirst?'first':(p.rank===2?'second':(p.rank===3?'third':(isLast?'last':'')));
+      const medal = isFirst?'👑 ':(p.rank===2?'🥈 ':(p.rank===3?'🥉 ':''));
       const prize = prizeSet.has(p.alias)?'<span class="chip chip-prize">💰 prêmio</span>':'';
       const free  = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
       const hit   = q?'<span class="you-tag">é você?</span>':'';
       return `<div class="lb-row ${cls}">
         <div class="rk">${p.rank}</div>
         <div class="who">
-          <div class="nm">${isFirst?'👑 ':''}${isLast?'🔦 ':''}${p.alias} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
+          <div class="nm">${medal}${isLast?'🔦 ':''}${p.alias} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
           <div class="meta">última rodada: +${p.last_match_points} pts · placares exatos: ${p.exact_scores ?? 0}</div>
         </div>
         <div class="lb-right">
