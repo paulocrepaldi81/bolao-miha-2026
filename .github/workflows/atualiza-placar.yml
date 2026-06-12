@@ -10,9 +10,13 @@
 name: Atualiza placar
 
 on:
-  schedule:
-    - cron: "*/20 * * * *"   # a cada 20 min (GitHub pode atrasar alguns minutos)
-  workflow_dispatch: {}       # botão "Run workflow" para rodar na mão
+  # ⏸️ MODO DE ESPERA: o agendamento automático está desligado até as apostas
+  # reais chegarem (hoje só há 3 exemplos — rodar agora publicaria dados falsos).
+  # Para LIGAR o robô: descomente as 2 linhas abaixo e remova o --placeholder
+  # do passo "Repontuar".
+  # schedule:
+  #   - cron: "*/20 * * * *"   # a cada 20 min (GitHub pode atrasar alguns minutos)
+  workflow_dispatch: {}       # botão "Run workflow" para rodar na mão (teste)
 
 permissions:
   contents: write
@@ -42,7 +46,9 @@ jobs:
 
       - name: Repontuar e gerar data.json
         working-directory: engine
-        run: python build_data.py --from-json --out ../landing-page/data.json
+        # --placeholder mantém o aviso de protótipo no site enquanto as apostas
+        # são exemplos. Remover quando as 84 planilhas reais forem carregadas.
+        run: python build_data.py --from-json --placeholder --out ../landing-page/data.json
 
       - name: Publicar (commit se houve mudança)
         run: |
