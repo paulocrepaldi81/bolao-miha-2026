@@ -511,12 +511,22 @@ let ti=0; const tEl=document.getElementById('tagline');
 function rotate(){ tEl.textContent = TAGLINES[ti % TAGLINES.length]; ti++; }
 rotate(); setInterval(rotate, 4200);
 
-// boot: tenta carregar data.json (fonte real). Se falhar (file:// ou offline), usa os dados embutidos.
+// boot: carrega o placar direto do GitHub (não consome deploys da Netlify);
+// fallback: data.json local (deploy antigo / file:// / offline).
+const DATA_SOURCES = [
+  'https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/main/landing-page/data.json',
+  './data.json'
+];
 async function boot(){
   try{
-    const r = await fetch('./data.json?ts=' + Date.now(), {cache:'no-store'});
-    if(r.ok){
-      const live = await r.json();
+    let live = null;
+    for(const src of DATA_SOURCES){
+      try{
+        const r = await fetch(src + '?ts=' + Date.now(), {cache:'no-store'});
+        if(r.ok){ live = await r.json(); break; }
+      }catch(e){ /* tenta a próxima fonte */ }
+    }
+    if(live){
       PRECOPA = live;                                   // "Pré-Copa" passa a refletir os dados reais
       if(Array.isArray(live.history)) HISTORY.splice(0, HISTORY.length, ...live.history);
       if(live.meta && live.meta.is_placeholder === false){

@@ -4,6 +4,11 @@
 [build]
   publish = "landing-page"
   command = ""
+  # ECONOMIA DE CRÉDITOS: só faz deploy se os arquivos da PÁGINA mudarem.
+  # Commits do robô (placares/data.json/engine) NÃO geram deploy — o site lê o
+  # placar direto do GitHub (raw.githubusercontent), sem custo de deploy.
+  # (comando com exit 0 = pula o build; exit 1 = builda)
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- landing-page/index.html landing-page/app.js netlify.toml"
 
 [[headers]]
   for = "/data.json"
