@@ -191,12 +191,20 @@ function render(){
     document.getElementById('lastResult').innerHTML = `<span>—</span><span class="sc">vs</span><span>—</span>`;
     document.getElementById('lastResultNote').textContent = 'A bola ainda não rolou. Calma.';
   }
-  // next match
-  const next = DATA.matches.filter(m=>m.status==='scheduled').sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
+  // next match — só jogos FUTUROS (tolerância de 2h30 p/ jogo em andamento)
+  const nowMs = Date.now();
+  const next = DATA.matches
+    .filter(m=>m.status==='scheduled' && m.kickoff_sao_paulo && (new Date(m.kickoff_sao_paulo).getTime() > nowMs - 2.5*3600e3))
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
   if(next){
     document.getElementById('nextMatch').innerHTML = `<span>${flag(next.home_team)}${next.home_team}</span><span class="sc">×</span><span>${next.away_team}${flagA(next.away_team)}</span>`;
-    document.getElementById('nextWhen').textContent = `${fmtDateTime(next.kickoff_sao_paulo)} · ${next.venue}`;
+    document.getElementById('nextWhen').textContent = `${fmtDateTime(next.kickoff_sao_paulo)}${next.venue?' · '+next.venue:''}`;
     startCountdown(next);
+  } else {
+    if(cdTimer) clearInterval(cdTimer);
+    document.getElementById('countdown').hidden = true;
+    document.getElementById('nextMatch').innerHTML = `<span>—</span><span class="sc">×</span><span>—</span>`;
+    document.getElementById('nextWhen').textContent = 'Aguardando a definição dos próximos jogos.';
   }
   // prêmio acumulado
   renderPrize();
@@ -317,7 +325,7 @@ function renderLeaderboard(){
         <div class="rk">${p.rank}</div>
         <div class="who">
           <div class="nm">${isFirst?'👑 ':''}${isLast?'🔦 ':''}${p.alias} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
-          <div class="meta">última rodada: +${p.last_match_points} pts · máx. possível ${p.max_possible}</div>
+          <div class="meta">última rodada: +${p.last_match_points} pts · placares exatos: ${p.exact_scores ?? 0}</div>
         </div>
         <div class="lb-right">
           <div class="pwin"><div class="v">${p.eliminated ? '<span style="color:var(--coral)">fora</span>' : (p.max_possible ?? '—')}</div><div class="l">máx possível</div></div>

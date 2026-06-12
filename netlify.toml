@@ -14,3 +14,9 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "no-cache"
+
+# JS também sem cache — senão jogadores veem versões velhas após atualizações
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"

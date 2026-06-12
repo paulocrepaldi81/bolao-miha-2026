@@ -40,8 +40,8 @@
     "fav_score": "2 × 1"
   },
   "probability": {
-    "method": "Simulação de Monte Carlo com 30.000 sorteios dos jogos restantes, aplicando as regras do bolão a cada cenário. O resultado é a fração de simulações em que cada jogador termina em 1º. São estimativas, não garantias.",
-    "simulations": 30000
+    "method": "Pontos atuais comparados ao máximo ainda alcançável (jogos por disputar + classificação final + categorias). Quem não consegue mais alcançar o líder é marcado como eliminado. Sem simulação de probabilidade — só a matemática dos pontos.",
+    "simulations": 0
   },
   "history": [
     { "year": 2022, "host": "Catar",         "flag": "🇶🇦", "podium": ["Alexandre Tauszig", "Charles Miller", "Guilherme Marcondes"] },
