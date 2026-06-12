@@ -167,6 +167,7 @@ def main():
             "rule_version": "v2.1", "freshness": "ok",
         },
         "latest_result": build_latest(catalog, results),
+        "extras_summary": build_extras_summary(bets, facts),
         "participants": participants,
         "matches": matches,
         "movement": movement,
@@ -207,6 +208,36 @@ def main():
     print(f"  → {args.out}")
     if all_issues:
         print(f"  ⚠ {len(all_issues)} planilha(s) com avisos — veja data/validation_report.txt")
+
+
+EXTRA_LABELS = [
+    ("artilheiro_nome",      "⚽ Artilheiro — nome",            C.PTS_ART_NOME),
+    ("artilheiro_equipe",    "👕 Artilheiro — equipe",          C.PTS_ART_EQUIPE),
+    ("artilheiro_gols",      "🔢 Artilheiro — nº de gols",      C.PTS_ART_GOLS),
+    ("mais_goleadora",       "🎯 Equipe mais goleadora",        C.PTS_CURIOSIDADE),
+    ("menos_vazada",         "🧤 Equipe menos vazada",          C.PTS_CURIOSIDADE),
+    ("mais_gols_jogo",       "🔥 Maior nº de gols em um jogo",  C.PTS_CURIOSIDADE),
+    ("empates_1f",           "🤝 Nº de empates na 1ª fase",     C.PTS_CURIOSIDADE),
+    ("jogos_penaltis",       "🥅 Jogos decididos nos pênaltis", C.PTS_CURIOSIDADE),
+    ("equipe_1o_expulso",    "🟥 Equipe do 1º expulso",         C.PTS_CURIOSIDADE),
+    ("equipe_1o_gol_contra", "😅 Equipe do 1º gol contra",      C.PTS_CURIOSIDADE),
+    ("azarao",               "🦓 Azarão da Copa",               C.PTS_CURIOSIDADE),
+]
+
+
+def build_extras_summary(bets, facts):
+    """Para cada categoria extra: valor real (se definido) + quem pontuou."""
+    from scoring import _match_fact
+    out = []
+    for key, label, pts in EXTRA_LABELS:
+        real = facts.get(key)
+        winners = []
+        if real not in (None, ""):
+            winners = sorted(b["alias"] for b in bets
+                             if _match_fact(b["extras"].get(key), real))
+        out.append({"key": key, "label": label, "points": pts,
+                    "real": real if real not in (None, "") else None, "winners": winners})
+    return out
 
 
 def build_latest(catalog, results):

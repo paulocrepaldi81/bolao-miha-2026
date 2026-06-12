@@ -5,6 +5,21 @@
    ============================================================ */
 const METHOD = "Pontos atuais comparados ao máximo ainda alcançável (jogos por disputar + classificação final + categorias). Quem não consegue mais alcançar o líder é marcado como eliminado. Sem simulação de probabilidade — só a matemática dos pontos.";
 
+// Categorias extras (labels/pontos = espelho do motor; usado como fallback sem data.json)
+const EXTRAS_DEF = [
+  {key:"artilheiro_nome",      label:"⚽ Artilheiro — nome",            points:8},
+  {key:"artilheiro_equipe",    label:"👕 Artilheiro — equipe",          points:4},
+  {key:"artilheiro_gols",      label:"🔢 Artilheiro — nº de gols",      points:3},
+  {key:"mais_goleadora",       label:"🎯 Equipe mais goleadora",        points:5},
+  {key:"menos_vazada",         label:"🧤 Equipe menos vazada",          points:5},
+  {key:"mais_gols_jogo",       label:"🔥 Maior nº de gols em um jogo",  points:5},
+  {key:"empates_1f",           label:"🤝 Nº de empates na 1ª fase",     points:5},
+  {key:"jogos_penaltis",       label:"🥅 Jogos decididos nos pênaltis", points:5},
+  {key:"equipe_1o_expulso",    label:"🟥 Equipe do 1º expulso",         points:5},
+  {key:"equipe_1o_gol_contra", label:"😅 Equipe do 1º gol contra",      points:5},
+  {key:"azarao",               label:"🦓 Azarão da Copa",               points:5}
+];
+
 // ---------- ESTADO 1: PRÉ-COPA (fallback embutido; sobrescrito por data.json se existir) ----------
 let PRECOPA = {
   meta:{ pool_name:"Bolão Miha 2026", timezone:"America/Sao_Paulo", is_placeholder:true, bet_value:60,
@@ -124,6 +139,9 @@ function genDemoParticipants(){
   DEMO.stats.optimistic   = {alias:g[3].alias, val:"média 3,2 gols/palpite"};
   DEMO.stats.cursed       = {alias:last.alias, val:"0 de 4 placares"};
   DEMO.stats.longest_first = {alias:g[0].alias, val:"do 1º jogo até agora"};
+  // exemplo de categoria já definida (mostra o card verde + acertadores)
+  DEMO.extras_summary = EXTRAS_DEF.map(d => ({...d, real:null, winners:[]}));
+  DEMO.extras_summary[8] = {...EXTRAS_DEF[8], real:"Catar", winners:[g[0].alias, g[5].alias, g[11].alias]};
 })();
 
 let DATA = PRECOPA;
@@ -206,11 +224,24 @@ function render(){
     document.getElementById('nextMatch').innerHTML = `<span>—</span><span class="sc">×</span><span>—</span>`;
     document.getElementById('nextWhen').textContent = 'Aguardando a definição dos próximos jogos.';
   }
+  // radar de JOGO ESPECIAL (verde = vale 5 pts): alerta no hero + countdown destacado
+  const nextSpecial = DATA.matches
+    .filter(m=>m.is_special && m.status==='scheduled' && m.kickoff_sao_paulo && (new Date(m.kickoff_sao_paulo).getTime() > nowMs - 2.5*3600e3))
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
+  const sa = document.getElementById('specialAlert');
+  if(nextSpecial){
+    const isNext = next && next===nextSpecial;
+    document.getElementById('saTxt').innerHTML =
+      `<b>JOGO ESPECIAL${isNext?' — É O PRÓXIMO!':''}</b> · ${flag(nextSpecial.home_team)}${nextSpecial.home_team} × ${nextSpecial.away_team}${flagA(nextSpecial.away_team)} · ${fmtDateTime(nextSpecial.kickoff_sao_paulo)} — acertar o vencedor vale <b>5 pts</b> (em vez de 3). Capricha no palpite!`;
+    sa.hidden = false;
+  } else sa.hidden = true;
+  document.getElementById('countdown').classList.toggle('is-special', !!(next && next.is_special));
   // prêmio acumulado
   renderPrize();
   // leaderboard (escalável até 70+ apostas)
   renderLeaderboard();
   renderBomPalpite();
+  renderExtras();
   // movement
   const mv = DATA.movement;
   document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
@@ -351,6 +382,24 @@ function renderBomPalpite(){
       <span class="bp-nm">${i===0?'🏁 ':''}${p.alias}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
       <span class="bp-pts">${p.ph1} pts</span>
     </div>`).join('') || '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
+}
+
+// Categorias Extras — o que já aconteceu na real + quem pontuou
+function renderExtras(){
+  const list = DATA.extras_summary || EXTRAS_DEF.map(d => ({...d, real:null, winners:[]}));
+  document.getElementById('exGrid').innerHTML = list.map(x=>{
+    const done = x.real !== null && x.real !== undefined && x.real !== '';
+    const status = done
+      ? `<div class="ex-real">${flag(String(x.real))}${x.real}</div>
+         <div class="ex-winners">${x.winners && x.winners.length
+            ? `🎉 Pontuaram (+${x.points}): <b>${x.winners.join('</b>, <b>')}</b>`
+            : 'Ninguém acertou esta. O futebol venceu.'}</div>`
+      : `<div class="ex-status">⏳ Em aberto — definido ao longo da Copa</div>`;
+    return `<div class="ex-card ${done?'done':''}">
+      <div class="ex-top"><span class="ex-lab">${x.label}</span><span class="ex-pts">+${x.points} pts</span></div>
+      ${status}
+    </div>`;
+  }).join('');
 }
 
 document.getElementById('lbSearch').addEventListener('input',e=>{ lbSearch=e.target.value; renderLeaderboard(); });

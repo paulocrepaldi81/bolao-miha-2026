@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T10:34:33.012772-03:00",
-    "last_source_check": "2026-06-12T10:34:33.012772-03:00",
+    "last_data_update": "2026-06-12T10:45:42.546296-03:00",
+    "last_source_check": "2026-06-12T10:45:42.546296-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -19,6 +19,85 @@
     "away_score": 1,
     "note": "Resultado oficial computado."
   },
+  "extras_summary": [
+    {
+      "key": "artilheiro_nome",
+      "label": "⚽ Artilheiro — nome",
+      "points": 8,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "artilheiro_equipe",
+      "label": "👕 Artilheiro — equipe",
+      "points": 4,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "artilheiro_gols",
+      "label": "🔢 Artilheiro — nº de gols",
+      "points": 3,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "mais_goleadora",
+      "label": "🎯 Equipe mais goleadora",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "menos_vazada",
+      "label": "🧤 Equipe menos vazada",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "mais_gols_jogo",
+      "label": "🔥 Maior nº de gols em um jogo",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "empates_1f",
+      "label": "🤝 Nº de empates na 1ª fase",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "jogos_penaltis",
+      "label": "🥅 Jogos decididos nos pênaltis",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "equipe_1o_expulso",
+      "label": "🟥 Equipe do 1º expulso",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "equipe_1o_gol_contra",
+      "label": "😅 Equipe do 1º gol contra",
+      "points": 5,
+      "real": null,
+      "winners": []
+    },
+    {
+      "key": "azarao",
+      "label": "🦓 Azarão da Copa",
+      "points": 5,
+      "real": null,
+      "winners": []
+    }
+  ],
   "participants": [
     {
       "alias": "Crepaldi",
