@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T11:12:34.294964-03:00",
-    "last_source_check": "2026-06-12T11:12:34.294964-03:00",
+    "last_data_update": "2026-06-12T11:27:14.478830-03:00",
+    "last_source_check": "2026-06-12T11:27:14.478830-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -89,7 +89,7 @@
       "label": "🟥 Equipe do 1º expulso",
       "points": 5,
       "real": null,
-      "partial": "nenhuma expulsão em 2 jogo(s) varrido(s)",
+      "partial": "nenhuma expulsão em 0 jogo(s) varrido(s)",
       "winners": []
     },
     {
@@ -97,7 +97,7 @@
       "label": "😅 Equipe do 1º gol contra",
       "points": 5,
       "real": null,
-      "partial": "nenhum gol contra em 2 jogo(s) varrido(s)",
+      "partial": "nenhum gol contra em 0 jogo(s) varrido(s)",
       "winners": []
     },
     {
