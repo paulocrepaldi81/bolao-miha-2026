@@ -10,7 +10,10 @@
     "equipe_1o_expulso": "nenhuma expulsão em 2 jogo(s) varrido(s)",
     "equipe_1o_gol_contra": "nenhum gol contra em 2 jogo(s) varrido(s)"
   },
-  "scanned": [],
+  "scanned": [
+    537327,
+    537328
+  ],
   "first_red": null,
   "first_own": null
 }
