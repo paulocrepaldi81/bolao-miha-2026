@@ -24,3 +24,6 @@ landing-page/_serve.py
 
 # --- Relatórios locais ---
 engine/data/validation_report.txt
+
+# Documentos pessoais / prints (não subir)
+*.pdf
