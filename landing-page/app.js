@@ -366,6 +366,13 @@ function renderLeaderboard(){
       </div>`;
     }).join('');
   }
+  // estado de espera: protótipo com poucas apostas → explica a ausência das 84
+  if(DATA.meta && DATA.meta.is_placeholder && total < 8 && !q && lbFilter==='all'){
+    el.innerHTML += `<div class="lb-empty" style="margin-top:4px">
+      📦 <b>As 84 apostas oficiais entram aqui</b> assim que a organização liberar as planilhas —
+      os nomes acima são exemplos de teste. O Top 7 (com 👑🥈🥉) e o botão “Ver todas” aparecem automaticamente.
+    </div>`;
+  }
   const more=document.getElementById('lbMore');
   if(collapsed){ more.hidden=false; more.textContent=`Ver todas as ${list.length} apostas ▾`; }
   else if(lbExpanded && !q && list.length>LB_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
