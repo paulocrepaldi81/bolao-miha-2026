@@ -14,7 +14,8 @@ def remaining_group_points(catalog, results):
     total = 0
     for m in catalog:
         r = results.get(m["match_id"])
-        if not r or r.get("home_score") is None:
+        # jogo ainda rende pontos se NÃO estiver encerrado
+        if not r or r.get("status") != "finished" or r.get("home_score") is None:
             base = C.PTS_OUTCOME_SPECIAL if m["special"] else C.PTS_OUTCOME_NORMAL
             total += base + C.MAX_BONUS_CAP
     return total

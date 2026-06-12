@@ -211,7 +211,8 @@ def main():
 
 def build_latest(catalog, results):
     played = [(m, results[m["match_id"]]) for m in catalog
-              if results.get(m["match_id"], {}).get("home_score") is not None]
+              if results.get(m["match_id"], {}).get("status") == "finished"
+              and results.get(m["match_id"], {}).get("home_score") is not None]
     if not played:
         return None
     m, r = played[-1]

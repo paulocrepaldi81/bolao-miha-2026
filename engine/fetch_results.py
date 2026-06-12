@@ -133,6 +133,9 @@ def main():
             new_h, new_a = (hs, as_) if _same_order(ht, at, mid) else (as_, hs)
             new["home_score"], new["away_score"] = str(new_h), str(new_a)
             new["verified"] = "sim" if status == "finished" else ""
+        else:
+            # jogo NÃO disputado: limpa qualquer placar residual (ex.: dado de teste)
+            new["home_score"], new["away_score"], new["verified"] = "", "", ""
         if new != cur:
             rows[mid] = new
             if mid not in order:

@@ -7,61 +7,61 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T10:32:03.209411-03:00",
-    "last_source_check": "2026-06-12T10:32:03.209411-03:00",
+    "last_data_update": "2026-06-12T10:34:33.012772-03:00",
+    "last_source_check": "2026-06-12T10:34:33.012772-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
   "latest_result": {
-    "home_team": "Brasil",
-    "away_team": "Marrocos",
-    "home_score": 3,
-    "away_score": 0,
+    "home_team": "Coreia do Sul",
+    "away_team": "Rep Tcheca",
+    "home_score": 2,
+    "away_score": 1,
     "note": "Resultado oficial computado."
   },
   "participants": [
     {
       "alias": "Crepaldi",
-      "score": 16,
-      "phase1_points": 16,
+      "score": 3,
+      "phase1_points": 3,
       "rank": 1,
       "previous_rank": 1,
       "rank_change": 0,
       "last_match_points": 0,
-      "exact_scores": 2,
-      "correct_outcomes": 3,
-      "max_possible": 990,
-      "points_available": 974,
+      "exact_scores": 0,
+      "correct_outcomes": 1,
+      "max_possible": 997,
+      "points_available": 994,
       "eliminated": false,
       "paid": true
     },
     {
       "alias": "PaulinhIA",
-      "score": 11,
-      "phase1_points": 11,
+      "score": 3,
+      "phase1_points": 3,
       "rank": 2,
       "previous_rank": 2,
       "rank_change": 0,
       "last_match_points": 0,
       "exact_scores": 0,
-      "correct_outcomes": 3,
-      "max_possible": 985,
-      "points_available": 974,
+      "correct_outcomes": 1,
+      "max_possible": 997,
+      "points_available": 994,
       "eliminated": false,
       "paid": true
     },
     {
       "alias": "Mihalik",
-      "score": 10,
-      "phase1_points": 10,
+      "score": 0,
+      "phase1_points": 0,
       "rank": 3,
       "previous_rank": 3,
       "rank_change": 0,
       "last_match_points": 0,
-      "exact_scores": 1,
-      "correct_outcomes": 2,
-      "max_possible": 984,
-      "points_available": 974,
+      "exact_scores": 0,
+      "correct_outcomes": 0,
+      "max_possible": 994,
+      "points_available": 994,
       "eliminated": false,
       "paid": true
     }
@@ -146,9 +146,9 @@
       "venue": "",
       "kickoff_sao_paulo": "2026-06-12T16:00:00-03:00",
       "status": "scheduled",
-      "home_score": 1,
-      "away_score": 1,
-      "verified": true,
+      "home_score": null,
+      "away_score": null,
+      "verified": false,
       "is_special": true
     },
     {
@@ -218,9 +218,9 @@
       "venue": "",
       "kickoff_sao_paulo": "2026-06-13T19:00:00-03:00",
       "status": "scheduled",
-      "home_score": 3,
-      "away_score": 0,
-      "verified": true,
+      "home_score": null,
+      "away_score": null,
+      "verified": false,
       "is_special": false
     },
     {
@@ -939,17 +939,14 @@
     "pain_of_round": "Rodada tranquila — ninguém despencou."
   },
   "stats": {
-    "best_exact": {
-      "alias": "Crepaldi",
-      "val": "2 placares exatos"
-    },
+    "best_exact": null,
     "optimistic": {
       "alias": "Crepaldi",
       "val": "média 2.7 gols/palpite"
     },
     "cursed": {
       "alias": "Mihalik",
-      "val": "2 acertos de vencedor"
+      "val": "0 acertos de vencedor"
     },
     "elimination": "ninguém eliminado (fase de grupos)",
     "longest_first": {

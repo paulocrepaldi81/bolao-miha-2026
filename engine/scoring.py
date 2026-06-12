@@ -95,7 +95,8 @@ def score_bet(bet, results, catalog, real_final, facts):
     by_match, group_pts, exact = {}, 0, 0
     for mid, (ph, pa) in bet["group_preds"].items():
         r = results.get(mid)
-        if not r or r.get("home_score") is None:
+        # só pontua jogo ENCERRADO com placar — nunca ao vivo nem placar residual
+        if not r or r.get("status") != "finished" or r.get("home_score") is None:
             continue
         p = score_match(ph, pa, r["home_score"], r["away_score"], special.get(mid, False))
         by_match[mid] = p

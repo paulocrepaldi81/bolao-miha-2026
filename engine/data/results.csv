@@ -1,7 +1,7 @@
 match_id,status,home_score,away_score,verified,lock
 A1,finished,2,0,sim,
-B1,scheduled,1,1,sim,
-C1,scheduled,3,0,sim,
+B1,scheduled,,,,
+C1,scheduled,,,,
 A2,finished,2,1,sim,
 D1,scheduled,,,,
 B2,scheduled,,,,
