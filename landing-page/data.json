@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T10:45:42.546296-03:00",
-    "last_source_check": "2026-06-12T10:45:42.546296-03:00",
+    "last_data_update": "2026-06-12T11:06:51.556714-03:00",
+    "last_source_check": "2026-06-12T11:06:51.556714-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -25,6 +25,7 @@
       "label": "⚽ Artilheiro — nome",
       "points": 8,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -32,6 +33,7 @@
       "label": "👕 Artilheiro — equipe",
       "points": 4,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -39,6 +41,7 @@
       "label": "🔢 Artilheiro — nº de gols",
       "points": 3,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -46,6 +49,7 @@
       "label": "🎯 Equipe mais goleadora",
       "points": 5,
       "real": null,
+      "partial": "México (2 gols)",
       "winners": []
     },
     {
@@ -53,6 +57,7 @@
       "label": "🧤 Equipe menos vazada",
       "points": 5,
       "real": null,
+      "partial": "México (0 sofrido(s))",
       "winners": []
     },
     {
@@ -60,6 +65,7 @@
       "label": "🔥 Maior nº de gols em um jogo",
       "points": 5,
       "real": null,
+      "partial": "3 gols (Coreia do Sul 2×1 Rep Tcheca)",
       "winners": []
     },
     {
@@ -67,6 +73,7 @@
       "label": "🤝 Nº de empates na 1ª fase",
       "points": 5,
       "real": null,
+      "partial": "0 até agora (2/72 jogos da 1ª fase)",
       "winners": []
     },
     {
@@ -74,6 +81,7 @@
       "label": "🥅 Jogos decididos nos pênaltis",
       "points": 5,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -81,6 +89,7 @@
       "label": "🟥 Equipe do 1º expulso",
       "points": 5,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -88,6 +97,7 @@
       "label": "😅 Equipe do 1º gol contra",
       "points": 5,
       "real": null,
+      "partial": null,
       "winners": []
     },
     {
@@ -95,6 +105,7 @@
       "label": "🦓 Azarão da Copa",
       "points": 5,
       "real": null,
+      "partial": null,
       "winners": []
     }
   ],

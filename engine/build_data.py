@@ -226,8 +226,16 @@ EXTRA_LABELS = [
 
 
 def build_extras_summary(bets, facts):
-    """Para cada categoria extra: valor real (se definido) + quem pontuou."""
+    """Para cada categoria extra: valor real (se definido), quem pontuou e parcial ao vivo."""
     from scoring import _match_fact
+    live_path = os.path.join(DATA, "facts_live.json")
+    partials = {}
+    if os.path.exists(live_path):
+        try:
+            with open(live_path, encoding="utf-8") as f:
+                partials = json.load(f).get("partials", {})
+        except Exception:
+            pass
     out = []
     for key, label, pts in EXTRA_LABELS:
         real = facts.get(key)
@@ -236,7 +244,9 @@ def build_extras_summary(bets, facts):
             winners = sorted(b["alias"] for b in bets
                              if _match_fact(b["extras"].get(key), real))
         out.append({"key": key, "label": label, "points": pts,
-                    "real": real if real not in (None, "") else None, "winners": winners})
+                    "real": real if real not in (None, "") else None,
+                    "partial": partials.get(key) if real in (None, "") else None,
+                    "winners": winners})
     return out
 
 

@@ -44,6 +44,12 @@ jobs:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
         run: python fetch_results.py
 
+      - name: Apurar categorias extras (cartões, gols contra, artilharia, parciais)
+        working-directory: engine
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+        run: python fetch_facts.py
+
       - name: Repontuar e gerar data.json
         working-directory: engine
         # --placeholder mantém o aviso de protótipo no site enquanto as apostas
@@ -54,7 +60,7 @@ jobs:
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          git add engine/data/results.csv engine/data/history.json landing-page/data.json
+          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json landing-page/data.json
           if git diff --cached --quiet; then
             echo "Sem mudanças — nada a publicar."
           else

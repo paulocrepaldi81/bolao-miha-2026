@@ -395,7 +395,9 @@ function renderExtras(){
          <div class="ex-winners">${x.winners && x.winners.length
             ? `🎉 Pontuaram (+${x.points}): <b>${x.winners.join('</b>, <b>')}</b>`
             : 'Ninguém acertou esta. O futebol venceu.'}</div>`
-      : `<div class="ex-status">⏳ Em aberto — definido ao longo da Copa</div>`;
+      : (x.partial
+          ? `<div class="ex-status">📡 <b style="color:var(--blue)">Parcial ao vivo:</b> ${x.partial}</div>`
+          : `<div class="ex-status">⏳ Em aberto — definido ao longo da Copa</div>`);
     return `<div class="ex-card ${done?'done':''}">
       <div class="ex-top"><span class="ex-lab">${x.label}</span><span class="ex-pts">+${x.points} pts</span></div>
       ${status}
