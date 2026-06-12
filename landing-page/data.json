@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T11:28:58.445280-03:00",
-    "last_source_check": "2026-06-12T11:28:58.445280-03:00",
+    "last_data_update": "2026-06-12T11:31:57.171783-03:00",
+    "last_source_check": "2026-06-12T11:31:57.171783-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -88,8 +88,8 @@
       "key": "equipe_1o_expulso",
       "label": "🟥 Equipe do 1º expulso",
       "points": 5,
-      "real": null,
-      "partial": "nenhuma expulsão em 0 jogo(s) varrido(s)",
+      "real": "África do Sul",
+      "partial": null,
       "winners": []
     },
     {
@@ -120,8 +120,8 @@
       "last_match_points": 0,
       "exact_scores": 0,
       "correct_outcomes": 1,
-      "max_possible": 997,
-      "points_available": 994,
+      "max_possible": 992,
+      "points_available": 989,
       "eliminated": false,
       "paid": true
     },
@@ -135,8 +135,8 @@
       "last_match_points": 0,
       "exact_scores": 0,
       "correct_outcomes": 1,
-      "max_possible": 997,
-      "points_available": 994,
+      "max_possible": 992,
+      "points_available": 989,
       "eliminated": false,
       "paid": true
     },
@@ -150,8 +150,8 @@
       "last_match_points": 0,
       "exact_scores": 0,
       "correct_outcomes": 0,
-      "max_possible": 994,
-      "points_available": 994,
+      "max_possible": 989,
+      "points_available": 989,
       "eliminated": false,
       "paid": true
     }

@@ -7,14 +7,19 @@
     "artilheiro_nome": "Julián Quiñones (México) — 1 gol(s)",
     "artilheiro_equipe": "México",
     "artilheiro_gols": "1 (parcial)",
-    "equipe_1o_expulso": "nenhuma expulsão em 0 jogo(s) varrido(s)",
+    "equipe_1o_expulso": "África do Sul (Sithole, 49')",
     "equipe_1o_gol_contra": "nenhum gol contra em 0 jogo(s) varrido(s)"
   },
   "scanned": [
     537327,
     537328
   ],
-  "first_red": null,
+  "first_red": {
+    "team": "África do Sul",
+    "player": "Sithole",
+    "minute": 49,
+    "utc": "2026-06-11T19:00:00+00:00"
+  },
   "first_own": null,
   "af_scanned": []
 }

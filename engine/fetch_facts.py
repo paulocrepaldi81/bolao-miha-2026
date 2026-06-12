@@ -137,8 +137,9 @@ def main():
 
     if not af_key:
         if pending:
-            print("ℹ Lances (1º expulso/1º gol contra): defina o secret APIFOOTBALL_KEY "
-                  "(grátis em https://dashboard.api-football.com) para automatizar.")
+            print("ℹ Lances (1º expulso/1º gol contra): preencher manualmente em data/facts.json. "
+                  "(API-Football só cobre a temporada 2026 em plano PAGO; o código está pronto "
+                  "se um dia houver APIFOOTBALL_KEY paga.)")
     elif pending:
         # 1 chamada por DATA com jogo pendente → mapa de fixtures por par de times
         dates = sorted({iso_by_mid[mid][:10] for mid in pending})
