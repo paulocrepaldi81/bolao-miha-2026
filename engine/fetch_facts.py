@@ -133,6 +133,11 @@ def main():
             print(f"  (detalhe {fx['id']} indisponível: {e})")
             break
         md = d.get("match", d)
+        # diagnóstico: o que a API realmente entrega neste plano
+        print(f"  jogo {fx['id']} ({fx.get('homeTeam',{}).get('name','?')} x {fx.get('awayTeam',{}).get('name','?')}): "
+              f"campos={sorted(k for k in md.keys() if k not in ('area','competition','season','odds'))} | "
+              f"bookings={len(md.get('bookings') or [])} goals={len(md.get('goals') or [])} "
+              f"substitutions={len(md.get('substitutions') or [])}")
         when = fx.get("utcDate", "")
         home_en = (md.get("homeTeam", {}).get("name") or "")
         away_en = (md.get("awayTeam", {}).get("name") or "")
