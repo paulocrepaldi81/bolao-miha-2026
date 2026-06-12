@@ -146,6 +146,9 @@ def main():
         for dt in dates[:3]:
             try:
                 resp = af_get(f"/fixtures?league={AF_LEAGUE}&season={AF_SEASON}&date={dt}", af_key)
+                if resp.get("errors"):
+                    print(f"  ⚠ API-Football errors ({dt}): {resp['errors']}")
+                print(f"  fixtures {dt}: {resp.get('results', 0)} resultado(s)")
                 for fx in resp.get("response", []):
                     h = EN_PT.get((fx["teams"]["home"]["name"] or "").lower(), fx["teams"]["home"]["name"])
                     a = EN_PT.get((fx["teams"]["away"]["name"] or "").lower(), fx["teams"]["away"]["name"])
