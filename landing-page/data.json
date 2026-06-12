@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T11:06:51.556714-03:00",
-    "last_source_check": "2026-06-12T11:06:51.556714-03:00",
+    "last_data_update": "2026-06-12T11:07:41.189957-03:00",
+    "last_source_check": "2026-06-12T11:07:41.189957-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -25,7 +25,7 @@
       "label": "⚽ Artilheiro — nome",
       "points": 8,
       "real": null,
-      "partial": null,
+      "partial": "Julián Quiñones (México) — 1 gol(s)",
       "winners": []
     },
     {
@@ -33,7 +33,7 @@
       "label": "👕 Artilheiro — equipe",
       "points": 4,
       "real": null,
-      "partial": null,
+      "partial": "México",
       "winners": []
     },
     {
@@ -41,7 +41,7 @@
       "label": "🔢 Artilheiro — nº de gols",
       "points": 3,
       "real": null,
-      "partial": null,
+      "partial": "1 (parcial)",
       "winners": []
     },
     {
@@ -89,7 +89,7 @@
       "label": "🟥 Equipe do 1º expulso",
       "points": 5,
       "real": null,
-      "partial": null,
+      "partial": "nenhuma expulsão em 2 jogo(s) varrido(s)",
       "winners": []
     },
     {
@@ -97,7 +97,7 @@
       "label": "😅 Equipe do 1º gol contra",
       "points": 5,
       "real": null,
-      "partial": null,
+      "partial": "nenhum gol contra em 2 jogo(s) varrido(s)",
       "winners": []
     },
     {
