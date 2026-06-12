@@ -4,8 +4,10 @@ Apura automaticamente as CATEGORIAS EXTRAS a partir dos resultados e da API.
 Camadas:
   1. Derivado dos placares já buscados (results.csv): empates na 1ª fase,
      maior nº de gols num jogo, mais goleadora / menos vazada (parciais).
-  2. API football-data.org: artilharia (/scorers) e varredura jogo a jogo de
-     cartões vermelhos e gols contra (detalhe de cada partida encerrada).
+  2. API football-data.org (FOOTBALL_DATA_TOKEN): artilharia (/scorers).
+  3. API-Football (APIFOOTBALL_KEY, api-football.com): LANCES — cartões
+     vermelhos e gols contra. (O plano grátis da football-data.org NÃO entrega
+     lances — diagnóstico de 12/jun: bookings/goals sempre vazios.)
 
 Saídas:
   - data/facts_live.json  → parciais "ao vivo" exibidos no site + memória da varredura
@@ -29,12 +31,19 @@ DATA = os.path.join(HERE, "data")
 FACTS = os.path.join(DATA, "facts.json")
 LIVE = os.path.join(DATA, "facts_live.json")
 API = "https://api.football-data.org/v4"
+AF = "https://v3.football.api-sports.io"      # API-Football (lances)
+AF_LEAGUE, AF_SEASON = 1, 2026                # FIFA World Cup
 SCAN_PER_RUN = 6
-RED_CARDS = {"RED", "YELLOW_RED"}   # expulsão = vermelho direto ou 2º amarelo
 
 
 def api_get(path, token):
     req = urllib.request.Request(API + path, headers={"X-Auth-Token": token})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.load(r)
+
+
+def af_get(path, key):
+    req = urllib.request.Request(AF + path, headers={"x-apisports-key": key})
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
@@ -92,83 +101,95 @@ def main():
         partials["mais_goleadora"] = f"{best_attack[0]} ({best_attack[1]} gols)"
         partials["menos_vazada"] = f"{best_def[0]} ({best_def[1]} sofrido(s))"
 
-    if not token:
-        print("⚠ Sem FOOTBALL_DATA_TOKEN — só parciais derivadas dos placares.")
-        save_json(LIVE, live)
-        sys.exit(0)
-
-    # ---------- 2) Artilharia (1 chamada) ----------
-    try:
-        sc = api_get("/competitions/WC/scorers?limit=3", token)
-        scorers = sc.get("scorers", [])
-        if scorers:
-            s = scorers[0]
-            nome = s.get("player", {}).get("name", "?")
-            equipe = EN_PT.get((s.get("team", {}).get("name") or "").lower(),
-                               s.get("team", {}).get("name", "?"))
-            gols = s.get("goals", "?")
-            partials["artilheiro_nome"] = f"{nome} ({equipe}) — {gols} gol(s)"
-            partials["artilheiro_equipe"] = equipe
-            partials["artilheiro_gols"] = f"{gols} (parcial)"
-    except Exception as e:
-        print(f"  (artilharia indisponível: {e})")
-
-    # ---------- 3) Varredura de cartões/gols contra (detalhe por partida) ----------
-    try:
-        fixtures = api_get("/competitions/WC/matches", token).get("matches", [])
-    except Exception as e:
-        print(f"⚠ lista de partidas indisponível: {e}")
-        save_json(LIVE, live)
-        return
-    fin = [fx for fx in fixtures if fx.get("status") == "FINISHED"]
-    fin.sort(key=lambda fx: fx.get("utcDate", ""))
-    scanned = set(live["scanned"])
-    to_scan = [fx for fx in fin if fx["id"] not in scanned][:SCAN_PER_RUN]
-
-    for fx in to_scan:
+    # ---------- 2) Artilharia via football-data (funciona no plano grátis) ----------
+    if token:
         try:
-            time.sleep(6.5)   # respeita ~10 req/min do plano grátis
-            d = api_get(f"/matches/{fx['id']}", token)
+            sc = api_get("/competitions/WC/scorers?limit=3", token)
+            scorers = sc.get("scorers", [])
+            if scorers:
+                s = scorers[0]
+                nome = s.get("player", {}).get("name", "?")
+                equipe = EN_PT.get((s.get("team", {}).get("name") or "").lower(),
+                                   s.get("team", {}).get("name", "?"))
+                gols = s.get("goals", "?")
+                partials["artilheiro_nome"] = f"{nome} ({equipe}) — {gols} gol(s)"
+                partials["artilheiro_equipe"] = equipe
+                partials["artilheiro_gols"] = f"{gols} (parcial)"
         except Exception as e:
-            print(f"  (detalhe {fx['id']} indisponível: {e})")
-            break
-        md = d.get("match", d)
-        # diagnóstico: o que a API realmente entrega neste plano
-        print(f"  jogo {fx['id']} ({fx.get('homeTeam',{}).get('name','?')} x {fx.get('awayTeam',{}).get('name','?')}): "
-              f"campos={sorted(k for k in md.keys() if k not in ('area','competition','season','odds'))} | "
-              f"bookings={len(md.get('bookings') or [])} goals={len(md.get('goals') or [])} "
-              f"substitutions={len(md.get('substitutions') or [])}")
-        when = fx.get("utcDate", "")
-        home_en = (md.get("homeTeam", {}).get("name") or "")
-        away_en = (md.get("awayTeam", {}).get("name") or "")
-        pt = {home_en: EN_PT.get(home_en.lower(), home_en),
-              away_en: EN_PT.get(away_en.lower(), away_en)}
+            print(f"  (artilharia indisponível: {e})")
 
-        if live["first_red"] is None:
-            reds = [b for b in (md.get("bookings") or []) if b.get("card") in RED_CARDS]
-            if reds:
-                b = min(reds, key=lambda x: x.get("minute") or 999)
-                team_en = b.get("team", {}).get("name", "")
-                live["first_red"] = {"team": EN_PT.get(team_en.lower(), team_en),
-                                     "player": b.get("player", {}).get("name", "?"),
-                                     "minute": b.get("minute"), "utc": when}
-        if live["first_own"] is None:
-            owns = [g for g in (md.get("goals") or []) if g.get("type") == "OWN"]
-            if owns:
-                g = min(owns, key=lambda x: x.get("minute") or 999)
-                credited_en = g.get("team", {}).get("name", "")
-                # quem SOFRE o gol contra é a equipe do autor = a outra equipe
-                suffer_en = away_en if credited_en == home_en else home_en
-                live["first_own"] = {"team": EN_PT.get(suffer_en.lower(), suffer_en),
-                                     "player": g.get("scorer", {}).get("name", "?"),
-                                     "minute": g.get("minute"), "utc": when}
-        scanned.add(fx["id"])
-    live["scanned"] = sorted(scanned)
+    # ---------- 3) Lances (expulsões / gols contra) via API-Football ----------
+    # O plano grátis da football-data NÃO entrega lances (diagnóstico 12/jun).
+    # API-Football grátis = 100 chamadas/dia; só consultamos quando há jogo
+    # encerrado ainda não varrido (~2 chamadas por jogo novo).
+    af_key = os.environ.get("APIFOOTBALL_KEY", "").strip()
+    af_scanned = set(live.get("af_scanned", []))
+    iso_by_mid, kick_of = {}, {}
+    for m in catalog:
+        from build_data import parse_kickoff
+        iso = parse_kickoff(m["date"]) or ""
+        iso_by_mid[m["match_id"]] = iso
+        kick_of[m["match_id"]] = m
+    fin_mids = sorted((mid for mid, r in results.items()
+                       if r.get("status") == "finished" and mid in iso_by_mid),
+                      key=lambda mid: iso_by_mid[mid])
+    pending = [mid for mid in fin_mids if mid not in af_scanned][:SCAN_PER_RUN]
 
-    # finaliza 1º expulso / 1º gol contra quando a cronologia está garantida
+    if not af_key:
+        if pending:
+            print("ℹ Lances (1º expulso/1º gol contra): defina o secret APIFOOTBALL_KEY "
+                  "(grátis em https://dashboard.api-football.com) para automatizar.")
+    elif pending:
+        # 1 chamada por DATA com jogo pendente → mapa de fixtures por par de times
+        dates = sorted({iso_by_mid[mid][:10] for mid in pending})
+        fx_by_pair = {}
+        for dt in dates[:3]:
+            try:
+                resp = af_get(f"/fixtures?league={AF_LEAGUE}&season={AF_SEASON}&date={dt}", af_key)
+                for fx in resp.get("response", []):
+                    h = EN_PT.get((fx["teams"]["home"]["name"] or "").lower(), fx["teams"]["home"]["name"])
+                    a = EN_PT.get((fx["teams"]["away"]["name"] or "").lower(), fx["teams"]["away"]["name"])
+                    fx_by_pair[frozenset((h, a))] = fx["fixture"]["id"]
+            except Exception as e:
+                print(f"⚠ API-Football fixtures {dt}: {e}")
+        for mid in pending:
+            m = kick_of[mid]
+            fxid = fx_by_pair.get(frozenset((m["home"], m["away"])))
+            if not fxid:
+                print(f"  ⚠ {mid} ({m['home']} x {m['away']}): fixture não encontrada — tentará de novo")
+                continue
+            try:
+                time.sleep(1.5)
+                ev = af_get(f"/fixtures/events?fixture={fxid}", af_key).get("response", [])
+            except Exception as e:
+                print(f"  ⚠ eventos de {mid}: {e}")
+                continue
+            when = iso_by_mid[mid]
+            reds = [e for e in ev if e.get("type") == "Card" and "Red" in (e.get("detail") or "")]
+            if reds and live["first_red"] is None:
+                e0 = min(reds, key=lambda e: (e.get("time", {}).get("elapsed") or 999))
+                t_en = e0.get("team", {}).get("name", "")
+                live["first_red"] = {"team": EN_PT.get(t_en.lower(), t_en),
+                                     "player": (e0.get("player") or {}).get("name", "?"),
+                                     "minute": e0.get("time", {}).get("elapsed"), "utc": when}
+                print(f"  🟥 expulsão encontrada: {live['first_red']}")
+            owns = [e for e in ev if e.get("type") == "Goal" and "Own" in (e.get("detail") or "")]
+            if owns and live["first_own"] is None:
+                e0 = min(owns, key=lambda e: (e.get("time", {}).get("elapsed") or 999))
+                credited = EN_PT.get((e0.get("team", {}).get("name") or "").lower(),
+                                     e0.get("team", {}).get("name", ""))
+                suffer = m["away"] if credited == m["home"] else m["home"]   # quem fez o gol contra
+                live["first_own"] = {"team": suffer,
+                                     "player": (e0.get("player") or {}).get("name", "?"),
+                                     "minute": e0.get("time", {}).get("elapsed"), "utc": when}
+                print(f"  😅 gol contra encontrado: {live['first_own']}")
+            af_scanned.add(mid)
+        live["af_scanned"] = sorted(af_scanned)
+
+    # finaliza quando a cronologia está garantida (todos os jogos anteriores varridos)
     def chronology_complete(found):
-        earlier = [fx for fx in fin if fx.get("utcDate", "") < found["utc"]]
-        return all(fx["id"] in scanned for fx in earlier)
+        earlier = [mid for mid in fin_mids if iso_by_mid[mid] < found["utc"]]
+        return all(mid in af_scanned for mid in earlier)
 
     if live["first_red"]:
         fr = live["first_red"]
@@ -177,8 +198,8 @@ def main():
             facts["equipe_1o_expulso"] = fr["team"]
             changed_facts = True
             print(f"✔ DEFINIDO equipe_1o_expulso = {fr['team']}")
-    elif fin:
-        partials["equipe_1o_expulso"] = f"nenhuma expulsão em {len(scanned)} jogo(s) varrido(s)"
+    elif fin_mids:
+        partials["equipe_1o_expulso"] = f"nenhuma expulsão em {len(af_scanned)} jogo(s) varrido(s)"
 
     if live["first_own"]:
         fo = live["first_own"]
@@ -187,14 +208,13 @@ def main():
             facts["equipe_1o_gol_contra"] = fo["team"]
             changed_facts = True
             print(f"✔ DEFINIDO equipe_1o_gol_contra = {fo['team']}")
-    elif fin:
-        partials["equipe_1o_gol_contra"] = f"nenhum gol contra em {len(scanned)} jogo(s) varrido(s)"
+    elif fin_mids:
+        partials["equipe_1o_gol_contra"] = f"nenhum gol contra em {len(af_scanned)} jogo(s) varrido(s)"
 
     save_json(LIVE, live)
     if changed_facts:
         save_json(FACTS, facts)
-    print(f"OK · varridos {len(to_scan)} jogo(s) nesta execução ({len(scanned)}/{len(fin)} encerrados) "
-          f"· parciais: {len(partials)}")
+    print(f"OK · lances: {len(af_scanned)}/{len(fin_mids)} jogo(s) varrido(s) · parciais: {len(partials)}")
 
 
 if __name__ == "__main__":

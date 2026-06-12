@@ -48,6 +48,7 @@ jobs:
         working-directory: engine
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+          APIFOOTBALL_KEY: ${{ secrets.APIFOOTBALL_KEY }}   # lances (api-football.com)
         run: python fetch_facts.py
 
       - name: Repontuar e gerar data.json
