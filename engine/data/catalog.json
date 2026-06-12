@@ -1,0 +1,722 @@
+[
+ {
+  "match_id": "A1",
+  "group": "A",
+  "home": "México",
+  "away": "África do Sul",
+  "date": "11/jun 16h",
+  "sh_cell": "C6",
+  "sa_cell": "D6",
+  "special": false
+ },
+ {
+  "match_id": "A2",
+  "group": "A",
+  "home": "Coreia do Sul",
+  "away": "Rep Tcheca",
+  "date": "11/jun 23h",
+  "sh_cell": "C7",
+  "sa_cell": "D7",
+  "special": false
+ },
+ {
+  "match_id": "A3",
+  "group": "A",
+  "home": "Rep Tcheca",
+  "away": "África do Sul",
+  "date": "18/jun 13h",
+  "sh_cell": "C8",
+  "sa_cell": "D8",
+  "special": false
+ },
+ {
+  "match_id": "A4",
+  "group": "A",
+  "home": "México",
+  "away": "Coreia do Sul",
+  "date": "18/jun 22h",
+  "sh_cell": "C9",
+  "sa_cell": "D9",
+  "special": false
+ },
+ {
+  "match_id": "A5",
+  "group": "A",
+  "home": "Rep Tcheca",
+  "away": "México",
+  "date": "24/jun 22h",
+  "sh_cell": "C10",
+  "sa_cell": "D10",
+  "special": false
+ },
+ {
+  "match_id": "A6",
+  "group": "A",
+  "home": "África do Sul",
+  "away": "Coreia do Sul",
+  "date": "24/jun 22h",
+  "sh_cell": "C11",
+  "sa_cell": "D11",
+  "special": true
+ },
+ {
+  "match_id": "B1",
+  "group": "B",
+  "home": "Canadá",
+  "away": "Bósnia",
+  "date": "12/jun 16h",
+  "sh_cell": "I6",
+  "sa_cell": "J6",
+  "special": true
+ },
+ {
+  "match_id": "B2",
+  "group": "B",
+  "home": "Catar",
+  "away": "Suíça",
+  "date": "13/jun 16h",
+  "sh_cell": "I7",
+  "sa_cell": "J7",
+  "special": false
+ },
+ {
+  "match_id": "B3",
+  "group": "B",
+  "home": "Suíça",
+  "away": "Bósnia",
+  "date": "18/jun 16h",
+  "sh_cell": "I8",
+  "sa_cell": "J8",
+  "special": false
+ },
+ {
+  "match_id": "B4",
+  "group": "B",
+  "home": "Canadá",
+  "away": "Catar",
+  "date": "18/jun 19h",
+  "sh_cell": "I9",
+  "sa_cell": "J9",
+  "special": false
+ },
+ {
+  "match_id": "B5",
+  "group": "B",
+  "home": "Suíça",
+  "away": "Canadá",
+  "date": "24/jun 16h",
+  "sh_cell": "I10",
+  "sa_cell": "J10",
+  "special": false
+ },
+ {
+  "match_id": "B6",
+  "group": "B",
+  "home": "Bósnia",
+  "away": "Catar",
+  "date": "24/jun 16h",
+  "sh_cell": "I11",
+  "sa_cell": "J11",
+  "special": false
+ },
+ {
+  "match_id": "C1",
+  "group": "C",
+  "home": "Brasil",
+  "away": "Marrocos",
+  "date": "13/jun 19h",
+  "sh_cell": "O6",
+  "sa_cell": "P6",
+  "special": false
+ },
+ {
+  "match_id": "C2",
+  "group": "C",
+  "home": "Haiti",
+  "away": "Escócia",
+  "date": "13/jun 22h",
+  "sh_cell": "O7",
+  "sa_cell": "P7",
+  "special": true
+ },
+ {
+  "match_id": "C3",
+  "group": "C",
+  "home": "Escócia",
+  "away": "Marrocos",
+  "date": "19/jun 19h",
+  "sh_cell": "O8",
+  "sa_cell": "P8",
+  "special": false
+ },
+ {
+  "match_id": "C4",
+  "group": "C",
+  "home": "Brasil",
+  "away": "Haiti",
+  "date": "19/jun 21h30",
+  "sh_cell": "O9",
+  "sa_cell": "P9",
+  "special": false
+ },
+ {
+  "match_id": "C5",
+  "group": "C",
+  "home": "Escócia",
+  "away": "Brasil",
+  "date": "24/jun 19h",
+  "sh_cell": "O10",
+  "sa_cell": "P10",
+  "special": false
+ },
+ {
+  "match_id": "C6",
+  "group": "C",
+  "home": "Marrocos",
+  "away": "Haiti",
+  "date": "24/jun 19h",
+  "sh_cell": "O11",
+  "sa_cell": "P11",
+  "special": false
+ },
+ {
+  "match_id": "D1",
+  "group": "D",
+  "home": "EUA",
+  "away": "Paraguai",
+  "date": "12/jun 22h",
+  "sh_cell": "U6",
+  "sa_cell": "V6",
+  "special": false
+ },
+ {
+  "match_id": "D2",
+  "group": "D",
+  "home": "Austrália",
+  "away": "Turquia",
+  "date": "14/jun 1h",
+  "sh_cell": "U7",
+  "sa_cell": "V7",
+  "special": false
+ },
+ {
+  "match_id": "D3",
+  "group": "D",
+  "home": "EUA",
+  "away": "Austrália",
+  "date": "19/jun 16h",
+  "sh_cell": "U8",
+  "sa_cell": "V8",
+  "special": true
+ },
+ {
+  "match_id": "D4",
+  "group": "D",
+  "home": "Turquia",
+  "away": "Paraguai",
+  "date": "20/jun 0h",
+  "sh_cell": "U9",
+  "sa_cell": "V9",
+  "special": false
+ },
+ {
+  "match_id": "D5",
+  "group": "D",
+  "home": "Turquia",
+  "away": "EUA",
+  "date": "25/jun 23h",
+  "sh_cell": "U10",
+  "sa_cell": "V10",
+  "special": false
+ },
+ {
+  "match_id": "D6",
+  "group": "D",
+  "home": "Paraguai",
+  "away": "Austrália",
+  "date": "25/jun 23h",
+  "sh_cell": "U11",
+  "sa_cell": "V11",
+  "special": false
+ },
+ {
+  "match_id": "E1",
+  "group": "E",
+  "home": "Alemanha",
+  "away": "Curaçao",
+  "date": "14/jun 14h",
+  "sh_cell": "C15",
+  "sa_cell": "D15",
+  "special": false
+ },
+ {
+  "match_id": "E2",
+  "group": "E",
+  "home": "Costa do Marfim",
+  "away": "Equador",
+  "date": "14/jun 20h",
+  "sh_cell": "C16",
+  "sa_cell": "D16",
+  "special": true
+ },
+ {
+  "match_id": "E3",
+  "group": "E",
+  "home": "Alemanha",
+  "away": "Costa do Marfim",
+  "date": "20/jun 17h",
+  "sh_cell": "C17",
+  "sa_cell": "D17",
+  "special": false
+ },
+ {
+  "match_id": "E4",
+  "group": "E",
+  "home": "Equador",
+  "away": "Curaçao",
+  "date": "20/jun 21h",
+  "sh_cell": "C18",
+  "sa_cell": "D18",
+  "special": false
+ },
+ {
+  "match_id": "E5",
+  "group": "E",
+  "home": "Equador",
+  "away": "Alemanha",
+  "date": "25/jun 17h",
+  "sh_cell": "C19",
+  "sa_cell": "D19",
+  "special": false
+ },
+ {
+  "match_id": "E6",
+  "group": "E",
+  "home": "Curaçao",
+  "away": "Costa do Marfim",
+  "date": "25/jun 17h",
+  "sh_cell": "C20",
+  "sa_cell": "D20",
+  "special": false
+ },
+ {
+  "match_id": "F1",
+  "group": "F",
+  "home": "Holanda",
+  "away": "Japão",
+  "date": "14/jun 17h",
+  "sh_cell": "I15",
+  "sa_cell": "J15",
+  "special": false
+ },
+ {
+  "match_id": "F2",
+  "group": "F",
+  "home": "Suécia",
+  "away": "Tunísia",
+  "date": "14/jun 23h",
+  "sh_cell": "I16",
+  "sa_cell": "J16",
+  "special": false
+ },
+ {
+  "match_id": "F3",
+  "group": "F",
+  "home": "Holanda",
+  "away": "Suécia",
+  "date": "20/jun 14h",
+  "sh_cell": "I17",
+  "sa_cell": "J17",
+  "special": false
+ },
+ {
+  "match_id": "F4",
+  "group": "F",
+  "home": "Tunísia",
+  "away": "Japão",
+  "date": "21/jun 1h",
+  "sh_cell": "I18",
+  "sa_cell": "J18",
+  "special": true
+ },
+ {
+  "match_id": "F5",
+  "group": "F",
+  "home": "Tunísia",
+  "away": "Holanda",
+  "date": "25/jun 20h",
+  "sh_cell": "I19",
+  "sa_cell": "J19",
+  "special": false
+ },
+ {
+  "match_id": "F6",
+  "group": "F",
+  "home": "Japão",
+  "away": "Suécia",
+  "date": "25/jun 20h",
+  "sh_cell": "I20",
+  "sa_cell": "J20",
+  "special": false
+ },
+ {
+  "match_id": "G1",
+  "group": "G",
+  "home": "Bélgica",
+  "away": "Egito",
+  "date": "15/jun 16h",
+  "sh_cell": "O15",
+  "sa_cell": "P15",
+  "special": false
+ },
+ {
+  "match_id": "G2",
+  "group": "G",
+  "home": "Irã",
+  "away": "Nova Zelândia",
+  "date": "15/jun 22h",
+  "sh_cell": "O16",
+  "sa_cell": "P16",
+  "special": true
+ },
+ {
+  "match_id": "G3",
+  "group": "G",
+  "home": "Bélgica",
+  "away": "Irã",
+  "date": "21/jun 16h",
+  "sh_cell": "O17",
+  "sa_cell": "P17",
+  "special": false
+ },
+ {
+  "match_id": "G4",
+  "group": "G",
+  "home": "Nova Zelândia",
+  "away": "Egito",
+  "date": "21/jun 22h",
+  "sh_cell": "O18",
+  "sa_cell": "P18",
+  "special": false
+ },
+ {
+  "match_id": "G5",
+  "group": "G",
+  "home": "Nova Zelândia",
+  "away": "Bélgica",
+  "date": "27/jun 0h",
+  "sh_cell": "O19",
+  "sa_cell": "P19",
+  "special": false
+ },
+ {
+  "match_id": "G6",
+  "group": "G",
+  "home": "Egito",
+  "away": "Irã",
+  "date": "27/jun 0h",
+  "sh_cell": "O20",
+  "sa_cell": "P20",
+  "special": false
+ },
+ {
+  "match_id": "H1",
+  "group": "H",
+  "home": "Espanha",
+  "away": "Cabo Verde",
+  "date": "15/jun 13h",
+  "sh_cell": "U15",
+  "sa_cell": "V15",
+  "special": false
+ },
+ {
+  "match_id": "H2",
+  "group": "H",
+  "home": "Arábia Saudita",
+  "away": "Uruguai",
+  "date": "15/jun 19h",
+  "sh_cell": "U16",
+  "sa_cell": "V16",
+  "special": false
+ },
+ {
+  "match_id": "H3",
+  "group": "H",
+  "home": "Espanha",
+  "away": "Arábia Saudita",
+  "date": "21/jun 13h",
+  "sh_cell": "U17",
+  "sa_cell": "V17",
+  "special": false
+ },
+ {
+  "match_id": "H4",
+  "group": "H",
+  "home": "Uruguai",
+  "away": "Cabo Verde",
+  "date": "21/jun 19h",
+  "sh_cell": "U18",
+  "sa_cell": "V18",
+  "special": false
+ },
+ {
+  "match_id": "H5",
+  "group": "H",
+  "home": "Uruguai",
+  "away": "Espanha",
+  "date": "26/jun 21h",
+  "sh_cell": "U19",
+  "sa_cell": "V19",
+  "special": false
+ },
+ {
+  "match_id": "H6",
+  "group": "H",
+  "home": "Cabo Verde",
+  "away": "Arábia Saudita",
+  "date": "26/jun 21h",
+  "sh_cell": "U20",
+  "sa_cell": "V20",
+  "special": true
+ },
+ {
+  "match_id": "I1",
+  "group": "I",
+  "home": "França",
+  "away": "Senegal",
+  "date": "16/jun 16h",
+  "sh_cell": "C24",
+  "sa_cell": "D24",
+  "special": false
+ },
+ {
+  "match_id": "I2",
+  "group": "I",
+  "home": "Iraque",
+  "away": "Noruega",
+  "date": "16/jun 19h",
+  "sh_cell": "C25",
+  "sa_cell": "D25",
+  "special": false
+ },
+ {
+  "match_id": "I3",
+  "group": "I",
+  "home": "França",
+  "away": "Iraque",
+  "date": "22/jun 18h",
+  "sh_cell": "C26",
+  "sa_cell": "D26",
+  "special": false
+ },
+ {
+  "match_id": "I4",
+  "group": "I",
+  "home": "Noruega",
+  "away": "Senegal",
+  "date": "22/jun 21h",
+  "sh_cell": "C27",
+  "sa_cell": "D27",
+  "special": false
+ },
+ {
+  "match_id": "I5",
+  "group": "I",
+  "home": "Noruega",
+  "away": "França",
+  "date": "26/jun 16h",
+  "sh_cell": "C28",
+  "sa_cell": "D28",
+  "special": false
+ },
+ {
+  "match_id": "I6",
+  "group": "I",
+  "home": "Senegal",
+  "away": "Iraque",
+  "date": "26/jun 16h",
+  "sh_cell": "C29",
+  "sa_cell": "D29",
+  "special": true
+ },
+ {
+  "match_id": "J1",
+  "group": "J",
+  "home": "Argentina",
+  "away": "Argélia",
+  "date": "16/jun 22h",
+  "sh_cell": "I24",
+  "sa_cell": "J24",
+  "special": false
+ },
+ {
+  "match_id": "J2",
+  "group": "J",
+  "home": "Áustria",
+  "away": "Jordânia",
+  "date": "17/jun 1h",
+  "sh_cell": "I25",
+  "sa_cell": "J25",
+  "special": false
+ },
+ {
+  "match_id": "J3",
+  "group": "J",
+  "home": "Argentina",
+  "away": "Áustria",
+  "date": "22/jun 14h",
+  "sh_cell": "I26",
+  "sa_cell": "J26",
+  "special": false
+ },
+ {
+  "match_id": "J4",
+  "group": "J",
+  "home": "Jordânia",
+  "away": "Argélia",
+  "date": "23/jun 0h",
+  "sh_cell": "I27",
+  "sa_cell": "J27",
+  "special": true
+ },
+ {
+  "match_id": "J5",
+  "group": "J",
+  "home": "Jordânia",
+  "away": "Argentina",
+  "date": "27/jun 23h",
+  "sh_cell": "I28",
+  "sa_cell": "J28",
+  "special": false
+ },
+ {
+  "match_id": "J6",
+  "group": "J",
+  "home": "Argélia",
+  "away": "Áustria",
+  "date": "27/jun 23h",
+  "sh_cell": "I29",
+  "sa_cell": "J29",
+  "special": false
+ },
+ {
+  "match_id": "K1",
+  "group": "K",
+  "home": "Portugal",
+  "away": "RD Congo",
+  "date": "17/jun 14h",
+  "sh_cell": "O24",
+  "sa_cell": "P24",
+  "special": false
+ },
+ {
+  "match_id": "K2",
+  "group": "K",
+  "home": "Uzbequistão",
+  "away": "Colômbia",
+  "date": "17/jun 23h",
+  "sh_cell": "O25",
+  "sa_cell": "P25",
+  "special": false
+ },
+ {
+  "match_id": "K3",
+  "group": "K",
+  "home": "Portugal",
+  "away": "Uzbequistão",
+  "date": "23/jun 14h",
+  "sh_cell": "O26",
+  "sa_cell": "P26",
+  "special": false
+ },
+ {
+  "match_id": "K4",
+  "group": "K",
+  "home": "Colômbia",
+  "away": "RD Congo",
+  "date": "23/jun 23h",
+  "sh_cell": "O27",
+  "sa_cell": "P27",
+  "special": false
+ },
+ {
+  "match_id": "K5",
+  "group": "K",
+  "home": "Colômbia",
+  "away": "Portugal",
+  "date": "27/jun 20h30",
+  "sh_cell": "O28",
+  "sa_cell": "P28",
+  "special": false
+ },
+ {
+  "match_id": "K6",
+  "group": "K",
+  "home": "RD Congo",
+  "away": "Uzbequistão",
+  "date": "27/jun 20h30",
+  "sh_cell": "O29",
+  "sa_cell": "P29",
+  "special": true
+ },
+ {
+  "match_id": "L1",
+  "group": "L",
+  "home": "Inglaterra",
+  "away": "Gana",
+  "date": "17/jun 17h",
+  "sh_cell": "U24",
+  "sa_cell": "V24",
+  "special": false
+ },
+ {
+  "match_id": "L2",
+  "group": "L",
+  "home": "Croácia",
+  "away": "Panamá",
+  "date": "17/jun 20h",
+  "sh_cell": "U25",
+  "sa_cell": "V25",
+  "special": false
+ },
+ {
+  "match_id": "L3",
+  "group": "L",
+  "home": "Gana",
+  "away": "Panamá",
+  "date": "23/jun 17h",
+  "sh_cell": "U26",
+  "sa_cell": "V26",
+  "special": true
+ },
+ {
+  "match_id": "L4",
+  "group": "L",
+  "home": "Croácia",
+  "away": "Inglaterra",
+  "date": "23/jun 20h",
+  "sh_cell": "U27",
+  "sa_cell": "V27",
+  "special": false
+ },
+ {
+  "match_id": "L5",
+  "group": "L",
+  "home": "Panamá",
+  "away": "Inglaterra",
+  "date": "27/jun 18h",
+  "sh_cell": "U28",
+  "sa_cell": "V28",
+  "special": false
+ },
+ {
+  "match_id": "L6",
+  "group": "L",
+  "home": "Gana",
+  "away": "Croácia",
+  "date": "27/jun 18h",
+  "sh_cell": "U29",
+  "sa_cell": "V29",
+  "special": false
+ }
+]

@@ -1,0 +1,53 @@
+{
+  "_comment": "FONTE ÚNICA DE DADOS do site. A cada rodada, o motor de pontuação regenera este arquivo a partir das planilhas preenchidas e você faz commit/push (ou re-arrasta no Netlify). Enquanto is_placeholder=true, o site mostra o aviso de protótipo. Quando os dados forem reais, defina is_placeholder=false que o aviso some sozinho.",
+  "meta": {
+    "pool_name": "Bolão Miha 2026",
+    "timezone": "America/Sao_Paulo",
+    "is_placeholder": true,
+    "bet_value": 60,
+    "last_data_update": "2026-06-10T21:40:00-03:00",
+    "last_source_check": "2026-06-10T21:40:00-03:00",
+    "rule_version": "v2.1",
+    "freshness": "ok"
+  },
+  "latest_result": null,
+  "participants": [
+    { "alias": "Crepaldi",  "score": 0, "rank": 1, "previous_rank": 1, "rank_change": 0,  "last_match_points": 0, "p_win": 0.18, "p_top3": 0.41, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "alias": "PaulinhIA", "score": 0, "rank": 2, "previous_rank": 3, "rank_change": 1,  "last_match_points": 0, "p_win": 0.16, "p_top3": 0.39, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "alias": "Mihalik",   "score": 0, "rank": 3, "previous_rank": 2, "rank_change": -1, "last_match_points": 0, "p_win": 0.15, "p_top3": 0.37, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "alias": "Jogador D", "score": 0, "rank": 4, "previous_rank": 4, "rank_change": 0,  "last_match_points": 0, "p_win": 0.12, "p_top3": 0.30, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "alias": "Jogador E", "score": 0, "rank": 5, "previous_rank": 5, "rank_change": 0,  "last_match_points": 0, "p_win": 0.10, "p_top3": 0.26, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": false },
+    { "alias": "Jogador F", "score": 0, "rank": 6, "previous_rank": 6, "rank_change": 0,  "last_match_points": 0, "p_win": 0.08, "p_top3": 0.21, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true }
+  ],
+  "matches": [
+    { "group": "A", "home_team": "México", "away_team": "África do Sul", "venue": "Estádio Azteca", "kickoff_sao_paulo": "2026-06-11T16:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "verified": true },
+    { "group": "B", "home_team": "Canadá", "away_team": "Bósnia", "venue": "BC Place", "kickoff_sao_paulo": "2026-06-12T16:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "verified": false, "is_special": true },
+    { "group": "D", "home_team": "EUA", "away_team": "Paraguai", "venue": "SoFi Stadium", "kickoff_sao_paulo": "2026-06-12T22:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "verified": false },
+    { "group": "C", "home_team": "Brasil", "away_team": "Marrocos", "venue": "MetLife Stadium", "kickoff_sao_paulo": "2026-06-13T19:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "verified": true }
+  ],
+  "movement": {
+    "biggest_jump": null,
+    "biggest_drop": null,
+    "longest_first": "— (após o 1º jogo)",
+    "pain_of_round": "Ninguém sofreu ainda. A bola nem rolou. Aproveitem a paz — ela é curta."
+  },
+  "stats": {
+    "best_exact": null,
+    "optimistic": null,
+    "cursed": null,
+    "elimination": "ninguém eliminado",
+    "longest_first": null,
+    "fav_score": "2 × 1"
+  },
+  "probability": {
+    "method": "Simulação de Monte Carlo com 30.000 sorteios dos jogos restantes, aplicando as regras do bolão a cada cenário. O resultado é a fração de simulações em que cada jogador termina em 1º. São estimativas, não garantias.",
+    "simulations": 30000
+  },
+  "history": [
+    { "year": 2022, "host": "Catar",         "flag": "🇶🇦", "podium": ["Alexandre Tauszig", "Charles Miller", "Guilherme Marcondes"] },
+    { "year": 2018, "host": "Rússia",        "flag": "🇷🇺", "podium": ["Fabio Terzian", "Pedro Marcondes", "Ricardo Kerr"] },
+    { "year": 2014, "host": "Brasil",        "flag": "🇧🇷", "podium": ["Paulo Crepaldi", "Ricardo Mihalik", "Fernando Mihalik"] },
+    { "year": 2010, "host": "África do Sul", "flag": "🇿🇦", "podium": ["Marina Mihalik", "Rodrigo Duarte", "Luis Luengo"] },
+    { "year": 2006, "host": "Alemanha",      "flag": "🇩🇪", "podium": ["Kat Lencina", "Pedro Mitev", "Flávia Mihalik"] }
+  ]
+}

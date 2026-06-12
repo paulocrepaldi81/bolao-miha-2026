@@ -1,0 +1,19 @@
+# --- macOS ---
+.DS_Store
+.AppleDouble
+
+# --- Servidor local de teste / logs ---
+_serve.py
+*.log
+
+# --- Planilhas dos jogadores (DADOS PRIVADOS — nunca subir ao GitHub) ---
+*.xlsx
+*.xls
+
+# --- Editores ---
+.vscode/
+.idea/
+*.swp
+
+# Observação: o site publica apenas index.html, data.json, data.sample.json,
+# netlify.toml, README.md e DEPLOY.md. As planilhas ficam fora do repositório.

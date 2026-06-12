@@ -1,0 +1,43 @@
+{
+  "_comment": "DADOS DE EXEMPLO (placeholder). Estrutura = modelo de dados final. Os jogadores reais virão dos nomes dos arquivos .xlsx preenchidos. Troque este arquivo pela saída do motor de pontuação quando as planilhas chegarem.",
+  "meta": {
+    "pool_name": "Bolão Miha 2026",
+    "edition": "Copa do Mundo FIFA 2026",
+    "timezone": "America/Sao_Paulo",
+    "is_placeholder": true,
+    "last_data_update": "2026-06-10T21:40:00-03:00",
+    "last_source_check": "2026-06-10T21:40:00-03:00",
+    "rule_version": "v2.1",
+    "freshness": "ok"
+  },
+  "participants": [
+    { "participant_id": "p1", "alias": "Crepaldi",  "score": 0, "rank": 1, "previous_rank": 1, "rank_change": 0, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.18, "p_top3": 0.41, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "participant_id": "p2", "alias": "PaulinhIA", "score": 0, "rank": 2, "previous_rank": 3, "rank_change": 1, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.16, "p_top3": 0.39, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "participant_id": "p3", "alias": "Mihalik",   "score": 0, "rank": 3, "previous_rank": 2, "rank_change": -1, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.15, "p_top3": 0.37, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "participant_id": "p4", "alias": "Jogador D",  "score": 0, "rank": 4, "previous_rank": 4, "rank_change": 0, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.12, "p_top3": 0.30, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true },
+    { "participant_id": "p5", "alias": "Jogador E",  "score": 0, "rank": 5, "previous_rank": 5, "rank_change": 0, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.10, "p_top3": 0.26, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": false },
+    { "participant_id": "p6", "alias": "Jogador F",  "score": 0, "rank": 6, "previous_rank": 6, "rank_change": 0, "last_match_points": 0, "exact_scores": 0, "correct_outcomes": 0, "time_in_first_seconds": 0, "p_win": 0.08, "p_top3": 0.21, "max_possible": 612, "points_available": 612, "eliminated": false, "paid": true }
+  ],
+  "matches": [
+    { "match_id": "m1",  "match_number": 1,  "stage": "Fase de Grupos", "group": "A", "home_team": "México",   "away_team": "África do Sul", "venue": "Estádio Azteca", "kickoff_sao_paulo": "2026-06-11T16:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "result_source": "FIFA", "verified": true },
+    { "match_id": "m6",  "match_number": 6,  "stage": "Fase de Grupos", "group": "C", "home_team": "Brasil",   "away_team": "Marrocos",      "venue": "MetLife Stadium", "kickoff_sao_paulo": "2026-06-13T19:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "result_source": "FIFA", "verified": true },
+    { "match_id": "m2",  "match_number": 2,  "stage": "Fase de Grupos", "group": "B", "home_team": "Canadá",   "away_team": "Bósnia",        "venue": "BC Place",        "kickoff_sao_paulo": "2026-06-12T16:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "result_source": "FIFA", "verified": false },
+    { "match_id": "m3",  "match_number": 3,  "stage": "Fase de Grupos", "group": "D", "home_team": "EUA",      "away_team": "Paraguai",      "venue": "SoFi Stadium",    "kickoff_sao_paulo": "2026-06-12T22:00:00-03:00", "status": "scheduled", "home_score": null, "away_score": null, "result_source": "FIFA", "verified": false }
+  ],
+  "movement": {
+    "biggest_jump": { "alias": "PaulinhIA", "delta": 1 },
+    "biggest_drop": { "alias": "Mihalik", "delta": -1 },
+    "pain_of_round": "Ninguém sofreu ainda. A bola nem rolou. Aproveitem a paz."
+  },
+  "stats": {
+    "longest_first_place": { "alias": "—", "label": "Será definido após o 1º jogo" },
+    "best_exact_rate": { "alias": "—", "value": "0%" },
+    "most_optimistic": { "alias": "—", "value": "média de gols por palpite" },
+    "most_cursed": { "alias": "—", "value": "pior sequência" },
+    "closest_to_elimination": { "alias": "—", "value": "ninguém eliminado" }
+  },
+  "probability": {
+    "method": "Monte Carlo (estimativa) — 30.000 simulações dos jogos restantes aplicando as regras do bolão. Valores são estimativas, não garantias.",
+    "simulations": 30000
+  }
+}

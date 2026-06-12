@@ -1,0 +1,4 @@
+match_id,status,home_score,away_score,verified,lock
+A1,finished,2,1,sim,
+B1,finished,1,1,sim,
+C1,finished,3,0,sim,

@@ -1,0 +1,17 @@
+{
+  "_comment": "Fatos das categorias extras + classificação final real. Preencha conforme forem definidos (a maioria só no fim). null = ainda não definido (não pontua).",
+  "champion": null,
+  "vice": null,
+  "third": null,
+  "artilheiro_nome": null,
+  "artilheiro_equipe": null,
+  "artilheiro_gols": null,
+  "mais_goleadora": null,
+  "menos_vazada": null,
+  "mais_gols_jogo": null,
+  "empates_1f": null,
+  "jogos_penaltis": null,
+  "equipe_1o_expulso": null,
+  "equipe_1o_gol_contra": null,
+  "azarao": null
+}

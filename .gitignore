@@ -1,0 +1,26 @@
+# --- Planilhas dos jogadores e modelo (DADOS PRIVADOS — nunca subir) ---
+*.xlsx
+engine/bets/
+
+# Exceção: nenhum xlsx é necessário no repositório.
+# O robô usa engine/data/bets_extracted.json (gerado por extract_bets.py)
+# e engine/data/matches_reference.csv (catálogo dos jogos).
+
+# --- macOS / editores ---
+.DS_Store
+.AppleDouble
+.vscode/
+.idea/
+*.swp
+
+# --- Python ---
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- Logs e servidor local ---
+*.log
+landing-page/_serve.py
+
+# --- Relatórios locais ---
+engine/data/validation_report.txt

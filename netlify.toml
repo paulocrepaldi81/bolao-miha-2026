@@ -1,0 +1,16 @@
+# Netlify — repositório na RAIZ do projeto (engine + landing-page + robô).
+# O site publicado é só a pasta landing-page.
+
+[build]
+  publish = "landing-page"
+  command = ""
+
+[[headers]]
+  for = "/data.json"
+  [headers.values]
+    Cache-Control = "no-cache, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache"

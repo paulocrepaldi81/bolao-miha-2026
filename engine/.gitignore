@@ -1,0 +1,11 @@
+# Planilhas dos apostadores = DADOS PRIVADOS (nunca subir ao GitHub)
+bets/
+*.xlsx
+
+# Gerados localmente (history.json NÃO entra aqui: o robô em CI precisa dele
+# commitado para calcular a movimentação subiu/desceu entre rodadas)
+data/validation_report.txt
+data/matches_reference.csv
+__pycache__/
+*.pyc
+.pytest_cache/

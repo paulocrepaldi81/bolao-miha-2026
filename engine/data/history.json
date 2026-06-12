@@ -1,0 +1,53 @@
+[
+  {
+    "ts": "2026-06-12T09:06:04.029314-03:00",
+    "ranks": {
+      "Crepaldi": {
+        "rank": 1,
+        "total": 19
+      },
+      "PaulinhIA": {
+        "rank": 2,
+        "total": 11
+      },
+      "Mihalik": {
+        "rank": 3,
+        "total": 10
+      }
+    }
+  },
+  {
+    "ts": "2026-06-12T09:11:42.582406-03:00",
+    "ranks": {
+      "Crepaldi": {
+        "rank": 1,
+        "total": 19
+      },
+      "PaulinhIA": {
+        "rank": 2,
+        "total": 11
+      },
+      "Mihalik": {
+        "rank": 3,
+        "total": 10
+      }
+    }
+  },
+  {
+    "ts": "2026-06-12T09:12:55.235613-03:00",
+    "ranks": {
+      "Crepaldi": {
+        "rank": 1,
+        "total": 19
+      },
+      "PaulinhIA": {
+        "rank": 2,
+        "total": 11
+      },
+      "Mihalik": {
+        "rank": 3,
+        "total": 10
+      }
+    }
+  }
+]

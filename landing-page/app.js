@@ -1,0 +1,465 @@
+/* ============================================================
+   DADOS — protótipo embute um exemplo. Para usar dados reais,
+   troque a const DATA por:  const DATA = await (await fetch('data.json')).json();
+   A estrutura é idêntica a data.sample.json (modelo de dados oficial).
+   ============================================================ */
+const METHOD = "Pontos atuais comparados ao máximo ainda alcançável (jogos por disputar + classificação final + categorias). Quem não consegue mais alcançar o líder é marcado como eliminado. Sem simulação de probabilidade — só a matemática dos pontos.";
+
+// ---------- ESTADO 1: PRÉ-COPA (fallback embutido; sobrescrito por data.json se existir) ----------
+let PRECOPA = {
+  meta:{ pool_name:"Bolão Miha 2026", timezone:"America/Sao_Paulo", is_placeholder:true, bet_value:60,
+    last_data_update:"2026-06-10T21:40:00-03:00", last_source_check:"2026-06-10T21:40:00-03:00",
+    rule_version:"v2.1", freshness:"ok" },
+  latest_result:null,
+  participants:[
+    {alias:"Crepaldi", score:0, rank:1, previous_rank:1, rank_change:0, last_match_points:0, p_win:0.18, p_top3:0.41, max_possible:612, points_available:612, eliminated:false, paid:true},
+    {alias:"PaulinhIA",score:0, rank:2, previous_rank:3, rank_change:1, last_match_points:0, p_win:0.16, p_top3:0.39, max_possible:612, points_available:612, eliminated:false, paid:true},
+    {alias:"Mihalik",  score:0, rank:3, previous_rank:2, rank_change:-1,last_match_points:0, p_win:0.15, p_top3:0.37, max_possible:612, points_available:612, eliminated:false, paid:true},
+    {alias:"Jogador D",score:0, rank:4, previous_rank:4, rank_change:0, last_match_points:0, p_win:0.12, p_top3:0.30, max_possible:612, points_available:612, eliminated:false, paid:true},
+    {alias:"Jogador E",score:0, rank:5, previous_rank:5, rank_change:0, last_match_points:0, p_win:0.10, p_top3:0.26, max_possible:612, points_available:612, eliminated:false, paid:false},
+    {alias:"Jogador F",score:0, rank:6, previous_rank:6, rank_change:0, last_match_points:0, p_win:0.08, p_top3:0.21, max_possible:612, points_available:612, eliminated:false, paid:true}
+  ],
+  matches:[
+    {group:"A", home_team:"México", away_team:"África do Sul", venue:"Estádio Azteca", kickoff_sao_paulo:"2026-06-11T16:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:true},
+    {group:"B", home_team:"Canadá", away_team:"Bósnia", venue:"BC Place", kickoff_sao_paulo:"2026-06-12T16:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:false, is_special:true},
+    {group:"D", home_team:"EUA", away_team:"Paraguai", venue:"SoFi Stadium", kickoff_sao_paulo:"2026-06-12T22:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:false},
+    {group:"C", home_team:"Brasil", away_team:"Marrocos", venue:"MetLife Stadium", kickoff_sao_paulo:"2026-06-13T19:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:true}
+  ],
+  movement:{ biggest_jump:null, biggest_drop:null, longest_first:"— (após o 1º jogo)",
+    pain_of_round:"Ninguém sofreu ainda. A bola nem rolou. Aproveitem a paz — ela é curta." },
+  stats:{ best_exact:null, optimistic:null, cursed:null, elimination:"ninguém eliminado", longest_first:null, fav_score:"2 × 1" },
+  probability:{ method:METHOD, simulations:30000 }
+};
+
+// ---------- ESTADO 2: SIMULAÇÃO AO VIVO (1ª rodada rolando) ----------
+const DEMO = {
+  meta:{ pool_name:"Bolão Miha 2026", timezone:"America/Sao_Paulo", is_placeholder:true, bet_value:60,
+    last_data_update:"2026-06-13T21:55:00-03:00", last_source_check:"2026-06-13T21:50:00-03:00",
+    rule_version:"v2.1", freshness:"ok" },
+  latest_result:{ home_team:"Brasil", away_team:"Marrocos", home_score:3, away_score:0,
+    note:"Brasil amassou. Quem cravou 3×0 fez a festa (e ganhou bônus de 3 gols)." },
+  participants:[
+    {alias:"Crepaldi", score:17, rank:1, previous_rank:3, rank_change:2,  last_match_points:6, p_win:0.29, p_top3:0.58, max_possible:601, points_available:584, eliminated:false, paid:true},
+    {alias:"PaulinhIA",score:14, rank:2, previous_rank:1, rank_change:-1, last_match_points:3, p_win:0.23, p_top3:0.51, max_possible:598, points_available:584, eliminated:false, paid:true},
+    {alias:"Mihalik",  score:12, rank:3, previous_rank:4, rank_change:1,  last_match_points:5, p_win:0.19, p_top3:0.46, max_possible:596, points_available:584, eliminated:false, paid:true},
+    {alias:"Jogador D",score:11, rank:4, previous_rank:6, rank_change:2,  last_match_points:8, p_win:0.14, p_top3:0.39, max_possible:595, points_available:584, eliminated:false, paid:true},
+    {alias:"Jogador E",score:7,  rank:5, previous_rank:2, rank_change:-3, last_match_points:0, p_win:0.09, p_top3:0.28, max_possible:591, points_available:584, eliminated:false, paid:false},
+    {alias:"Jogador F",score:4,  rank:6, previous_rank:5, rank_change:-1, last_match_points:0, p_win:0.06, p_top3:0.20, max_possible:588, points_available:584, eliminated:false, paid:true}
+  ],
+  matches:[
+    {group:"A", home_team:"México", away_team:"África do Sul", venue:"Estádio Azteca", kickoff_sao_paulo:"2026-06-11T16:00:00-03:00", status:"finished", home_score:2, away_score:1, verified:true},
+    {group:"B", home_team:"Canadá", away_team:"Bósnia", venue:"BC Place", kickoff_sao_paulo:"2026-06-12T16:00:00-03:00", status:"finished", home_score:1, away_score:1, verified:true, is_special:true},
+    {group:"D", home_team:"EUA", away_team:"Paraguai", venue:"SoFi Stadium", kickoff_sao_paulo:"2026-06-12T22:00:00-03:00", status:"finished", home_score:0, away_score:1, verified:true},
+    {group:"C", home_team:"Brasil", away_team:"Marrocos", venue:"MetLife Stadium", kickoff_sao_paulo:"2026-06-13T19:00:00-03:00", status:"finished", home_score:3, away_score:0, verified:true},
+    {group:"H", home_team:"Espanha", away_team:"Arábia Saudita", venue:"Mercedes-Benz Stadium", kickoff_sao_paulo:"2026-06-15T13:00:00-03:00", status:"live", home_score:1, away_score:0, verified:true},
+    {group:"I", home_team:"França", away_team:"Senegal", venue:"Lumen Field", kickoff_sao_paulo:"2026-06-16T16:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:true},
+    {group:"J", home_team:"Argentina", away_team:"Argélia", venue:"Hard Rock Stadium", kickoff_sao_paulo:"2026-06-16T22:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:false}
+  ],
+  movement:{ biggest_jump:{alias:"Crepaldi",delta:2}, biggest_drop:{alias:"Jogador E",delta:-3},
+    longest_first:"PaulinhIA — liderou do sorteio até o 1º jogo",
+    pain_of_round:"A zebra do dia: EUA 0×1 Paraguai bagunçou o grupo todo. Quem apostou no favorito sentiu — faz parte." },
+  stats:{
+    best_exact:{alias:"Crepaldi", val:"50% (2 de 4)"},
+    optimistic:{alias:"Mihalik", val:"média 3,2 gols/palpite"},
+    cursed:{alias:"Jogador F", val:"0 de 4 placares"},
+    elimination:"ninguém eliminado (só 4 jogos)",
+    longest_first:{alias:"PaulinhIA", val:"do sorteio ao 1º jogo"},
+    fav_score:"2 × 1"
+  },
+  probability:{ method:METHOD, simulations:30000 }
+};
+
+// Gera 70 apostas para a SIMULAÇÃO (demonstra a escala real do bolão).
+// Determinístico (sem Math.random) p/ ficar igual a cada carregamento.
+function genDemoParticipants(){
+  const seeded = [
+    {alias:"Crepaldi", score:17, paid:true},
+    {alias:"PaulinhIA",score:14, paid:true},
+    {alias:"Mihalik",  score:12, paid:true},
+    {alias:"Jogador D",score:11, paid:true},
+    {alias:"Jogador E",score:7,  paid:false},
+    {alias:"Jogador F",score:4,  paid:true}
+  ];
+  const pool = ["Tauszig","Charles","Marcondes","Terzian","Kerr","Marina","Duarte","Luengo","Kat",
+    "Mitev","Flávia","Fernandão","Tia Léa","Zé do Bar","Nostradamus","Chutômetro","Palpiteiro",
+    "Sortudo","Vidente","Capitão","Maestro","Profeta","Encosto","Zebra FC","Pênalti","Lanterninha"];
+  let s = 7919;                                   // semente fixa
+  const rnd = () => { s = (s*1103515245 + 12345) & 0x7fffffff; return s/0x7fffffff; };
+  const list = seeded.map(o => ({...o}));
+  for(let i = list.length; i < 70; i++){
+    const nm = pool[i % pool.length] + " " + (Math.floor(i/pool.length) + 1);
+    const score = Math.max(0, Math.round(11 - (i-6)*0.12 + (rnd()*5 - 2.5)));
+    list.push({ alias:nm, score, paid: rnd() > 0.45 });   // ~55% pagaram
+  }
+  list.sort((a,b) => b.score - a.score || a.alias.localeCompare(b.alias));
+  const n = list.length;
+  const exps = list.map(p => Math.exp(p.score/6));
+  const sum  = exps.reduce((a,b) => a+b, 0);
+  list.forEach((p,i) => {
+    p.rank = i + 1;
+    const drift = Math.round(rnd()*6 - 3);
+    p.previous_rank = Math.min(n, Math.max(1, p.rank + drift));
+    p.rank_change = p.previous_rank - p.rank;
+    p.last_match_points = Math.max(0, Math.round(rnd()*8));
+    p.max_possible = 580 + Math.round(rnd()*30);
+    p.points_available = 555 + Math.round(rnd()*45);
+    p.eliminated = false;
+    p.phase1_points = p.score;          // na simulação, todos os pontos são da 1ª fase
+  });
+  return list;
+}
+
+// Reconstrói a SIMULAÇÃO em escala 70 e recalcula movimentação/estatísticas (auto-consistente).
+(function buildDemoScale(){
+  const g = genDemoParticipants();
+  DEMO.participants = g;
+  const jump = g.reduce((a,b) => b.rank_change > a.rank_change ? b : a);
+  const drop = g.reduce((a,b) => b.rank_change < a.rank_change ? b : a);
+  const last = g[g.length-1];
+  DEMO.movement.biggest_jump = {alias:jump.alias, delta:jump.rank_change};
+  DEMO.movement.biggest_drop = {alias:drop.alias, delta:drop.rank_change};
+  DEMO.movement.longest_first = `${g[0].alias} — na ponta desde o 1º jogo`;
+  DEMO.movement.pain_of_round = `${drop.alias} despencou ${Math.abs(drop.rank_change)} posições numa rodada só. Em ${g.length} apostas, dá pra cair MUITO.`;
+  DEMO.stats.best_exact   = {alias:g[0].alias, val:"50% (2 de 4)"};
+  DEMO.stats.optimistic   = {alias:g[3].alias, val:"média 3,2 gols/palpite"};
+  DEMO.stats.cursed       = {alias:last.alias, val:"0 de 4 placares"};
+  DEMO.stats.longest_first = {alias:g[0].alias, val:"do 1º jogo até agora"};
+})();
+
+let DATA = PRECOPA;
+
+// ---------- HALL DA FAMA: pódios das edições anteriores (dados reais) ----------
+const HISTORY = [
+  {year:2022, host:"Catar",         flag:"🇶🇦", podium:["Alexandre Tauszig","Charles Miller","Guilherme Marcondes"]},
+  {year:2018, host:"Rússia",        flag:"🇷🇺", podium:["Fabio Terzian","Pedro Marcondes","Ricardo Kerr"]},
+  {year:2014, host:"Brasil",        flag:"🇧🇷", podium:["Paulo Crepaldi","Ricardo Mihalik","Fernando Mihalik"]},
+  {year:2010, host:"África do Sul", flag:"🇿🇦", podium:["Marina Mihalik","Rodrigo Duarte","Luis Luengo"]},
+  {year:2006, host:"Alemanha",      flag:"🇩🇪", podium:["Kat Lencina","Pedro Mitev","Flávia Mihalik"]}
+];
+
+const TAGLINES = [
+  "Matematicamente vivo, emocionalmente questionável.",
+  "Líder por enquanto. Não mande imprimir a faixa.",
+  "Em último, mas primeiro no clima.",
+  "Sendo carregado por um único placar exato.",
+  "A planilha diz que há esperança. O futebol diz que não.",
+  "Apostou no zebrão e agora reza pelo zebrão.",
+  "Confiante como quem colocou 3×0 e tomou de 0×1.",
+  "O grupo da morte aqui é o do bolão.",
+  "Café-com-leite com sonho de Lanterna de Ouro.",
+  "Cada empate dói um pouquinho na alma."
+];
+
+// Bandeiras (emoji) das 48 seleções da Copa 2026
+const FLAGS = {
+  "México":"🇲🇽","África do Sul":"🇿🇦","Canadá":"🇨🇦","Bósnia":"🇧🇦","Brasil":"🇧🇷","Marrocos":"🇲🇦",
+  "Haiti":"🇭🇹","Escócia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","EUA":"🇺🇸","Paraguai":"🇵🇾","Austrália":"🇦🇺","Turquia":"🇹🇷",
+  "Alemanha":"🇩🇪","Curaçao":"🇨🇼","Costa do Marfim":"🇨🇮","Equador":"🇪🇨","Holanda":"🇳🇱","Japão":"🇯🇵",
+  "Suécia":"🇸🇪","Tunísia":"🇹🇳","Bélgica":"🇧🇪","Egito":"🇪🇬","Irã":"🇮🇷","Nova Zelândia":"🇳🇿",
+  "Espanha":"🇪🇸","Cabo Verde":"🇨🇻","Arábia Saudita":"🇸🇦","Uruguai":"🇺🇾","França":"🇫🇷","Senegal":"🇸🇳",
+  "Iraque":"🇮🇶","Noruega":"🇳🇴","Argentina":"🇦🇷","Argélia":"🇩🇿","Áustria":"🇦🇹","Jordânia":"🇯🇴",
+  "Portugal":"🇵🇹","RD Congo":"🇨🇩","Uzbequistão":"🇺🇿","Colômbia":"🇨🇴","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Gana":"🇬🇭",
+  "Croácia":"🇭🇷","Panamá":"🇵🇦","Catar":"🇶🇦","Suíça":"🇨🇭","Coreia do Sul":"🇰🇷","Rep Tcheca":"🇨🇿"
+};
+// Bandeiras de sub-nações (Escócia/Inglaterra/Gales) quebram em Windows → usa selo de 3 letras
+const SUBDIV = { "Escócia":"SCO", "Inglaterra":"ENG", "País de Gales":"WAL", "Irlanda do Norte":"NIR" };
+const fEmoji = t => SUBDIV[t] ? `<span class="fmono">${SUBDIV[t]}</span>` : (FLAGS[t] || '');
+const flag  = t => { const f = fEmoji(t); return f ? f+' ' : ''; };   // prefixo (antes do nome)
+const flagA = t => { const f = fEmoji(t); return f ? ' '+f : ''; };   // sufixo (depois do nome)
+
+const fmtDateTime = iso => {
+  const d = new Date(iso);
+  return d.toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}).replace(',','');
+};
+const arrow = c => c>0?`<span class="pill up">▲ ${c}</span>` : c<0?`<span class="pill down">▼ ${Math.abs(c)}</span>` : `<span class="pill flat">— 0</span>`;
+
+function render(){
+  const P = [...DATA.participants].sort((a,b)=>a.rank-b.rank);
+  // hero
+  const leader = P[0];
+  document.getElementById('leaderName').textContent = leader.alias;
+  document.getElementById('leaderScore').textContent = leader.score;
+  document.getElementById('leaderNote').textContent = (leader.paid === false)
+    ? 'Lidera no geral — mas é café-com-leite: joga pela glória (e pela zoeira).'
+    : 'Líder por enquanto. Não mande imprimir a faixa.';
+  // último resultado
+  const lr = DATA.latest_result;
+  if(lr){
+    document.getElementById('lastResult').innerHTML = `<span>${flag(lr.home_team)}${lr.home_team}</span><span class="sc">${lr.home_score} × ${lr.away_score}</span><span>${lr.away_team}${flagA(lr.away_team)}</span>`;
+    document.getElementById('lastResultNote').textContent = lr.note || '';
+  } else {
+    document.getElementById('lastResult').innerHTML = `<span>—</span><span class="sc">vs</span><span>—</span>`;
+    document.getElementById('lastResultNote').textContent = 'A bola ainda não rolou. Calma.';
+  }
+  // next match
+  const next = DATA.matches.filter(m=>m.status==='scheduled').sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
+  if(next){
+    document.getElementById('nextMatch').innerHTML = `<span>${flag(next.home_team)}${next.home_team}</span><span class="sc">×</span><span>${next.away_team}${flagA(next.away_team)}</span>`;
+    document.getElementById('nextWhen').textContent = `${fmtDateTime(next.kickoff_sao_paulo)} · ${next.venue}`;
+    startCountdown(next);
+  }
+  // prêmio acumulado
+  renderPrize();
+  // leaderboard (escalável até 70+ apostas)
+  renderLeaderboard();
+  renderBomPalpite();
+  // movement
+  const mv = DATA.movement;
+  document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
+  document.getElementById('bigDrop').textContent = mv.biggest_drop ? `${mv.biggest_drop.alias} ▼${Math.abs(mv.biggest_drop.delta)}` : '—';
+  document.getElementById('longestFirst').textContent = mv.longest_first || '—';
+  document.getElementById('painRound').textContent = mv.pain_of_round;
+  // stats
+  const st = DATA.stats || {};
+  const stat = o => o ? `${o.alias} · ${o.val}` : '—';
+  document.getElementById('s-exact').textContent = stat(st.best_exact);
+  document.getElementById('s-optim').textContent = stat(st.optimistic);
+  document.getElementById('s-cursed').textContent = stat(st.cursed);
+  document.getElementById('s-elim').textContent  = st.elimination || '—';
+  document.getElementById('s-first').textContent = stat(st.longest_first);
+  document.getElementById('s-fav').textContent   = st.fav_score || '2 × 1';
+  // corrida pelo título — modelo simples: pontos atuais × máximo ainda possível
+  const ranked = [...P].sort((a,b)=> b.score - a.score || (b.max_possible??0)-(a.max_possible??0));
+  const TOPP = 10;
+  const top = ranked.slice(0, TOPP);
+  const scaleMax = Math.max(...top.map(p=>p.max_possible ?? p.score), 1);
+  const others = ranked.length - top.length;
+  document.getElementById('probList').innerHTML = top.map(p=>{
+    const cur = p.score, mx = (p.max_possible ?? p.score);
+    const curW = (cur/scaleMax*100).toFixed(1), avW = (Math.max(0,mx-cur)/scaleMax*100).toFixed(1);
+    const tag = p.eliminated ? '<span class="elim-tag">eliminado</span>' : '';
+    return `<div class="prob-item">
+      <div class="nm">${p.alias}${tag}</div>
+      <div class="bar race"><i style="width:${curW}%"></i><u style="width:${avW}%"></u></div>
+      <div class="pct">${cur}<span class="pct-mx">/${mx}</span></div>
+    </div>`;
+  }).join('') + (others>0 ? `<div class="prob-note">+ ${others} apostas — barra cheia = pontos já feitos · parte clara = ainda em jogo.</div>` : '');
+  document.getElementById('methodText').textContent = (DATA.probability && DATA.probability.method)
+    || 'Pontos atuais comparados ao máximo ainda alcançável. Sem simulação de probabilidade.';
+  // audit
+  document.getElementById('a-update').textContent = fmtDateTime(DATA.meta.last_data_update);
+  document.getElementById('a-check').textContent = fmtDateTime(DATA.meta.last_source_check);
+  document.getElementById('a-rule').textContent = DATA.meta.rule_version;
+  document.getElementById('f-updated').textContent = fmtDateTime(DATA.meta.last_data_update);
+  // aba padrão: 'Encerrados' se já houver jogos, senão 'Próximos'
+  const hasFinished = DATA.matches.some(m=>m.status==='finished');
+  const defTab = hasFinished ? 'finished' : 'scheduled';
+  document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.f===defTab));
+  renderMatches(defTab);
+}
+
+// ---- Prêmio acumulado (apenas apostas pagas × valor da aposta) ----
+const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+function renderPrize(){
+  const all = DATA.participants || [];
+  const paidN = all.filter(p=>p.paid).length;
+  const bet = (DATA.meta && DATA.meta.bet_value) || 60;
+  const pot = paidN * bet;
+  const refund = paidN > 0 ? bet : 0;          // Lanterna de Ouro recebe a aposta de volta (sai por cima)
+  const base = Math.max(0, pot - refund);      // percentuais incidem sobre o RESTANTE
+  document.getElementById('prizeAmount').textContent = brl(pot);
+  document.getElementById('prizeSub').textContent =
+    `${paidN} aposta${paidN!==1?'s':''} paga${paidN!==1?'s':''} × ${brl(bet)} — só os “para valer” concorrem ao dinheiro.`;
+  const splits = [
+    {ic:'🏆', lab:'Campeão do Bolão',  pct:0.40},
+    {ic:'🥈', lab:'Vice-campeão',      pct:0.25},
+    {ic:'🥉', lab:'3º lugar',          pct:0.10},
+    {ic:'🏅', lab:'4º lugar',          pct:0.05},
+    {ic:'⚡', lab:'Bom de Palpite (fim da 1ª fase)', pct:0.20}
+  ];
+  document.getElementById('prizeSplit').innerHTML =
+    `<div class="psplit">
+      <span class="pic">🔦</span>
+      <span class="plab">Lanterna de Ouro (devolução da aposta)</span>
+      <span class="ppct">—</span>
+      <span class="pamt">${refund ? brl(refund) : '—'}</span>
+    </div>` +
+    splits.map(s=>`
+    <div class="psplit">
+      <span class="pic">${s.ic}</span>
+      <span class="plab">${s.lab}</span>
+      <span class="ppct">${Math.round(s.pct*100)}%</span>
+      <span class="pamt">${base ? brl(Math.round(base*s.pct)) : '—'}</span>
+    </div>`).join('');
+  document.getElementById('prizeFoot').innerHTML =
+    `Como divide: a <b>Lanterna de Ouro</b> (último ao fim da 1ª fase) recebe a aposta de volta (${brl(refund||bet)}); os percentuais incidem sobre o <b>restante</b> (${brl(base)}). Os pontos da 1ª fase não zeram — o vencedor da fase segue elegível aos prêmios finais. Bolão de palpites entre amigos: sem odds, sem casa de apostas.`;
+}
+
+// ---- Classificação escalável (busca + filtro pagas/café + colapso) ----
+let lbFilter='all', lbSearch='', lbExpanded=false;
+const LB_LIMIT=15;
+function renderLeaderboard(){
+  const all=[...DATA.participants].sort((a,b)=>a.rank-b.rank);
+  const total=all.length, paidN=all.filter(p=>p.paid).length, freeN=total-paidN;
+  document.getElementById('lbCount').textContent =
+    `${total} aposta${total!==1?'s':''} · ${paidN} para valer 💰 · ${freeN} café-com-leite ☕`;
+  // prêmio em dinheiro: só pagantes — top 4 pela ordem geral
+  const prizeSet=new Set(all.filter(p=>p.paid).slice(0,4).map(p=>p.alias));
+  const maxRank=total;
+  let list=all;
+  if(lbFilter==='paid') list=list.filter(p=>p.paid);
+  else if(lbFilter==='free') list=list.filter(p=>!p.paid);
+  const q=lbSearch.trim().toLowerCase();
+  if(q) list=list.filter(p=>p.alias.toLowerCase().includes(q));
+  const collapsed = !lbExpanded && !q && list.length>LB_LIMIT;
+  const view = collapsed ? list.slice(0,LB_LIMIT) : list;
+  const el=document.getElementById('lbList');
+  if(!view.length){
+    el.innerHTML=`<div class="lb-empty">Nenhuma aposta encontrada${lbSearch?` para “${lbSearch}”`:''}. Tente outro apelido.</div>`;
+  } else {
+    el.innerHTML = view.map(p=>{
+      const isFirst=p.rank===1, isLast=p.rank===maxRank;
+      const cls=isFirst?'first':(isLast?'last':'');
+      const prize = prizeSet.has(p.alias)?'<span class="chip chip-prize">💰 prêmio</span>':'';
+      const free  = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
+      const hit   = q?'<span class="you-tag">é você?</span>':'';
+      return `<div class="lb-row ${cls}">
+        <div class="rk">${p.rank}</div>
+        <div class="who">
+          <div class="nm">${isFirst?'👑 ':''}${isLast?'🔦 ':''}${p.alias} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
+          <div class="meta">última rodada: +${p.last_match_points} pts · máx. possível ${p.max_possible}</div>
+        </div>
+        <div class="lb-right">
+          <div class="pwin"><div class="v">${p.eliminated ? '<span style="color:var(--coral)">fora</span>' : (p.max_possible ?? '—')}</div><div class="l">máx possível</div></div>
+          <div class="lb-score">${p.score}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  const more=document.getElementById('lbMore');
+  if(collapsed){ more.hidden=false; more.textContent=`Ver todas as ${list.length} apostas ▾`; }
+  else if(lbExpanded && !q && list.length>LB_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
+  else more.hidden=true;
+}
+// Bom de Palpite — ranking só da 1ª fase (top 5)
+function renderBomPalpite(){
+  const P = [...DATA.participants]
+    .map(p => ({...p, ph1: p.phase1_points ?? p.score}))
+    .sort((a,b) => b.ph1 - a.ph1 || b.score - a.score)
+    .slice(0, 5);
+  document.getElementById('bpList').innerHTML = P.map((p,i) => `
+    <div class="bp-row">
+      <span class="bp-rk">${i+1}</span>
+      <span class="bp-nm">${i===0?'🏁 ':''}${p.alias}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
+      <span class="bp-pts">${p.ph1} pts</span>
+    </div>`).join('') || '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
+}
+
+document.getElementById('lbSearch').addEventListener('input',e=>{ lbSearch=e.target.value; renderLeaderboard(); });
+document.getElementById('lbFilter').addEventListener('click',e=>{
+  const b=e.target.closest('.seg-btn'); if(!b)return;
+  document.querySelectorAll('#lbFilter .seg-btn').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active'); lbFilter=b.dataset.f; lbExpanded=false; renderLeaderboard();
+});
+document.getElementById('lbMore').addEventListener('click',()=>{ lbExpanded=!lbExpanded; renderLeaderboard(); });
+
+function renderMatches(filter){
+  const list = DATA.matches.filter(m=>m.status===filter);
+  const el = document.getElementById('matchList');
+  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">Nenhum jogo nesta aba ainda.</div>`; return; }
+  el.innerHTML = list.map(m=>{
+    const chip = m.status==='live'?'<span class="chip chip-live live"><span class="dot"></span> Ao vivo</span>'
+      : m.status==='finished'?'<span class="chip chip-ft">Encerrado</span>'
+      : '<span class="chip chip-sched">Agendado</span>';
+    const sc = (m.home_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.home_score}</span>`;
+    const sc2= (m.away_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.away_score}</span>`;
+    const special = m.is_special ? '<span class="chip chip-special">⭐ Especial · 5 pts</span>' : '';
+    return `<div class="mcard">
+      <div class="top"><span class="grp">Grupo ${m.group}</span><span style="display:flex;gap:6px;align-items:center">${special}${chip}</span></div>
+      <div class="team"><span>${flag(m.home_team)}${m.home_team}</span>${sc}</div>
+      <div class="team"><span>${flag(m.away_team)}${m.away_team}</span>${sc2}</div>
+      <div class="foot">
+        <span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span>
+        <span class="verif">${m.verified?'<span class="ok">✓ verificado</span>':'<span class="warn">• a verificar</span>'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Hall da Fama (estático — independe do estado pré/demo)
+function renderFame(){
+  document.getElementById('fameGrid').innerHTML = HISTORY.map(e=>`
+    <div class="fame-card">
+      <div class="fame-top"><span class="fame-year">${e.year}</span><span class="fame-host">${e.flag} ${e.host}</span></div>
+      <ul class="podium">
+        <li class="p1"><span>🥇</span><b>${e.podium[0]}</b></li>
+        <li><span>🥈</span><span>${e.podium[1]}</span></li>
+        <li><span>🥉</span><span>${e.podium[2]}</span></li>
+      </ul>
+    </div>`).join('');
+  // dinastia = sobrenome mais frequente nos pódios
+  const fam={};
+  HISTORY.forEach(e=>e.podium.forEach(n=>{const s=n.trim().split(' ').pop(); fam[s]=(fam[s]||0)+1;}));
+  const top=Object.entries(fam).sort((a,b)=>b[1]-a[1])[0];
+  const champs=HISTORY.map(e=>`${e.podium[0].split(' ')[0]} (${e.year})`).join(' · ');
+  document.getElementById('fameHighlight').innerHTML =
+    `👑 <b>Dinastia ${top[0]}</b> — ${top[1]} presenças no pódio em ${HISTORY.length} edições. A casa do “Miha” claramente sabe das coisas.<br>🏆 <b>Campeões:</b> ${champs}`;
+}
+
+// countdown ao vivo até o próximo jogo
+let cdTimer=null;
+function startCountdown(match){
+  if(cdTimer) clearInterval(cdTimer);
+  const box=document.getElementById('countdown');
+  box.querySelector('.cd-lab').textContent='⏳ A bola rola em';
+  const target=new Date(match.kickoff_sao_paulo).getTime();
+  document.getElementById('cd-match').innerHTML = `${flag(match.home_team)}${match.home_team} × ${match.away_team}${flagA(match.away_team)}`;
+  box.hidden=false;
+  const tick=()=>{
+    let diff=target-Date.now();
+    if(diff<=0){ box.querySelector('.cd-lab').textContent='🔴 É AGORA'; clearInterval(cdTimer);
+      document.getElementById('cd-d').textContent='0';document.getElementById('cd-h').textContent='0';
+      document.getElementById('cd-m').textContent='0';document.getElementById('cd-s').textContent='0';return; }
+    const s=Math.floor(diff/1000);
+    document.getElementById('cd-d').textContent=Math.floor(s/86400);
+    document.getElementById('cd-h').textContent=Math.floor(s%86400/3600);
+    document.getElementById('cd-m').textContent=Math.floor(s%3600/60);
+    document.getElementById('cd-s').textContent=s%60;
+  };
+  tick(); cdTimer=setInterval(tick,1000);
+}
+
+// tabs
+document.getElementById('matchTabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab'); if(!b)return;
+  document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active'); renderMatches(b.dataset.f);
+});
+
+// alternar estado de visualização (pré-copa / simulação)
+document.getElementById('stateToggle').addEventListener('click',e=>{
+  const b=e.target.closest('.seg-btn'); if(!b)return;
+  document.querySelectorAll('#stateToggle .seg-btn').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active');
+  DATA = b.dataset.s==='demo' ? DEMO : PRECOPA;
+  // reset dos filtros da classificação ao trocar de estado
+  lbFilter='all'; lbSearch=''; lbExpanded=false;
+  document.getElementById('lbSearch').value='';
+  document.querySelectorAll('#lbFilter .seg-btn').forEach(t=>t.classList.toggle('active', t.dataset.f==='all'));
+  render();
+});
+
+// rotating tagline
+let ti=0; const tEl=document.getElementById('tagline');
+function rotate(){ tEl.textContent = TAGLINES[ti % TAGLINES.length]; ti++; }
+rotate(); setInterval(rotate, 4200);
+
+// boot: tenta carregar data.json (fonte real). Se falhar (file:// ou offline), usa os dados embutidos.
+async function boot(){
+  try{
+    const r = await fetch('./data.json?ts=' + Date.now(), {cache:'no-store'});
+    if(r.ok){
+      const live = await r.json();
+      PRECOPA = live;                                   // "Pré-Copa" passa a refletir os dados reais
+      if(Array.isArray(live.history)) HISTORY.splice(0, HISTORY.length, ...live.history);
+      if(live.meta && live.meta.is_placeholder === false){
+        document.querySelector('.statebar')?.remove();  // some o toggle de protótipo
+        document.querySelector('.demo-banner')?.remove();// some o aviso de placeholder
+      }
+    }
+  }catch(e){ console.info('data.json indisponível — usando dados embutidos (modo protótipo).'); }
+  DATA = PRECOPA;
+  renderFame();
+  render();
+}
+boot();

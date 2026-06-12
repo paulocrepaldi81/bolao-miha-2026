@@ -1,0 +1,57 @@
+# Robô do Bolão Miha 2026 — busca placares e republica a landing page.
+#
+# Roda a cada 20 minutos durante a Copa (11/jun–19/jul). Cada execução:
+#   1. fetch_results.py  → consulta a API e atualiza engine/data/results.csv
+#   2. build_data.py     → repontua tudo e gera landing-page/data.json
+#   3. commit+push       → o Netlify detecta e republica o site (~30s)
+#
+# Setup necessário (uma vez): em Settings → Secrets and variables → Actions,
+# criar o secret FOOTBALL_DATA_TOKEN com a chave de https://www.football-data.org
+name: Atualiza placar
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"   # a cada 20 min (GitHub pode atrasar alguns minutos)
+  workflow_dispatch: {}       # botão "Run workflow" para rodar na mão
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualiza-placar
+  cancel-in-progress: true
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install openpyxl
+
+      - name: Buscar placares oficiais
+        working-directory: engine
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+        run: python fetch_results.py
+
+      - name: Repontuar e gerar data.json
+        working-directory: engine
+        run: python build_data.py --from-json --out ../landing-page/data.json
+
+      - name: Publicar (commit se houve mudança)
+        run: |
+          git config user.name "bolao-bot"
+          git config user.email "actions@github.com"
+          git add engine/data/results.csv engine/data/history.json landing-page/data.json
+          if git diff --cached --quiet; then
+            echo "Sem mudanças — nada a publicar."
+          else
+            git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
+            git push
+          fi
