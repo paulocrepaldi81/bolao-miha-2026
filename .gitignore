@@ -27,3 +27,5 @@ engine/data/validation_report.txt
 
 # Documentos pessoais / prints (não subir)
 *.pdf
+Screenshot*.png
+*.png
