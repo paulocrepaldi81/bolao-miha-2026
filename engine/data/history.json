@@ -219,5 +219,22 @@
         "total": 0
       }
     }
+  },
+  {
+    "ts": "2026-06-14T18:49:58.415892-03:00",
+    "ranks": {
+      "Crepaldi": {
+        "rank": 1,
+        "total": 10
+      },
+      "PaulinhIA": {
+        "rank": 2,
+        "total": 8
+      },
+      "Mihalik": {
+        "rank": 3,
+        "total": 7
+      }
+    }
   }
 ]

@@ -7,17 +7,22 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-14T18:34:58.092179-03:00",
-    "last_source_check": "2026-06-14T18:34:58.092179-03:00",
+    "last_data_update": "2026-06-14T18:49:58.415892-03:00",
+    "last_source_check": "2026-06-14T18:49:58.415892-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
   "latest_result": {
-    "home_team": "Coreia do Sul",
-    "away_team": "Rep Tcheca",
-    "home_score": 2,
+    "home_team": "Alemanha",
+    "away_team": "Curaçao",
+    "home_score": 7,
     "away_score": 1,
     "note": "Resultado oficial computado."
+  },
+  "final_result": {
+    "champion": null,
+    "vice": null,
+    "third": null
   },
   "extras_summary": [
     {
@@ -25,7 +30,7 @@
       "label": "⚽ Artilheiro — nome",
       "points": 8,
       "real": null,
-      "partial": "Julián Quiñones (México) — 1 gol(s)",
+      "partial": "Folarin Balogun (EUA) — 2 gol(s)",
       "winners": []
     },
     {
@@ -33,7 +38,7 @@
       "label": "👕 Artilheiro — equipe",
       "points": 4,
       "real": null,
-      "partial": "México",
+      "partial": "EUA",
       "winners": []
     },
     {
@@ -41,7 +46,7 @@
       "label": "🔢 Artilheiro — nº de gols",
       "points": 3,
       "real": null,
-      "partial": "1 (parcial)",
+      "partial": "2 (parcial)",
       "winners": []
     },
     {
@@ -49,7 +54,7 @@
       "label": "🎯 Equipe mais goleadora",
       "points": 5,
       "real": null,
-      "partial": "México (2 gols)",
+      "partial": "Alemanha (7 gols)",
       "winners": []
     },
     {
@@ -65,7 +70,7 @@
       "label": "🔥 Maior nº de gols em um jogo",
       "points": 5,
       "real": null,
-      "partial": "3 gols (Coreia do Sul 2×1 Rep Tcheca)",
+      "partial": "8 gols (Alemanha 7×1 Curaçao)",
       "winners": []
     },
     {
@@ -73,7 +78,7 @@
       "label": "🤝 Nº de empates na 1ª fase",
       "points": 5,
       "real": null,
-      "partial": "0 até agora (2/72 jogos da 1ª fase)",
+      "partial": "3 até agora (9/72 jogos da 1ª fase)",
       "winners": []
     },
     {
@@ -112,16 +117,16 @@
   "participants": [
     {
       "alias": "Crepaldi",
-      "score": 3,
-      "phase1_points": 3,
+      "score": 10,
+      "phase1_points": 10,
       "rank": 1,
       "previous_rank": 1,
       "rank_change": 0,
-      "last_match_points": 0,
-      "exact_scores": 0,
-      "correct_outcomes": 1,
-      "max_possible": 992,
-      "points_available": 989,
+      "last_match_points": 7,
+      "exact_scores": 1,
+      "correct_outcomes": 2,
+      "max_possible": 932,
+      "points_available": 922,
       "eliminated": false,
       "paid": true,
       "picks": {
@@ -134,7 +139,7 @@
           "B1": [
             1,
             1,
-            0
+            7
           ],
           "C1": [
             3,
@@ -164,16 +169,16 @@
     },
     {
       "alias": "PaulinhIA",
-      "score": 3,
-      "phase1_points": 3,
+      "score": 8,
+      "phase1_points": 8,
       "rank": 2,
       "previous_rank": 2,
       "rank_change": 0,
-      "last_match_points": 0,
+      "last_match_points": 5,
       "exact_scores": 0,
-      "correct_outcomes": 1,
-      "max_possible": 992,
-      "points_available": 989,
+      "correct_outcomes": 2,
+      "max_possible": 930,
+      "points_available": 922,
       "eliminated": false,
       "paid": true,
       "picks": {
@@ -186,7 +191,7 @@
           "B1": [
             2,
             2,
-            0
+            5
           ],
           "C1": [
             2,
@@ -216,16 +221,16 @@
     },
     {
       "alias": "Mihalik",
-      "score": 0,
-      "phase1_points": 0,
+      "score": 7,
+      "phase1_points": 7,
       "rank": 3,
       "previous_rank": 3,
       "rank_change": 0,
-      "last_match_points": 0,
-      "exact_scores": 0,
-      "correct_outcomes": 0,
-      "max_possible": 989,
-      "points_available": 989,
+      "last_match_points": 7,
+      "exact_scores": 1,
+      "correct_outcomes": 1,
+      "max_possible": 929,
+      "points_available": 922,
       "eliminated": false,
       "paid": true,
       "picks": {
@@ -238,7 +243,7 @@
           "B1": [
             1,
             1,
-            0
+            7
           ],
           "C1": [
             1,
@@ -353,10 +358,10 @@
       "away_team": "Bósnia",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-12T16:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 1,
+      "away_score": 1,
+      "verified": true,
       "is_special": true
     },
     {
@@ -366,10 +371,10 @@
       "away_team": "Suíça",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-13T16:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 1,
+      "away_score": 1,
+      "verified": true,
       "is_special": false
     },
     {
@@ -431,10 +436,10 @@
       "away_team": "Marrocos",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-13T19:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 1,
+      "away_score": 1,
+      "verified": true,
       "is_special": false
     },
     {
@@ -444,10 +449,10 @@
       "away_team": "Escócia",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-13T22:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 0,
+      "away_score": 1,
+      "verified": true,
       "is_special": true
     },
     {
@@ -509,10 +514,10 @@
       "away_team": "Paraguai",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-12T22:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 4,
+      "away_score": 1,
+      "verified": true,
       "is_special": false
     },
     {
@@ -522,10 +527,10 @@
       "away_team": "Turquia",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-14T01:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 2,
+      "away_score": 0,
+      "verified": true,
       "is_special": false
     },
     {
@@ -587,10 +592,10 @@
       "away_team": "Curaçao",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-14T14:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
-      "verified": false,
+      "status": "finished",
+      "home_score": 7,
+      "away_score": 1,
+      "verified": true,
       "is_special": false
     },
     {
@@ -665,9 +670,9 @@
       "away_team": "Japão",
       "venue": "",
       "kickoff_sao_paulo": "2026-06-14T17:00:00-03:00",
-      "status": "scheduled",
-      "home_score": null,
-      "away_score": null,
+      "status": "live",
+      "home_score": 2,
+      "away_score": 1,
       "verified": false,
       "is_special": false
     },
@@ -1212,14 +1217,17 @@
     "pain_of_round": "Rodada tranquila — ninguém despencou."
   },
   "stats": {
-    "best_exact": null,
+    "best_exact": {
+      "alias": "Crepaldi",
+      "val": "1 placares exatos"
+    },
     "optimistic": {
       "alias": "Crepaldi",
       "val": "média 2.7 gols/palpite"
     },
     "cursed": {
       "alias": "Mihalik",
-      "val": "0 acertos de vencedor"
+      "val": "1 acertos de vencedor"
     },
     "elimination": "ninguém eliminado (fase de grupos)",
     "longest_first": {
