@@ -10,11 +10,10 @@
 name: Atualiza placar
 
 on:
-  schedule:
-    # Horários em UTC. BRT = UTC-3. Janela dos jogos da Copa ≈ 12h–04h BRT.
-    - cron: "*/10 0-6,15-23 * * *"   # a cada 10 min durante os jogos (atualização "ao vivo")
-    - cron: "0 9,12 * * *"           # 2 atualizações leves de manhã (BRT 06h e 09h)
-  workflow_dispatch: {}              # botão "Run workflow" para rodar na mão também
+  # Gatilho via workflow_dispatch — acionado pelo PINGER externo (cron-job.org)
+  # a cada 10 min, de forma confiável. Também roda pelo botão "Run workflow".
+  # (O agendador nativo do GitHub foi removido por ser irregular p/ alta frequência.)
+  workflow_dispatch: {}
 
 permissions:
   contents: write
