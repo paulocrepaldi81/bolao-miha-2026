@@ -145,12 +145,25 @@ def main():
     for m in catalog:
         r = results.get(m["match_id"], {})
         matches.append({
+            "match_id": m["match_id"],
             "group": m["group"], "home_team": m["home"], "away_team": m["away"], "venue": "",
             "kickoff_sao_paulo": parse_kickoff(m["date"]),
             "status": r.get("status", "scheduled"),
             "home_score": r.get("home_score"), "away_score": r.get("away_score"),
             "verified": r.get("verified", False), "is_special": m["special"],
         })
+
+    # ---- palpites individuais por aposta (alimenta a aba "Minha Aposta") ----
+    bet_by_alias = {b["alias"]: b for b in bets}
+    scored_by_alias = {s["alias"]: s for s in scored}
+    for p in participants:
+        b = bet_by_alias.get(p["alias"]); s = scored_by_alias.get(p["alias"])
+        if not b:
+            continue
+        groups = {}
+        for mid, (ph, pa) in b["group_preds"].items():
+            groups[mid] = [ph, pa, (s["by_match"].get(mid, 0) if s else 0)]
+        p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"]}
 
     # ---- estatísticas reais ----
     stats = build_stats(bets, scored, history)
@@ -167,6 +180,7 @@ def main():
             "rule_version": "v2.1", "freshness": "ok",
         },
         "latest_result": build_latest(catalog, results),
+        "final_result": real_final,
         "extras_summary": build_extras_summary(bets, facts),
         "participants": participants,
         "matches": matches,

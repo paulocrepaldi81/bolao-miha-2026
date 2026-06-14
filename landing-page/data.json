@@ -7,8 +7,8 @@
     "total_bets": 3,
     "paid_bets": 3,
     "paid_pending": true,
-    "last_data_update": "2026-06-12T11:31:57.171783-03:00",
-    "last_source_check": "2026-06-12T11:31:57.171783-03:00",
+    "last_data_update": "2026-06-14T18:34:58.092179-03:00",
+    "last_source_check": "2026-06-14T18:34:58.092179-03:00",
     "rule_version": "v2.1",
     "freshness": "ok"
   },
@@ -123,7 +123,44 @@
       "max_possible": 992,
       "points_available": 989,
       "eliminated": false,
-      "paid": true
+      "paid": true,
+      "picks": {
+        "groups": {
+          "A1": [
+            2,
+            1,
+            3
+          ],
+          "B1": [
+            1,
+            1,
+            0
+          ],
+          "C1": [
+            3,
+            0,
+            0
+          ]
+        },
+        "final": {
+          "champion": "Brasil",
+          "vice": "França",
+          "third": "Argentina"
+        },
+        "extras": {
+          "artilheiro_nome": "Mbappé",
+          "artilheiro_equipe": null,
+          "artilheiro_gols": null,
+          "mais_goleadora": null,
+          "menos_vazada": null,
+          "mais_gols_jogo": null,
+          "empates_1f": 9,
+          "jogos_penaltis": null,
+          "equipe_1o_expulso": null,
+          "equipe_1o_gol_contra": null,
+          "azarao": null
+        }
+      }
     },
     {
       "alias": "PaulinhIA",
@@ -138,7 +175,44 @@
       "max_possible": 992,
       "points_available": 989,
       "eliminated": false,
-      "paid": true
+      "paid": true,
+      "picks": {
+        "groups": {
+          "A1": [
+            1,
+            0,
+            3
+          ],
+          "B1": [
+            2,
+            2,
+            0
+          ],
+          "C1": [
+            2,
+            1,
+            0
+          ]
+        },
+        "final": {
+          "champion": "Argentina",
+          "vice": "Brasil",
+          "third": "Espanha"
+        },
+        "extras": {
+          "artilheiro_nome": "Mbappé",
+          "artilheiro_equipe": null,
+          "artilheiro_gols": null,
+          "mais_goleadora": null,
+          "menos_vazada": null,
+          "mais_gols_jogo": null,
+          "empates_1f": 9,
+          "jogos_penaltis": null,
+          "equipe_1o_expulso": null,
+          "equipe_1o_gol_contra": null,
+          "azarao": null
+        }
+      }
     },
     {
       "alias": "Mihalik",
@@ -153,11 +227,49 @@
       "max_possible": 989,
       "points_available": 989,
       "eliminated": false,
-      "paid": true
+      "paid": true,
+      "picks": {
+        "groups": {
+          "A1": [
+            0,
+            1,
+            0
+          ],
+          "B1": [
+            1,
+            1,
+            0
+          ],
+          "C1": [
+            1,
+            0,
+            0
+          ]
+        },
+        "final": {
+          "champion": "França",
+          "vice": "Inglaterra",
+          "third": "Brasil"
+        },
+        "extras": {
+          "artilheiro_nome": "Mbappé",
+          "artilheiro_equipe": null,
+          "artilheiro_gols": null,
+          "mais_goleadora": null,
+          "menos_vazada": null,
+          "mais_gols_jogo": null,
+          "empates_1f": 9,
+          "jogos_penaltis": null,
+          "equipe_1o_expulso": null,
+          "equipe_1o_gol_contra": null,
+          "azarao": null
+        }
+      }
     }
   ],
   "matches": [
     {
+      "match_id": "A1",
       "group": "A",
       "home_team": "México",
       "away_team": "África do Sul",
@@ -170,6 +282,7 @@
       "is_special": false
     },
     {
+      "match_id": "A2",
       "group": "A",
       "home_team": "Coreia do Sul",
       "away_team": "Rep Tcheca",
@@ -182,6 +295,7 @@
       "is_special": false
     },
     {
+      "match_id": "A3",
       "group": "A",
       "home_team": "Rep Tcheca",
       "away_team": "África do Sul",
@@ -194,6 +308,7 @@
       "is_special": false
     },
     {
+      "match_id": "A4",
       "group": "A",
       "home_team": "México",
       "away_team": "Coreia do Sul",
@@ -206,6 +321,7 @@
       "is_special": false
     },
     {
+      "match_id": "A5",
       "group": "A",
       "home_team": "Rep Tcheca",
       "away_team": "México",
@@ -218,6 +334,7 @@
       "is_special": false
     },
     {
+      "match_id": "A6",
       "group": "A",
       "home_team": "África do Sul",
       "away_team": "Coreia do Sul",
@@ -230,6 +347,7 @@
       "is_special": true
     },
     {
+      "match_id": "B1",
       "group": "B",
       "home_team": "Canadá",
       "away_team": "Bósnia",
@@ -242,6 +360,7 @@
       "is_special": true
     },
     {
+      "match_id": "B2",
       "group": "B",
       "home_team": "Catar",
       "away_team": "Suíça",
@@ -254,6 +373,7 @@
       "is_special": false
     },
     {
+      "match_id": "B3",
       "group": "B",
       "home_team": "Suíça",
       "away_team": "Bósnia",
@@ -266,6 +386,7 @@
       "is_special": false
     },
     {
+      "match_id": "B4",
       "group": "B",
       "home_team": "Canadá",
       "away_team": "Catar",
@@ -278,6 +399,7 @@
       "is_special": false
     },
     {
+      "match_id": "B5",
       "group": "B",
       "home_team": "Suíça",
       "away_team": "Canadá",
@@ -290,6 +412,7 @@
       "is_special": false
     },
     {
+      "match_id": "B6",
       "group": "B",
       "home_team": "Bósnia",
       "away_team": "Catar",
@@ -302,6 +425,7 @@
       "is_special": false
     },
     {
+      "match_id": "C1",
       "group": "C",
       "home_team": "Brasil",
       "away_team": "Marrocos",
@@ -314,6 +438,7 @@
       "is_special": false
     },
     {
+      "match_id": "C2",
       "group": "C",
       "home_team": "Haiti",
       "away_team": "Escócia",
@@ -326,6 +451,7 @@
       "is_special": true
     },
     {
+      "match_id": "C3",
       "group": "C",
       "home_team": "Escócia",
       "away_team": "Marrocos",
@@ -338,6 +464,7 @@
       "is_special": false
     },
     {
+      "match_id": "C4",
       "group": "C",
       "home_team": "Brasil",
       "away_team": "Haiti",
@@ -350,6 +477,7 @@
       "is_special": false
     },
     {
+      "match_id": "C5",
       "group": "C",
       "home_team": "Escócia",
       "away_team": "Brasil",
@@ -362,6 +490,7 @@
       "is_special": false
     },
     {
+      "match_id": "C6",
       "group": "C",
       "home_team": "Marrocos",
       "away_team": "Haiti",
@@ -374,6 +503,7 @@
       "is_special": false
     },
     {
+      "match_id": "D1",
       "group": "D",
       "home_team": "EUA",
       "away_team": "Paraguai",
@@ -386,6 +516,7 @@
       "is_special": false
     },
     {
+      "match_id": "D2",
       "group": "D",
       "home_team": "Austrália",
       "away_team": "Turquia",
@@ -398,6 +529,7 @@
       "is_special": false
     },
     {
+      "match_id": "D3",
       "group": "D",
       "home_team": "EUA",
       "away_team": "Austrália",
@@ -410,6 +542,7 @@
       "is_special": true
     },
     {
+      "match_id": "D4",
       "group": "D",
       "home_team": "Turquia",
       "away_team": "Paraguai",
@@ -422,6 +555,7 @@
       "is_special": false
     },
     {
+      "match_id": "D5",
       "group": "D",
       "home_team": "Turquia",
       "away_team": "EUA",
@@ -434,6 +568,7 @@
       "is_special": false
     },
     {
+      "match_id": "D6",
       "group": "D",
       "home_team": "Paraguai",
       "away_team": "Austrália",
@@ -446,6 +581,7 @@
       "is_special": false
     },
     {
+      "match_id": "E1",
       "group": "E",
       "home_team": "Alemanha",
       "away_team": "Curaçao",
@@ -458,6 +594,7 @@
       "is_special": false
     },
     {
+      "match_id": "E2",
       "group": "E",
       "home_team": "Costa do Marfim",
       "away_team": "Equador",
@@ -470,6 +607,7 @@
       "is_special": true
     },
     {
+      "match_id": "E3",
       "group": "E",
       "home_team": "Alemanha",
       "away_team": "Costa do Marfim",
@@ -482,6 +620,7 @@
       "is_special": false
     },
     {
+      "match_id": "E4",
       "group": "E",
       "home_team": "Equador",
       "away_team": "Curaçao",
@@ -494,6 +633,7 @@
       "is_special": false
     },
     {
+      "match_id": "E5",
       "group": "E",
       "home_team": "Equador",
       "away_team": "Alemanha",
@@ -506,6 +646,7 @@
       "is_special": false
     },
     {
+      "match_id": "E6",
       "group": "E",
       "home_team": "Curaçao",
       "away_team": "Costa do Marfim",
@@ -518,6 +659,7 @@
       "is_special": false
     },
     {
+      "match_id": "F1",
       "group": "F",
       "home_team": "Holanda",
       "away_team": "Japão",
@@ -530,6 +672,7 @@
       "is_special": false
     },
     {
+      "match_id": "F2",
       "group": "F",
       "home_team": "Suécia",
       "away_team": "Tunísia",
@@ -542,6 +685,7 @@
       "is_special": false
     },
     {
+      "match_id": "F3",
       "group": "F",
       "home_team": "Holanda",
       "away_team": "Suécia",
@@ -554,6 +698,7 @@
       "is_special": false
     },
     {
+      "match_id": "F4",
       "group": "F",
       "home_team": "Tunísia",
       "away_team": "Japão",
@@ -566,6 +711,7 @@
       "is_special": true
     },
     {
+      "match_id": "F5",
       "group": "F",
       "home_team": "Tunísia",
       "away_team": "Holanda",
@@ -578,6 +724,7 @@
       "is_special": false
     },
     {
+      "match_id": "F6",
       "group": "F",
       "home_team": "Japão",
       "away_team": "Suécia",
@@ -590,6 +737,7 @@
       "is_special": false
     },
     {
+      "match_id": "G1",
       "group": "G",
       "home_team": "Bélgica",
       "away_team": "Egito",
@@ -602,6 +750,7 @@
       "is_special": false
     },
     {
+      "match_id": "G2",
       "group": "G",
       "home_team": "Irã",
       "away_team": "Nova Zelândia",
@@ -614,6 +763,7 @@
       "is_special": true
     },
     {
+      "match_id": "G3",
       "group": "G",
       "home_team": "Bélgica",
       "away_team": "Irã",
@@ -626,6 +776,7 @@
       "is_special": false
     },
     {
+      "match_id": "G4",
       "group": "G",
       "home_team": "Nova Zelândia",
       "away_team": "Egito",
@@ -638,6 +789,7 @@
       "is_special": false
     },
     {
+      "match_id": "G5",
       "group": "G",
       "home_team": "Nova Zelândia",
       "away_team": "Bélgica",
@@ -650,6 +802,7 @@
       "is_special": false
     },
     {
+      "match_id": "G6",
       "group": "G",
       "home_team": "Egito",
       "away_team": "Irã",
@@ -662,6 +815,7 @@
       "is_special": false
     },
     {
+      "match_id": "H1",
       "group": "H",
       "home_team": "Espanha",
       "away_team": "Cabo Verde",
@@ -674,6 +828,7 @@
       "is_special": false
     },
     {
+      "match_id": "H2",
       "group": "H",
       "home_team": "Arábia Saudita",
       "away_team": "Uruguai",
@@ -686,6 +841,7 @@
       "is_special": false
     },
     {
+      "match_id": "H3",
       "group": "H",
       "home_team": "Espanha",
       "away_team": "Arábia Saudita",
@@ -698,6 +854,7 @@
       "is_special": false
     },
     {
+      "match_id": "H4",
       "group": "H",
       "home_team": "Uruguai",
       "away_team": "Cabo Verde",
@@ -710,6 +867,7 @@
       "is_special": false
     },
     {
+      "match_id": "H5",
       "group": "H",
       "home_team": "Uruguai",
       "away_team": "Espanha",
@@ -722,6 +880,7 @@
       "is_special": false
     },
     {
+      "match_id": "H6",
       "group": "H",
       "home_team": "Cabo Verde",
       "away_team": "Arábia Saudita",
@@ -734,6 +893,7 @@
       "is_special": true
     },
     {
+      "match_id": "I1",
       "group": "I",
       "home_team": "França",
       "away_team": "Senegal",
@@ -746,6 +906,7 @@
       "is_special": false
     },
     {
+      "match_id": "I2",
       "group": "I",
       "home_team": "Iraque",
       "away_team": "Noruega",
@@ -758,6 +919,7 @@
       "is_special": false
     },
     {
+      "match_id": "I3",
       "group": "I",
       "home_team": "França",
       "away_team": "Iraque",
@@ -770,6 +932,7 @@
       "is_special": false
     },
     {
+      "match_id": "I4",
       "group": "I",
       "home_team": "Noruega",
       "away_team": "Senegal",
@@ -782,6 +945,7 @@
       "is_special": false
     },
     {
+      "match_id": "I5",
       "group": "I",
       "home_team": "Noruega",
       "away_team": "França",
@@ -794,6 +958,7 @@
       "is_special": false
     },
     {
+      "match_id": "I6",
       "group": "I",
       "home_team": "Senegal",
       "away_team": "Iraque",
@@ -806,6 +971,7 @@
       "is_special": true
     },
     {
+      "match_id": "J1",
       "group": "J",
       "home_team": "Argentina",
       "away_team": "Argélia",
@@ -818,6 +984,7 @@
       "is_special": false
     },
     {
+      "match_id": "J2",
       "group": "J",
       "home_team": "Áustria",
       "away_team": "Jordânia",
@@ -830,6 +997,7 @@
       "is_special": false
     },
     {
+      "match_id": "J3",
       "group": "J",
       "home_team": "Argentina",
       "away_team": "Áustria",
@@ -842,6 +1010,7 @@
       "is_special": false
     },
     {
+      "match_id": "J4",
       "group": "J",
       "home_team": "Jordânia",
       "away_team": "Argélia",
@@ -854,6 +1023,7 @@
       "is_special": true
     },
     {
+      "match_id": "J5",
       "group": "J",
       "home_team": "Jordânia",
       "away_team": "Argentina",
@@ -866,6 +1036,7 @@
       "is_special": false
     },
     {
+      "match_id": "J6",
       "group": "J",
       "home_team": "Argélia",
       "away_team": "Áustria",
@@ -878,6 +1049,7 @@
       "is_special": false
     },
     {
+      "match_id": "K1",
       "group": "K",
       "home_team": "Portugal",
       "away_team": "RD Congo",
@@ -890,6 +1062,7 @@
       "is_special": false
     },
     {
+      "match_id": "K2",
       "group": "K",
       "home_team": "Uzbequistão",
       "away_team": "Colômbia",
@@ -902,6 +1075,7 @@
       "is_special": false
     },
     {
+      "match_id": "K3",
       "group": "K",
       "home_team": "Portugal",
       "away_team": "Uzbequistão",
@@ -914,6 +1088,7 @@
       "is_special": false
     },
     {
+      "match_id": "K4",
       "group": "K",
       "home_team": "Colômbia",
       "away_team": "RD Congo",
@@ -926,6 +1101,7 @@
       "is_special": false
     },
     {
+      "match_id": "K5",
       "group": "K",
       "home_team": "Colômbia",
       "away_team": "Portugal",
@@ -938,6 +1114,7 @@
       "is_special": false
     },
     {
+      "match_id": "K6",
       "group": "K",
       "home_team": "RD Congo",
       "away_team": "Uzbequistão",
@@ -950,6 +1127,7 @@
       "is_special": true
     },
     {
+      "match_id": "L1",
       "group": "L",
       "home_team": "Inglaterra",
       "away_team": "Gana",
@@ -962,6 +1140,7 @@
       "is_special": false
     },
     {
+      "match_id": "L2",
       "group": "L",
       "home_team": "Croácia",
       "away_team": "Panamá",
@@ -974,6 +1153,7 @@
       "is_special": false
     },
     {
+      "match_id": "L3",
       "group": "L",
       "home_team": "Gana",
       "away_team": "Panamá",
@@ -986,6 +1166,7 @@
       "is_special": true
     },
     {
+      "match_id": "L4",
       "group": "L",
       "home_team": "Croácia",
       "away_team": "Inglaterra",
@@ -998,6 +1179,7 @@
       "is_special": false
     },
     {
+      "match_id": "L5",
       "group": "L",
       "home_team": "Panamá",
       "away_team": "Inglaterra",
@@ -1010,6 +1192,7 @@
       "is_special": false
     },
     {
+      "match_id": "L6",
       "group": "L",
       "home_team": "Gana",
       "away_team": "Croácia",

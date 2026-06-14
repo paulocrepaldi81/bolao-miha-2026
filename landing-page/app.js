@@ -242,6 +242,7 @@ function render(){
   renderLeaderboard();
   renderBomPalpite();
   renderExtras();
+  renderMinhaAposta();
   // movement
   const mv = DATA.movement;
   document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
@@ -486,6 +487,134 @@ function startCountdown(match){
   tick(); cdTimer=setInterval(tick,1000);
 }
 
+// ===================== MINHA APOSTA =====================
+let maSelected = null, maTab = 'played';
+const maNorm = s => (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+
+function maPickRow(e){
+  const m=e.m, played=m.status==='finished';
+  const exact = played && e.ph===m.home_score && e.pa===m.away_score;
+  let cls='wait', txt='⏳';
+  if(played){
+    if(e.pts===0){cls='zero'; txt='0';}
+    else if(exact){cls='exato'; txt='⭐ +'+e.pts;}
+    else {cls='win'; txt='✓ +'+e.pts;}
+  }
+  const sp = m.is_special?' · <small style="color:#5FE08A">⭐ especial</small>':'';
+  return `<div class="ma-pick">
+    <div>
+      <div class="teams"><small>Grupo ${m.group}${sp}</small><br>${flag(m.home_team)}${m.home_team} <b>${e.ph}×${e.pa}</b> ${m.away_team}${flagA(m.away_team)}</div>
+      <div class="guess">${played?('saiu <b>'+m.home_score+'×'+m.away_score+'</b>'):'aguardando o jogo'}</div>
+    </div>
+    <span class="ma-pts ${cls}">${txt}</span>
+  </div>`;
+}
+
+function renderMinhaAposta(){
+  const card=document.getElementById('maCard');
+  const all=DATA.participants||[];
+  if(!maSelected || !all.find(x=>x.alias===maSelected)){ card.hidden=true; return; }
+  const p=all.find(x=>x.alias===maSelected);
+  const total=all.length;
+  card.hidden=false;
+  const initials=(p.alias.match(/[A-Za-zÀ-ÿ0-9]+/g)||['?']).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const mv = p.rank_change>0?`<span class="pill up">▲ ${p.rank_change}</span>`:(p.rank_change<0?`<span class="pill down">▼ ${Math.abs(p.rank_change)}</span>`:'');
+  const paidBadge = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
+  const paidTop4=[...all].filter(x=>x.paid).sort((a,b)=>a.rank-b.rank).slice(0,4).map(x=>x.alias);
+  const prize=(p.paid && paidTop4.includes(p.alias))?'<span class="chip chip-prize">💰 zona de prêmio</span>':'';
+  const mx=p.max_possible??p.score, cur=p.score;
+  const curW=(cur/Math.max(mx,1)*100).toFixed(1), avW=(Math.max(0,mx-cur)/Math.max(mx,1)*100).toFixed(1);
+  const ph1=p.phase1_points??p.score;
+
+  let h=`<div class="ma-hero">
+    <div class="ma-av">${initials}</div>
+    <div class="ma-who"><div class="ma-name">${p.alias} ${mv}</div>
+      <div class="ma-sub">${p.rank}º de ${total}${p.eliminated?' · <span style="color:var(--coral)">eliminado</span>':''} ${prize}${paidBadge}</div></div>
+    <div class="ma-score"><b>${p.score}</b><span>pontos</span></div></div>
+  <div class="ma-break">
+    <div class="ma-kpi"><b>${ph1}</b><span>pts 1ª fase</span></div>
+    <div class="ma-kpi"><b>${p.exact_scores??0}</b><span>placares exatos</span></div>
+    <div class="ma-kpi"><b>+${p.last_match_points??0}</b><span>última rodada</span></div>
+    <div class="ma-kpi"><b>${mx}</b><span>máx. possível</span></div>
+  </div>
+  <div class="ma-barwrap"><div class="ma-barlab"><span>corrida pelo título</span><span>${cur} / ${mx}</span></div>
+    <div class="ma-bar"><i style="width:${curW}%"></i><u style="width:${avW}%"></u></div></div>`;
+
+  const picks=p.picks;
+  if(!picks){
+    h+=`<div class="ma-nodata">📋 O detalhe dos palpites aparece com os dados reais — esta é a simulação de exemplo.</div>`;
+  } else {
+    const mm={}; (DATA.matches||[]).forEach(x=>mm[x.match_id]=x);
+    const entries=Object.entries(picks.groups||{}).map(([mid,a])=>({mid,m:mm[mid],ph:a[0],pa:a[1],pts:a[2]}))
+      .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
+    const played=entries.filter(e=>e.m.status==='finished');
+    const upcoming=entries.filter(e=>e.m.status!=='finished');
+    if(maTab==='played' && !played.length && upcoming.length) maTab='upcoming';
+    const list=maTab==='played'?played:upcoming;
+    h+=`<div class="ma-sec"><h4>⚽ Meus palpites — fase de grupos</h4>
+      <div class="ma-tabs" id="maTabs">
+        <button class="ma-tab ${maTab==='played'?'active':''}" data-t="played">Já jogados (${played.length})</button>
+        <button class="ma-tab ${maTab==='upcoming'?'active':''}" data-t="upcoming">A jogar (${upcoming.length})</button>
+      </div>${list.length?list.map(maPickRow).join(''):'<div class="ma-pend">Nada nesta aba ainda.</div>'}</div>`;
+
+    const rf=DATA.final_result||{}, fr=picks.final||{};
+    h+=`<div class="ma-sec"><h4>🏆 Minha classificação final</h4>`+
+      [['champion','Campeã',15],['vice','Vice',10],['third','3º lugar',5]].map(([k,lab,pt])=>{
+        const g=fr[k]||'—'; const real=rf[k];
+        const mark = (real!==null&&real!==undefined&&real!=='')
+          ? (maNorm(real)===maNorm(g)?`<span class="ma-ok">✓ +${pt}</span>`:'<span class="ma-pend">não veio</span>')
+          : '<span class="ma-pend">a definir</span>';
+        return `<div class="ma-final-row"><span><span class="pos">${lab}:</span> ${g!=='—'?flag(g):''}${g}</span>${mark}</div>`;
+      }).join('')+`</div>`;
+
+    const exVals=picks.extras||{};
+    const exRows=EXTRAS_DEF.map(d=>{
+      const g=exVals[d.key];
+      if(g===null||g===undefined||g==='') return '';
+      const fact=(DATA.extras_summary||[]).find(x=>x.key===d.key);
+      const real=fact?fact.real:null;
+      let mark='<span class="ma-pend">a definir</span>';
+      if(real!==null&&real!==undefined&&real!=='') mark=(maNorm(String(real))===maNorm(String(g)))?`<span class="ma-ok">✓ +${d.points}</span>`:'<span class="ma-pend">não veio</span>';
+      else if(fact&&fact.partial) mark='<span class="ma-pend">📡 parcial</span>';
+      return `<div class="ma-final-row"><span><span class="pos">${d.label}</span><br>${g}</span>${mark}</div>`;
+    }).filter(Boolean).join('');
+    h+=`<div class="ma-sec"><h4>🎯 Minhas categorias extras</h4>${exRows||'<div class="ma-pend">Sem categorias preenchidas.</div>'}</div>`;
+  }
+  card.innerHTML=h;
+}
+
+function maSelect(alias){
+  maSelected=alias; maTab='played';
+  try{ localStorage.setItem('minhaAposta', alias); }catch(e){}
+  const inp=document.getElementById('maInput'); inp.value=alias;
+  document.getElementById('maSuggest').hidden=true;
+  renderMinhaAposta();
+  document.getElementById('maCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function maRenderSuggest(q){
+  const box=document.getElementById('maSuggest');
+  const all=[...(DATA.participants||[])].sort((a,b)=>a.rank-b.rank);
+  const nq=maNorm(q);
+  const hits=(nq? all.filter(p=>maNorm(p.alias).includes(nq)) : all).slice(0,8);
+  if(!q){ box.hidden=true; return; }
+  box.hidden=false;
+  box.innerHTML = hits.length
+    ? hits.map(p=>`<div class="ma-sugg" data-a="${p.alias.replace(/"/g,'&quot;')}"><span>${p.alias}</span><span class="r">${p.rank}º</span></div>`).join('')
+    : `<div class="ma-empty-s">Nenhum apelido com “${q}”. Confere a grafia (igual à planilha).</div>`;
+}
+
+document.getElementById('maInput').addEventListener('input',e=>maRenderSuggest(e.target.value));
+document.getElementById('maInput').addEventListener('focus',e=>{ if(e.target.value) maRenderSuggest(e.target.value); });
+document.getElementById('maSuggest').addEventListener('click',e=>{
+  const it=e.target.closest('.ma-sugg'); if(it) maSelect(it.dataset.a);
+});
+document.getElementById('maCard').addEventListener('click',e=>{
+  const t=e.target.closest('.ma-tab'); if(!t)return;
+  maTab=t.dataset.t; renderMinhaAposta();
+});
+document.addEventListener('click',e=>{ if(!e.target.closest('.ma-search')) document.getElementById('maSuggest').hidden=true; });
+
 // tabs
 document.getElementById('matchTabs').addEventListener('click',e=>{
   const b=e.target.closest('.tab'); if(!b)return;
@@ -536,6 +665,13 @@ async function boot(){
     }
   }catch(e){ console.info('data.json indisponível — usando dados embutidos (modo protótipo).'); }
   DATA = PRECOPA;
+  // restaura "Minha Aposta" salva (se o apelido ainda existir nos dados)
+  try{
+    const saved=localStorage.getItem('minhaAposta');
+    if(saved && (DATA.participants||[]).some(p=>p.alias===saved)){
+      maSelected=saved; document.getElementById('maInput').value=saved;
+    }
+  }catch(e){}
   renderFame();
   render();
 }
