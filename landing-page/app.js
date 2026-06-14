@@ -642,19 +642,22 @@ rotate(); setInterval(rotate, 4200);
 
 // boot: carrega o placar direto do GitHub (não consome deploys da Netlify);
 // fallback: data.json local (deploy antigo / file:// / offline).
+// Duas fontes: a cópia local (mesma origem — fresca no GitHub Pages, que o robô
+// republica a cada rodada) e o raw do GitHub (fresco no Netlify congelado).
+// Buscamos as duas e usamos a MAIS RECENTE (por meta.last_data_update).
 const DATA_SOURCES = [
-  'https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/main/landing-page/data.json',
-  './data.json'
+  './data.json',
+  'https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/main/landing-page/data.json'
 ];
 async function boot(){
   try{
-    let live = null;
-    for(const src of DATA_SOURCES){
-      try{
-        const r = await fetch(src + '?ts=' + Date.now(), {cache:'no-store'});
-        if(r.ok){ live = await r.json(); break; }
-      }catch(e){ /* tenta a próxima fonte */ }
-    }
+    const got = await Promise.all(DATA_SOURCES.map(async src=>{
+      try{ const r=await fetch(src + '?ts=' + Date.now(), {cache:'no-store'}); if(r.ok) return await r.json(); }
+      catch(e){}
+      return null;
+    }));
+    const live = got.filter(Boolean)
+      .sort((a,b)=> new Date(b.meta?.last_data_update||0) - new Date(a.meta?.last_data_update||0))[0] || null;
     if(live){
       PRECOPA = live;                                   // "Pré-Copa" passa a refletir os dados reais
       if(Array.isArray(live.history)) HISTORY.splice(0, HISTORY.length, ...live.history);
