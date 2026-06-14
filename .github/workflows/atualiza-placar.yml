@@ -10,13 +10,11 @@
 name: Atualiza placar
 
 on:
-  # ⏸️ MODO DE ESPERA: o agendamento automático está desligado até as apostas
-  # reais chegarem (hoje só há 3 exemplos — rodar agora publicaria dados falsos).
-  # Para LIGAR o robô: descomente as 2 linhas abaixo e remova o --placeholder
-  # do passo "Repontuar".
-  # schedule:
-  #   - cron: "*/20 * * * *"   # a cada 20 min (GitHub pode atrasar alguns minutos)
-  workflow_dispatch: {}       # botão "Run workflow" para rodar na mão (teste)
+  schedule:
+    # Horários em UTC. BRT = UTC-3. Janela dos jogos da Copa ≈ 12h–04h BRT.
+    - cron: "*/10 0-6,15-23 * * *"   # a cada 10 min durante os jogos (atualização "ao vivo")
+    - cron: "0 9,12 * * *"           # 2 atualizações leves de manhã (BRT 06h e 09h)
+  workflow_dispatch: {}              # botão "Run workflow" para rodar na mão também
 
 permissions:
   contents: write
