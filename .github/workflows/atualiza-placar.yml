@@ -55,9 +55,8 @@ jobs:
 
       - name: Repontuar e gerar data.json
         working-directory: engine
-        # --placeholder mantém o aviso de protótipo no site enquanto as apostas
-        # são exemplos. Remover quando as 84 planilhas reais forem carregadas.
-        run: python build_data.py --from-json --placeholder --out ../landing-page/data.json
+        # Dados REAIS (88 apostas) — sem --placeholder. O site mostra tudo de verdade.
+        run: python build_data.py --from-json --out ../landing-page/data.json
 
       - name: Versionar dados (commit se houve mudança)
         run: |

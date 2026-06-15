@@ -203,7 +203,8 @@ def main():
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        # compacto (sem indent) — 88 apostas × palpites; economiza dados no mobile
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
     # ---- snapshot p/ movimentação futura ----
     history.append({"ts": now, "ranks": {p["alias"]: {"rank": p["rank"], "total": p["score"]}
