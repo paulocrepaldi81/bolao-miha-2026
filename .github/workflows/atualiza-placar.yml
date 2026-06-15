@@ -13,12 +13,12 @@
 name: Atualiza placar
 
 on:
-  # BASE: agendador do GitHub (grátis). O timing dele varia, então o gatilho
-  # principal é o pinger externo (cron-job.org via workflow_dispatch), de ~3 em 3 min
-  # na janela dos jogos — assim o placar atualiza quase no apito final.
+  # GATILHO PRINCIPAL: pinger externo (cron-job.org via workflow_dispatch), a cada ~3 min.
+  # O agendador do GitHub abaixo é só REDE DE SEGURANÇA (timing irregular) caso o pinger
+  # caia — por isso esparso, pra não empilhar runs em cima do pinger.
   schedule:
-    - cron: "*/5 0-6,15-23 * * *"    # a cada 5 min na janela dos jogos (12h-04h BRT)
-    - cron: "0 9,12 * * *"           # 2 atualizações leves de manhã (BRT)
+    - cron: "*/15 0-6,15-23 * * *"   # backup a cada 15 min na janela dos jogos (12h-04h BRT)
+    - cron: "0 9,12 * * *"           # 2 toques leves de manhã (BRT)
   # Gatilho cravado: pinger externo (cron-job.org) e o botão "Run workflow".
   workflow_dispatch: {}
 
@@ -27,9 +27,12 @@ permissions:
   pages: write          # publicar no GitHub Pages
   id-token: write       # deploy-pages
 
+# cancel-in-progress:false → os runs ficam EM FILA e rodam UM DE CADA VEZ. Como nunca há
+# dois ativos ao mesmo tempo, é IMPOSSÍVEL dois pushes colidirem (a raiz da corrida).
+# Combinado com o push resiliente abaixo, a publicação fica à prova de erro.
 concurrency:
   group: atualiza-placar
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   atualizar:
