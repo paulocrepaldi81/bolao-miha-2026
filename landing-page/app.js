@@ -279,8 +279,7 @@ function renderCurrentGameStats(){
     ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${m.minute||'em andamento'}</span>`
     : `<span class="chip chip-sched">📅 próximo</span> <span class="cg-min">${fmtDateTime(m.kickoff_sao_paulo)}</span>`;
   const score = cur.live ? `<b>${m.home_score??0}×${m.away_score??0}</b>` : '×';
-  const head=`<h3 class="sub-h" style="margin-top:4px">🔥 O jogo de agora nas apostas</h3>
-  <div class="cg-head">
+  const head=`<div class="cg-head">
     <div class="cg-match">${flag(m.home_team)}${m.home_team} ${score} ${m.away_team}${flagA(m.away_team)}${moreTag}</div>
     <div class="cg-status">${status}</div></div>`;
   if(!preds.length){
@@ -304,21 +303,7 @@ function renderCurrentGameStats(){
   let cards = card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria');
   if(boldest) cards += card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados');
   if(lonely)  cards += card('🎲', lonely[1]===1?'Aposta solitária':'Placar menos escolhido', lonely[0], lonely[1], lonely[1]===1?'só uma cravou esse':'o menos escolhido');
-
-  // Palpite de RESULTADO (1X2): quantos no mandante / empate / visitante
-  let hw=0,dr=0,aw=0;
-  preds.forEach(k=>{ const [h,a]=k.split('×').map(Number); if(h>a)hw++; else if(h<a)aw++; else dr++; });
-  const tot=preds.length, pc=n=>Math.round(n/tot*100);
-  const seg=(n,color)=> n>0?`<div style="width:${(n/tot*100).toFixed(1)}%;background:${color}"></div>`:'';
-  const r1x2=`<div class="cg-1x2">
-    <div class="cg-1x2-h">Quem o bolão acha que ganha</div>
-    <div class="cg-1x2-bar">${seg(hw,'#57d98a')}${seg(dr,'#e8b94e')}${seg(aw,'#5b9bff')}</div>
-    <div class="cg-1x2-leg">
-      <span><i style="background:#57d98a"></i>${flag(m.home_team)}${m.home_team} <b>${hw}</b> · ${pc(hw)}%</span>
-      <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pc(dr)}%</span>
-      <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pc(aw)}%</span>
-    </div></div>`;
-  box.innerHTML=head+r1x2+`<div class="cg-grid">${cards}</div>`
+  box.innerHTML=head+`<div class="cg-grid">${cards}</div>`
     +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
 }
 
@@ -821,6 +806,19 @@ document.getElementById('matchMore').addEventListener('click',()=>{
   renderMatches(document.querySelector('#matchTabs .tab.active')?.dataset.f||'scheduled');
 });
 
+// alternar estado de visualização (pré-copa / simulação)
+document.getElementById('stateToggle').addEventListener('click',e=>{
+  const b=e.target.closest('.seg-btn'); if(!b)return;
+  document.querySelectorAll('#stateToggle .seg-btn').forEach(t=>t.classList.remove('active'));
+  b.classList.add('active');
+  DATA = b.dataset.s==='demo' ? DEMO : PRECOPA;
+  // reset dos filtros da classificação ao trocar de estado
+  lbFilter='all'; lbSearch=''; lbExpanded=false;
+  document.getElementById('lbSearch').value='';
+  document.querySelectorAll('#lbFilter .seg-btn').forEach(t=>t.classList.toggle('active', t.dataset.f==='all'));
+  render();
+});
+
 // rotating tagline
 let ti=0; const tEl=document.getElementById('tagline');
 function rotate(){ tEl.textContent = TAGLINES[ti % TAGLINES.length]; ti++; }
@@ -845,8 +843,12 @@ async function boot(){
     const live = got.filter(Boolean)
       .sort((a,b)=> new Date(b.meta?.last_data_update||0) - new Date(a.meta?.last_data_update||0))[0] || null;
     if(live){
-      PRECOPA = live;                                   // passa a refletir os dados reais
+      PRECOPA = live;                                   // "Pré-Copa" passa a refletir os dados reais
       if(Array.isArray(live.history)) HISTORY.splice(0, HISTORY.length, ...live.history);
+      if(live.meta && live.meta.is_placeholder === false){
+        document.querySelector('.statebar')?.remove();  // some o toggle de protótipo
+        document.querySelector('.demo-banner')?.remove();// some o aviso de placeholder
+      }
     }
   }catch(e){ console.info('data.json indisponível — usando dados embutidos (modo protótipo).'); }
   DATA = PRECOPA;
