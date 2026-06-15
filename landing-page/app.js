@@ -152,7 +152,8 @@ const HISTORY = [
   {year:2018, host:"Rússia",        flag:"🇷🇺", podium:["Fabio Terzian","Pedro Marcondes","Ricardo Kerr"]},
   {year:2014, host:"Brasil",        flag:"🇧🇷", podium:["Paulo Crepaldi","Ricardo Mihalik","Fernando Mihalik"]},
   {year:2010, host:"África do Sul", flag:"🇿🇦", podium:["Marina Mihalik","Rodrigo Duarte","Luis Luengo"]},
-  {year:2006, host:"Alemanha",      flag:"🇩🇪", podium:["Kat Lencina","Pedro Mitev","Flávia Mihalik"]}
+  {year:2006, host:"Alemanha",      flag:"🇩🇪", podium:["Kat Lencina","Pedro Mitev","Flávia Mihalik"]},
+  {year:2002, host:"Coreia/Japão",  flag:"🇰🇷🇯🇵", podium:["Rafael Liberman","Wagner Jacot","Roberto Mihalik"]}
 ];
 
 const TAGLINES = [

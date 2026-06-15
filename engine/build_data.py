@@ -30,6 +30,7 @@ HALL_DA_FAMA = [
     {"year": 2014, "host": "Brasil",        "flag": "🇧🇷", "podium": ["Paulo Crepaldi", "Ricardo Mihalik", "Fernando Mihalik"]},
     {"year": 2010, "host": "África do Sul", "flag": "🇿🇦", "podium": ["Marina Mihalik", "Rodrigo Duarte", "Luis Luengo"]},
     {"year": 2006, "host": "Alemanha",      "flag": "🇩🇪", "podium": ["Kat Lencina", "Pedro Mitev", "Flávia Mihalik"]},
+    {"year": 2002, "host": "Coreia/Japão",  "flag": "🇰🇷🇯🇵", "podium": ["Rafael Liberman", "Wagner Jacot", "Roberto Mihalik"]},
 ]
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
@@ -222,16 +223,9 @@ def main():
                                   "Sem simulação de força de seleção no lançamento.", "simulations": 0},
         "history_note": "Hall da Fama vem do data.json (campo 'history').",
     }
-    # Hall da Fama: preserva o existente; senão usa o histórico oficial embutido
+    # Hall da Fama: HALL_DA_FAMA é a FONTE ÚNICA (constante versionada). Para editar o
+    # Hall da Fama, basta mudar HALL_DA_FAMA acima — o robô republica sozinho.
     data["history"] = HALL_DA_FAMA
-    if os.path.exists(args.out):
-        try:
-            with open(args.out, encoding="utf-8") as f:
-                prev = json.load(f).get("history")
-            if prev:
-                data["history"] = prev
-        except Exception:
-            pass
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
