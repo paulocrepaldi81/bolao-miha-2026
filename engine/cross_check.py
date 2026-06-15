@@ -58,10 +58,13 @@ def main():
                 if not m:
                     continue
                 ft = fx.get("score", {}).get("fullTime", {})
-                finished = fx.get("status") == "FINISHED"
+                hs_fd, as_fd = ft.get("home"), ft.get("away")
                 fd_by_mid[m["match_id"]] = {
-                    "finished": finished,
-                    "score": {h: ft.get("home"), a: ft.get("away")},
+                    "finished": fx.get("status") == "FINISHED",
+                    # a football-data às vezes marca FINISHED mas ainda não preencheu o
+                    # placar (None) — isso é ATRASO da 2ª fonte, NÃO divergência.
+                    "has_score": hs_fd is not None and as_fd is not None,
+                    "score": {h: hs_fd, a: as_fd},
                     "home": m["home"], "away": m["away"],
                 }
         except Exception as e:
@@ -74,7 +77,8 @@ def main():
         our_status = (row.get("status") or "scheduled").strip()
         hs, as_ = row.get("home_score", ""), row.get("away_score", "")
         our_finished = our_status == "finished" and str(hs).strip() != "" and str(as_).strip() != ""
-        if our_finished and fd["finished"]:
+        # só compara quando AS DUAS fontes têm placar real; senão a 2ª ainda está apurando
+        if our_finished and fd["finished"] and fd["has_score"]:
             compared += 1
             our = {fd["home"]: int(hs), fd["away"]: int(as_)}
             if all(our.get(t) == fd["score"].get(t) for t in our):
@@ -87,8 +91,8 @@ def main():
                     "secundaria": f"{fd['score'].get(fd['home'])}x{fd['score'].get(fd['away'])}  (football-data)",
                     "lock": str(row.get("lock", "")).strip().lower() in ("sim", "1", "true", "yes"),
                 })
-        elif our_finished and not fd["finished"]:
-            pendente.append(mid)   # ESPN já fechou; football-data (mais lenta) ainda não
+        elif our_finished and not (fd["finished"] and fd["has_score"]):
+            pendente.append(mid)   # ESPN já fechou; football-data (mais lenta) ainda sem placar
 
     if discrepancies:
         status = "divergencia"

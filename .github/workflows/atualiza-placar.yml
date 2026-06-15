@@ -75,11 +75,37 @@ jobs:
         working-directory: engine
         run: python validate_data.py
 
+      # Decide se a divergência é NOVA (compara a "assinatura" das discrepâncias, sem o
+      # timestamp). Só marca NEW_DIVERGENCE=true quando muda → 1 e-mail por divergência.
+      - name: Avaliar divergência entre fontes
+        working-directory: engine
+        run: |
+          python - <<'PY'
+          import json, os
+          def load(p, d):
+              try: return json.load(open(p, encoding="utf-8"))
+              except Exception: return d
+          c = load("data/cross_check.json", {})
+          st = load("data/alert_state.json", {"last_sig": ""})
+          if c.get("status") == "divergencia":
+              sig = json.dumps(sorted((d.get("match_id"), d.get("primaria"), d.get("secundaria"))
+                                      for d in c.get("discrepancias", c.get("discrepancies", []))), ensure_ascii=False)
+          else:
+              sig = ""
+          new = (c.get("status") == "divergencia" and sig != st.get("last_sig", ""))
+          if sig != st.get("last_sig", ""):
+              json.dump({"last_sig": sig}, open("data/alert_state.json", "w", encoding="utf-8"), ensure_ascii=False)
+          env = os.environ.get("GITHUB_ENV")
+          if env:
+              open(env, "a").write("NEW_DIVERGENCE=%s\n" % ("true" if new else "false"))
+          print("status:", c.get("status"), "| divergência nova?", new)
+          PY
+
       - name: Versionar dados (commit se houve mudança)
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json landing-page/data.json
+          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json
           if git diff --cached --quiet; then
             echo "Sem mudanças nos dados."
           else
@@ -95,24 +121,24 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
-      # ALERTA: roda DEPOIS de publicar (o site sempre sai no ar, já com o aviso
-      # de divergência). Se as duas fontes discordarem num jogo encerrado, este
-      # passo FALHA de propósito — e o GitHub manda e-mail automático ao dono do
-      # repositório. O alerta persiste a cada rodada até alguém resolver (corrigir
-      # o placar com lock=sim em results.csv).
-      - name: Alertar se houver divergência entre fontes
+      # ALERTA: roda DEPOIS de publicar (o site sempre sai no ar, já com o aviso de
+      # divergência) e SÓ quando a conferência MUDOU nesta rodada (env CC_CHANGED).
+      # Assim uma divergência real manda 1 e-mail quando aparece — não um a cada run.
+      # Some sozinho quando as fontes voltam a bater (a conferência muda p/ "ok").
+      - name: Alertar se houver divergência NOVA entre fontes
+        if: env.NEW_DIVERGENCE == 'true'
         working-directory: engine
         run: |
           python - <<'PY'
           import json, sys, os
           p = "data/cross_check.json"
           if not os.path.exists(p):
-              print("Sem relatório de conferência — ok."); sys.exit(0)
+              sys.exit(0)
           c = json.load(open(p, encoding="utf-8"))
           if c.get("status") == "divergencia":
-              print("⛔ DIVERGÊNCIA ENTRE FONTES — confira os placares:")
+              print("⛔ DIVERGÊNCIA NOVA ENTRE FONTES — confira os placares:")
               for d in c.get("discrepancies", []):
-                  print(f"   {d['match_id']} {d['teams']}: {d['oficial']} ≠ {d['espn']}")
-              sys.exit(1)   # falha de propósito → e-mail de alerta do GitHub
-          print(f"✓ Conferência ok: {c.get('agree')}/{c.get('compared')} batem em 2 fontes.")
+                  print(f"   {d['match_id']} {d['teams']}: {d.get('primaria')} ≠ {d.get('secundaria')}")
+              sys.exit(1)   # falha de propósito → 1 e-mail de alerta do GitHub
+          print(f"✓ Conferência atualizada: {c.get('agree')}/{c.get('compared')} batem em 2 fontes.")
           PY
