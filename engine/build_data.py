@@ -136,7 +136,6 @@ def main():
     real_final, facts = load_facts(os.path.join(DATA, "facts.json"))
     roster = load_roster(os.path.join(DATA, "roster.csv"))
     history = load_history(os.path.join(DATA, "history.json"))
-    prev_snapshot = history[-1]["ranks"] if history else {}
     audit = load_cross_check(os.path.join(DATA, "cross_check.json"))
 
     bets, scored, all_issues = [], [], []
@@ -157,6 +156,18 @@ def main():
         scored.append(score_bet(bet, results, catalog, real_final, facts))
         if bet["issues"]:
             all_issues.append((bet["alias"], bet["file"], bet["issues"]))
+
+    # Baseline da MOVIMENTAÇÃO = a classificação mais recente que era DIFERENTE da atual.
+    # Assim o "▲/▼ da rodada" reflete a última mudança real de pontos e continua aparecendo
+    # mesmo nas execuções em que nada mudou (o robô roda de minutos em minutos).
+    cur_tot = {s["alias"]: s["total"] for s in scored}
+    def _totals(snap):
+        return {a: v.get("total") for a, v in snap.get("ranks", {}).items()}
+    prev_snapshot = {}
+    for snap in reversed(history):
+        if _totals(snap) != cur_tot:
+            prev_snapshot = snap["ranks"]
+            break
 
     participants = LB.build(scored, roster, catalog, results, real_final, facts, prev_snapshot)
 
@@ -227,11 +238,13 @@ def main():
         # compacto (sem indent) — 88 apostas × palpites; economiza dados no mobile
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
-    # ---- snapshot p/ movimentação futura ----
-    history.append({"ts": now, "ranks": {p["alias"]: {"rank": p["rank"], "total": p["score"]}
-                                         for p in participants}})
-    with open(os.path.join(DATA, "history.json"), "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
+    # ---- snapshot p/ movimentação: só grava quando a classificação MUDA ----
+    # (evita inflar o histórico e mantém estável o baseline da "rodada" entre execuções iguais)
+    if not history or _totals(history[-1]) != cur_tot:
+        history.append({"ts": now, "ranks": {p["alias"]: {"rank": p["rank"], "total": p["score"]}
+                                             for p in participants}})
+        with open(os.path.join(DATA, "history.json"), "w", encoding="utf-8") as f:
+            json.dump(history, f, ensure_ascii=False, indent=2)
 
     # ---- referência de jogos + relatório de validação ----
     with open(os.path.join(DATA, "matches_reference.csv"), "w", newline="", encoding="utf-8") as f:
