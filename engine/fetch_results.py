@@ -1,21 +1,19 @@
 """
-Busca os placares oficiais da Copa 2026 automaticamente e atualiza data/results.csv.
+Busca os placares oficiais da Copa 2026 e atualiza data/results.csv.
 
-Fonte: football-data.org (API estruturada e estável; espelha os dados oficiais FIFA).
-Por que API e não raspar Globo/FIFA/ESPN: páginas de notícia mudam de HTML sem aviso
-e quebram robôs em silêncio — uma API estruturada é a forma confiável de automatizar.
-A verificação editorial (FIFA/GE/ESPN) continua sendo a checagem humana via `lock`.
+FONTE PRIMÁRIA: ESPN (API JSON pública `site.api.espn.com`, sem chave). É a mais
+RÁPIDA e a que a própria ESPN usa no site — atualiza segundos após o fim do jogo,
+exatamente o que o bolão precisa ("o apostador quer saber assim que acaba"). O plano
+grátis da football-data.org é mais lento; por isso ela virou a 2ª fonte (cross_check.py).
 
-Setup (uma vez):
-  1. Crie uma chave grátis em https://www.football-data.org/client/register
-  2. Exporte:  export FOOTBALL_DATA_TOKEN=suachave
-     (no GitHub Actions: Settings → Secrets → FOOTBALL_DATA_TOKEN)
+Por que API e não raspar HTML do Globo/ESPN: a página de notícia muda de layout sem
+aviso e quebra o robô em silêncio. A API JSON é estruturada e estável.
 
 Uso:
   python3 fetch_results.py            # atualiza data/results.csv
   python3 fetch_results.py --dry-run  # só mostra o que faria
 
-Regras de segurança:
+Segurança:
   - Linha com lock=sim em results.csv NUNCA é sobrescrita (correção manual vence).
   - Jogo sem casamento de nomes vai para o relatório, nunca é chutado.
 """
@@ -23,9 +21,12 @@ import argparse, csv, json, os, sys, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RESULTS = os.path.join(HERE, "data", "results.csv")
-API = "https://api.football-data.org/v4/competitions/WC/matches"
+ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates={a}-{b}"
+# ESPN devolve ~100 eventos por chamada → varremos a Copa em janelas.
+WINDOWS = [("20260611", "20260625"), ("20260626", "20260710"), ("20260711", "20260719")]
 
-# PT (planilha) → nomes possíveis na API (inglês)
+# PT (planilha) → nomes possíveis nas APIs (inglês). Vale p/ ESPN e football-data:
+# os nomes em inglês das duas são praticamente idênticos (validado: 48/48 mapeiam).
 TEAM_EN = {
     "México": ["Mexico"], "África do Sul": ["South Africa"],
     "Coreia do Sul": ["South Korea", "Korea Republic"], "Rep Tcheca": ["Czechia", "Czech Republic"],
@@ -37,7 +38,7 @@ TEAM_EN = {
     "Alemanha": ["Germany"], "Curaçao": ["Curaçao", "Curacao"],
     "Costa do Marfim": ["Ivory Coast", "Côte d'Ivoire", "Cote d'Ivoire"], "Equador": ["Ecuador"],
     "Holanda": ["Netherlands"], "Japão": ["Japan"], "Suécia": ["Sweden"], "Tunísia": ["Tunisia"],
-    "Bélgica": ["Belgium"], "Egito": ["Egypt"], "Irã": ["Iran"], "Nova Zelândia": ["New Zealand"],
+    "Bélgica": ["Belgium"], "Egito": ["Egypt"], "Irã": ["Iran", "IR Iran"], "Nova Zelândia": ["New Zealand"],
     "Espanha": ["Spain"], "Cabo Verde": ["Cape Verde", "Cabo Verde", "Cape Verde Islands"],
     "Arábia Saudita": ["Saudi Arabia"], "Uruguai": ["Uruguay"],
     "França": ["France"], "Senegal": ["Senegal"], "Iraque": ["Iraq"], "Noruega": ["Norway"],
@@ -48,18 +49,11 @@ TEAM_EN = {
 }
 EN_PT = {en.lower(): pt for pt, ens in TEAM_EN.items() for en in ens}
 
-STATUS_MAP = {"FINISHED": "finished", "IN_PLAY": "live", "PAUSED": "live",
-              "TIMED": "scheduled", "SCHEDULED": "scheduled", "POSTPONED": "scheduled"}
-
 
 def load_catalog_pairs():
-    """match_id por par (home,away) em PT, nas duas ordens."""
+    """par de seleções (sem ordem) → jogo do catálogo."""
     from catalog import get_catalog
-    pairs = {}
-    for m in get_catalog():
-        pairs[(m["home"], m["away"])] = m["match_id"]
-        pairs[(m["away"], m["home"])] = m["match_id"]   # API pode inverter mando
-    return pairs
+    return {frozenset((m["home"], m["away"])): m for m in get_catalog()}
 
 
 def load_results():
@@ -84,10 +78,46 @@ def save_results(rows, order):
             w.writerow({k: rows[mid].get(k, "") for k in field_order})
 
 
-def fetch_api(token):
-    req = urllib.request.Request(API, headers={"X-Auth-Token": token})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.load(resp)
+def fetch_espn():
+    """Eventos da Copa em todas as janelas → {match_id: {status, score_by_pt}}."""
+    pairs = load_catalog_pairs()
+    out, unmatched = {}, []
+    for a, b in WINDOWS:
+        req = urllib.request.Request(ESPN.format(a=a, b=b),
+                                     headers={"User-Agent": "bolao-miha-bot"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.load(resp)
+        for ev in data.get("events", []):
+            comp = (ev.get("competitions") or [{}])[0]
+            cs = comp.get("competitors", [])
+            if len(cs) != 2:
+                continue
+            score, names = {}, []
+            ok = True
+            for c in cs:
+                raw = (c.get("team", {}).get("displayName")
+                       or c.get("team", {}).get("name") or "")
+                pt = EN_PT.get(raw.strip().lower())
+                if not pt:
+                    ok = False
+                    break
+                names.append(pt)
+                try:
+                    score[pt] = int(c.get("score"))
+                except (TypeError, ValueError):
+                    score[pt] = None
+            if not ok:
+                continue   # placeholders de chave ("Group A Winner") — ignora
+            m = pairs.get(frozenset(names))
+            if not m:
+                unmatched.append(" x ".join(names))
+                continue
+            t = ev.get("status", {}).get("type", {})
+            state, completed = t.get("state"), bool(t.get("completed"))
+            status = "finished" if completed else ("live" if state == "in" else "scheduled")
+            out[m["match_id"]] = {"status": status, "score": score,
+                                  "home": m["home"], "away": m["away"]}
+    return out, unmatched
 
 
 def main():
@@ -95,73 +125,46 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    token = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
-    if not token:
-        print("⚠ FOOTBALL_DATA_TOKEN não definido — nada buscado.")
-        print("  Crie a chave grátis em https://www.football-data.org/client/register")
-        print("  e rode:  export FOOTBALL_DATA_TOKEN=suachave")
-        sys.exit(0)   # sai sem erro: o pipeline segue com o results.csv manual
-
-    pairs = load_catalog_pairs()
     rows, order = load_results()
-    data = fetch_api(token)
+    try:
+        espn, unmatched = fetch_espn()
+    except Exception as e:
+        print(f"⚠ ESPN indisponível: {e} — results.csv mantido como está.")
+        sys.exit(0)   # não derruba o pipeline; segue com o results.csv atual
 
-    updated, unmatched, locked = [], [], []
-    for fx in data.get("matches", []):
-        if fx.get("stage") and "GROUP" not in fx["stage"].upper():
-            continue   # v1: só fase de grupos (mata-mata entra no v2)
-        ht = EN_PT.get((fx.get("homeTeam", {}).get("name") or "").lower())
-        at = EN_PT.get((fx.get("awayTeam", {}).get("name") or "").lower())
-        if not ht or not at:
-            unmatched.append(f"{fx.get('homeTeam',{}).get('name')} x {fx.get('awayTeam',{}).get('name')}")
-            continue
-        mid = pairs.get((ht, at))
-        if not mid:
-            unmatched.append(f"{ht} x {at} (sem match_id)")
-            continue
-        status = STATUS_MAP.get(fx.get("status", ""), "scheduled")
-        ft = fx.get("score", {}).get("fullTime", {})
-        hs, as_ = ft.get("home"), ft.get("away")
+    updated, locked = [], []
+    for mid, e in espn.items():
         cur = rows.get(mid, {"match_id": mid})
         if str(cur.get("lock", "")).strip().lower() in ("sim", "1", "true", "yes"):
             locked.append(mid)
             continue
         new = dict(cur)
-        new["status"] = status
-        if hs is not None and as_ is not None and status in ("finished", "live"):
-            # respeita a ordem mandante/visitante da PLANILHA
-            new_h, new_a = (hs, as_) if _same_order(ht, at, mid) else (as_, hs)
-            new["home_score"], new["away_score"] = str(new_h), str(new_a)
-            new["verified"] = "sim" if status == "finished" else ""
+        new["status"] = e["status"]
+        hs, as_ = e["score"].get(e["home"]), e["score"].get(e["away"])
+        if hs is not None and as_ is not None and e["status"] in ("finished", "live"):
+            new["home_score"], new["away_score"] = str(hs), str(as_)
+            new["verified"] = "sim" if e["status"] == "finished" else ""
         else:
-            # jogo NÃO disputado: limpa qualquer placar residual (ex.: dado de teste)
+            # jogo não disputado: limpa qualquer placar residual
             new["home_score"], new["away_score"], new["verified"] = "", "", ""
         if new != cur:
             rows[mid] = new
             if mid not in order:
                 order.append(mid)
-            updated.append(f"{mid}: {ht} {new.get('home_score','—')} x {new.get('away_score','—')} {at} [{status}]")
+            updated.append(f"{mid}: {e['home']} {new.get('home_score','—')} x "
+                           f"{new.get('away_score','—')} {e['away']} [{e['status']}]")
 
     if args.dry_run:
         print("DRY-RUN — mudanças que seriam aplicadas:")
     else:
         save_results(rows, order)
 
-    print(f"Atualizados: {len(updated)} | travados (lock): {len(locked)} | sem casamento: {len(unmatched)}")
+    print(f"[ESPN] Atualizados: {len(updated)} | travados (lock): {len(locked)} | "
+          f"sem casamento: {len(unmatched)}")
     for u in updated:
         print("  ✓", u)
-    for u in unmatched[:10]:
+    for u in unmatched[:8]:
         print("  ⚠ sem casamento de nome:", u)
-
-
-_ORDER_CACHE = None
-def _same_order(ht, at, mid):
-    """True se (ht, at) é a ordem mandante/visitante da planilha para mid."""
-    global _ORDER_CACHE
-    if _ORDER_CACHE is None:
-        from catalog import get_catalog
-        _ORDER_CACHE = {m["match_id"]: (m["home"], m["away"]) for m in get_catalog()}
-    return _ORDER_CACHE.get(mid) == (ht, at)
 
 
 if __name__ == "__main__":

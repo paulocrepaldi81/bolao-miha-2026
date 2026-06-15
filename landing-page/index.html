@@ -195,6 +195,13 @@
     padding:8px 16px;border-radius:999px;cursor:pointer}
   .tab.active{background:var(--green);color:#04120A}
   .matches{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  /* faixa "acontecendo agora" — só aparece quando há jogo ao vivo */
+  .live-strip{margin-bottom:18px;border:1px solid rgba(230,29,37,.45);background:rgba(230,29,37,.06);
+    border-radius:var(--r);padding:14px}
+  .live-strip-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.5px;font-size:12px;color:#FF6B72}
+  .live-strip .mcard{border-color:rgba(230,29,37,.35)}
+  .mlive-min{font-family:Anton;font-size:13px;color:#FF6B72}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .mcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
   .mcard .grp{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
@@ -501,10 +508,10 @@
 <!-- ============ MATCH CENTER ============ -->
 <section id="matches" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="sec-head"><h2 class="display">Central de jogos</h2><span class="kick">Horários em São Paulo (BRT, GMT−3)</span></div>
+    <div class="sec-head"><h2 class="display">Central de jogos</h2><span class="kick">Horários em São Paulo (BRT, GMT−3) · atualiza junto com o robô</span></div>
+    <div class="live-strip" id="liveStrip" hidden></div>
     <div class="tabs" id="matchTabs">
       <button class="tab active" data-f="scheduled">Próximos</button>
-      <button class="tab" data-f="live">Ao vivo</button>
       <button class="tab" data-f="finished">Encerrados</button>
     </div>
     <div class="matches" id="matchList"></div>

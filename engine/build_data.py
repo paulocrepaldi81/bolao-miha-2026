@@ -292,6 +292,8 @@ def build_latest(catalog, results):
               and results.get(m["match_id"], {}).get("home_score") is not None]
     if not played:
         return None
+    # o "último resultado" é o jogo encerrado mais RECENTE (por horário), não o último do catálogo
+    played.sort(key=lambda x: parse_kickoff(x[0]["date"]) or "")
     m, r = played[-1]
     return {"home_team": m["home"], "away_team": m["away"],
             "home_score": r["home_score"], "away_score": r["away_score"],

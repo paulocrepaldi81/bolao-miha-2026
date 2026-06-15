@@ -1,22 +1,25 @@
 # Robô do Bolão Miha 2026 — busca placares e republica a landing page.
 #
-# Roda a cada 20 minutos durante a Copa (11/jun–19/jul). Cada execução:
-#   1. fetch_results.py  → consulta a API e atualiza engine/data/results.csv
-#   2. build_data.py     → repontua tudo e gera landing-page/data.json
-#   3. commit+push       → o Netlify detecta e republica o site (~30s)
+# Cada execução:
+#   1. fetch_results.py  → ESPN (fonte primária, near-real-time) → results.csv
+#   2. cross_check.py    → football-data.org (2ª fonte) confere os encerrados
+#   3. fetch_facts.py    → categorias extras (1º expulso/gol contra via ESPN; artilharia)
+#   4. build_data.py     → repontua tudo e gera landing-page/data.json
+#   5. commit + deploy-pages → publica no GitHub Pages
+#   6. alerta            → e-mail automático se as 2 fontes divergirem
 #
-# Setup necessário (uma vez): em Settings → Secrets and variables → Actions,
-# criar o secret FOOTBALL_DATA_TOKEN com a chave de https://www.football-data.org
+# Secret necessário: FOOTBALL_DATA_TOKEN (https://www.football-data.org) — usado na
+# conferência e na artilharia. A ESPN não precisa de chave.
 name: Atualiza placar
 
 on:
-  # BASE: agendador do GitHub (grátis, automático). Timing pode variar 10-40 min,
-  # mas garante atualização recorrente sozinho durante toda a Copa.
+  # BASE: agendador do GitHub (grátis). O timing dele varia, então o gatilho
+  # principal é o pinger externo (cron-job.org via workflow_dispatch), de ~3 em 3 min
+  # na janela dos jogos — assim o placar atualiza quase no apito final.
   schedule:
-    - cron: "*/10 0-6,15-23 * * *"   # ~a cada 10 min na janela dos jogos (12h-04h BRT)
+    - cron: "*/5 0-6,15-23 * * *"    # a cada 5 min na janela dos jogos (12h-04h BRT)
     - cron: "0 9,12 * * *"           # 2 atualizações leves de manhã (BRT)
-  # UPGRADE opcional: o pinger externo (cron-job.org) chama via workflow_dispatch
-  # para timing cravado. O botão "Run workflow" também usa este gatilho.
+  # Gatilho cravado: pinger externo (cron-job.org) e o botão "Run workflow".
   workflow_dispatch: {}
 
 permissions:
@@ -44,21 +47,20 @@ jobs:
       - name: Instalar dependências
         run: pip install openpyxl
 
-      - name: Buscar placares oficiais
+      - name: Buscar placares oficiais (ESPN — fonte primária)
         working-directory: engine
-        env:
-          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
         run: python fetch_results.py
 
-      - name: Conferir placares numa 2ª fonte independente (ESPN)
-        working-directory: engine
-        run: python cross_check.py
-
-      - name: Apurar categorias extras (cartões, gols contra, artilharia, parciais)
+      - name: Conferir numa 2ª fonte independente (football-data.org)
         working-directory: engine
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
-          APIFOOTBALL_KEY: ${{ secrets.APIFOOTBALL_KEY }}   # lances (api-football.com)
+        run: python cross_check.py
+
+      - name: Apurar categorias extras (1º expulso/gol contra via ESPN, artilharia, parciais)
+        working-directory: engine
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
         run: python fetch_facts.py
 
       - name: Repontuar e gerar data.json

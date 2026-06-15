@@ -282,9 +282,11 @@ function render(){
   document.getElementById('a-rule').textContent = DATA.meta.rule_version;
   document.getElementById('f-updated').textContent = fmtDateTime(DATA.meta.last_data_update);
   renderCrossCheck();
-  // aba padrão: 'Encerrados' se já houver jogos, senão 'Próximos'
-  const hasFinished = DATA.matches.some(m=>m.status==='finished');
-  const defTab = hasFinished ? 'finished' : 'scheduled';
+  // jogos ao vivo entram numa faixa destacada no topo (só quando existem)
+  renderLiveStrip();
+  // aba padrão: 'Próximos' enquanto houver jogos por vir; senão 'Encerrados'
+  const hasScheduled = DATA.matches.some(m=>m.status==='scheduled');
+  const defTab = hasScheduled ? 'scheduled' : 'finished';
   document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.f===defTab));
   renderMatches(defTab);
 }
@@ -299,17 +301,18 @@ function renderCrossCheck(){
     return;
   }
   const when = a.checked_at ? ' · conferido ' + fmtDateTime(a.checked_at) : '';
+  const pair = `${a.source_a||'ESPN'} × ${a.source_b||'football-data.org'}`;
   if(a.status === 'divergencia' && (a.discrepancies||[]).length){
     const list = a.discrepancies.map(d =>
-      `<li>${d.teams}: oficial <b>${d.oficial}</b> ≠ <b>${d.espn}</b>${d.lock?' (correção manual ativa)':''}</li>`).join('');
+      `<li>${d.teams}: <b>${d.primaria||d.oficial}</b> ≠ <b>${d.secundaria||d.espn}</b>${d.lock?' (correção manual ativa)':''}</li>`).join('');
     el.innerHTML = `<b style="color:#ff6b6b">⚠ Divergência entre fontes detectada</b> — em verificação pelo organizador:
       <ul style="margin:6px 0 0 16px">${list}</ul>
-      <div style="margin-top:6px;color:var(--ink-faint)">football-data.org × ESPN${when}. O organizador foi avisado automaticamente.</div>`;
+      <div style="margin-top:6px;color:var(--ink-faint)">${pair}${when}. O organizador foi avisado automaticamente.</div>`;
   } else if(a.status === 'fonte_indisponivel'){
-    el.innerHTML = `Conferência da 2ª fonte (ESPN) temporariamente indisponível — placares seguem pela fonte oficial (football-data.org).${when}`;
+    el.innerHTML = `Conferência da 2ª fonte temporariamente indisponível — placares seguem pela fonte primária (ESPN).${when}`;
   } else {
     el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
-      (football-data.org × ESPN) — nenhuma divergência.${when}`;
+      (${pair}) — nenhuma divergência.${when}`;
   }
 }
 
@@ -446,27 +449,45 @@ document.getElementById('lbFilter').addEventListener('click',e=>{
 });
 document.getElementById('lbMore').addEventListener('click',()=>{ lbExpanded=!lbExpanded; renderLeaderboard(); });
 
+function matchCardHTML(m){
+  const chip = m.status==='live'?'<span class="chip chip-live live"><span class="dot"></span> Ao vivo</span>'
+    : m.status==='finished'?'<span class="chip chip-ft">Encerrado</span>'
+    : '<span class="chip chip-sched">Agendado</span>';
+  const sc = (m.home_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.home_score}</span>`;
+  const sc2= (m.away_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.away_score}</span>`;
+  const special = m.is_special ? '<span class="chip chip-special">⭐ Especial · 5 pts</span>' : '';
+  // rodapé: ao vivo mostra o minuto (se houver); encerrado mostra conferência; agendado, horário
+  let foot;
+  if(m.status==='live') foot = `<span class="mlive-min">${m.minute?('🔴 '+m.minute):'🔴 em andamento'}</span><span class="verif">placar parcial</span>`;
+  else if(m.status==='finished') foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">${m.verified?'<span class="ok">✓ conferido</span>':'<span class="warn">• conferindo</span>'}</span>`;
+  else foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">a bola não rolou</span>`;
+  return `<div class="mcard">
+    <div class="top"><span class="grp">Grupo ${m.group}</span><span style="display:flex;gap:6px;align-items:center">${special}${chip}</span></div>
+    <div class="team"><span>${flag(m.home_team)}${m.home_team}</span>${sc}</div>
+    <div class="team"><span>${flag(m.away_team)}${m.away_team}</span>${sc2}</div>
+    <div class="foot">${foot}</div>
+  </div>`;
+}
+
+// faixa "acontecendo agora" — só aparece quando há jogo ao vivo
+function renderLiveStrip(){
+  const el = document.getElementById('liveStrip');
+  if(!el) return;
+  const live = (DATA.matches||[]).filter(m=>m.status==='live')
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
+  if(!live.length){ el.hidden=true; el.innerHTML=''; return; }
+  el.hidden=false;
+  el.innerHTML = `<div class="live-strip-head"><span class="dot" style="color:#FF6B72"></span> 🔴 Acontecendo agora</div>
+    <div class="matches">${live.map(matchCardHTML).join('')}</div>`;
+}
+
 function renderMatches(filter){
-  const list = DATA.matches.filter(m=>m.status===filter);
+  const list = DATA.matches.filter(m=>m.status===filter)
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
   const el = document.getElementById('matchList');
-  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">Nenhum jogo nesta aba ainda.</div>`; return; }
-  el.innerHTML = list.map(m=>{
-    const chip = m.status==='live'?'<span class="chip chip-live live"><span class="dot"></span> Ao vivo</span>'
-      : m.status==='finished'?'<span class="chip chip-ft">Encerrado</span>'
-      : '<span class="chip chip-sched">Agendado</span>';
-    const sc = (m.home_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.home_score}</span>`;
-    const sc2= (m.away_score==null)?'<span class="sc">–</span>':`<span class="sc">${m.away_score}</span>`;
-    const special = m.is_special ? '<span class="chip chip-special">⭐ Especial · 5 pts</span>' : '';
-    return `<div class="mcard">
-      <div class="top"><span class="grp">Grupo ${m.group}</span><span style="display:flex;gap:6px;align-items:center">${special}${chip}</span></div>
-      <div class="team"><span>${flag(m.home_team)}${m.home_team}</span>${sc}</div>
-      <div class="team"><span>${flag(m.away_team)}${m.away_team}</span>${sc2}</div>
-      <div class="foot">
-        <span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span>
-        <span class="verif">${m.verified?'<span class="ok">✓ verificado</span>':'<span class="warn">• a verificar</span>'}</span>
-      </div>
-    </div>`;
-  }).join('');
+  const empty = filter==='scheduled' ? 'Sem próximos jogos no momento.' : 'Nenhum jogo encerrado ainda.';
+  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; return; }
+  el.innerHTML = list.map(matchCardHTML).join('');
 }
 
 // Hall da Fama (estático — independe do estado pré/demo)
@@ -629,7 +650,20 @@ function maRenderSuggest(q){
     : `<div class="ma-empty-s">Nenhum apelido com “${q}”. Confere a grafia (igual à planilha).</div>`;
 }
 
-document.getElementById('maInput').addEventListener('input',e=>maRenderSuggest(e.target.value));
+// limpa a seleção: nome apagado / clique no "x" → não deixa nada parado na tela
+function maClear(){
+  maSelected=null;
+  try{ localStorage.removeItem('minhaAposta'); }catch(e){}
+  document.getElementById('maCard').hidden=true;
+  document.getElementById('maSuggest').hidden=true;
+}
+document.getElementById('maInput').addEventListener('input',e=>{
+  const v=e.target.value;
+  if(!v.trim()){ maClear(); return; }                 // campo vazio → reseta tudo
+  if(v!==maSelected) document.getElementById('maCard').hidden=true;  // editando → some o card antigo
+  maRenderSuggest(v);
+});
+document.getElementById('maInput').addEventListener('search',e=>{ if(!e.target.value.trim()) maClear(); });
 document.getElementById('maInput').addEventListener('focus',e=>{ if(e.target.value) maRenderSuggest(e.target.value); });
 document.getElementById('maSuggest').addEventListener('click',e=>{
   const it=e.target.closest('.ma-sugg'); if(it) maSelect(it.dataset.a);

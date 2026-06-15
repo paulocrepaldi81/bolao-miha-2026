@@ -7,19 +7,28 @@
     "artilheiro_nome": "Folarin Balogun (EUA) — 2 gol(s)",
     "artilheiro_equipe": "EUA",
     "artilheiro_gols": "2 (parcial)",
-    "equipe_1o_expulso": "África do Sul (Sithole, 49')",
-    "equipe_1o_gol_contra": "nenhum gol contra em 0 jogo(s) varrido(s)"
+    "equipe_1o_expulso": "África do Sul (Sphephelo Sithole, 49')",
+    "equipe_1o_gol_contra": "Paraguai (Damián Bobadilla, 7')"
   },
   "scanned": [
     537327,
     537328
   ],
   "first_red": {
+    "match_date": "2026-06-11T19:00Z",
+    "kind": "red",
     "team": "África do Sul",
-    "player": "Sithole",
-    "minute": 49,
-    "utc": "2026-06-11T19:00:00+00:00"
+    "player": "Sphephelo Sithole",
+    "minute": "49",
+    "order": 2940.0
   },
-  "first_own": null,
+  "first_own": {
+    "match_date": "2026-06-13T01:00Z",
+    "kind": "own",
+    "team": "Paraguai",
+    "player": "Damián Bobadilla",
+    "minute": "7",
+    "order": 408.0
+  },
   "af_scanned": []
 }

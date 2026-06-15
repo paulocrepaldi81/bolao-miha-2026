@@ -29,3 +29,6 @@ engine/data/validation_report.txt
 *.pdf
 Screenshot*.png
 *.png
+
+# Dev-only preview tooling (Claude Code)
+.claude/
