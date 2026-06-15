@@ -1,19 +1,13 @@
 {
-  "checked_at": "2026-06-15T01:44:17.511514-03:00",
+  "checked_at": "2026-06-15T01:46:14.143811-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
-  "status": "divergencia",
-  "compared": 12,
+  "status": "ok",
+  "compared": 11,
   "agree": 11,
-  "discrepancies": [
-    {
-      "match_id": "B1",
-      "teams": "Canadá x Bósnia",
-      "primaria": "1x1  (ESPN)",
-      "secundaria": "NonexNone  (football-data)",
-      "lock": false
-    }
-  ],
-  "pendente_2a_fonte": []
+  "discrepancies": [],
+  "pendente_2a_fonte": [
+    "E2"
+  ]
 }
