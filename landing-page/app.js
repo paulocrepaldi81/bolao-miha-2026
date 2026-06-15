@@ -357,7 +357,6 @@ function render(){
   const mv = DATA.movement;
   document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
   document.getElementById('bigDrop').textContent = mv.biggest_drop ? `${mv.biggest_drop.alias} ▼${Math.abs(mv.biggest_drop.delta)}` : '—';
-  document.getElementById('painRound').textContent = mv.pain_of_round;
   // stats
   const st = DATA.stats || {};
   const stat = o => o ? `${o.alias} · ${o.val}` : '—';
