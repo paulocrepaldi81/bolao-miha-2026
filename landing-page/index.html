@@ -231,7 +231,7 @@
   .cg-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim)}
   .cg-min{font-family:Anton;color:#FF6B72}
   .cg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-  .cg-card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;text-align:center}
+  .cg-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;text-align:center}
   .cg-ic{font-size:20px}
   .cg-cl{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
   .cg-sc{font-family:Anton;font-size:30px;color:var(--ink);line-height:1.1;margin:4px 0}
@@ -239,6 +239,15 @@
   .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
   .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
   .cg-empty{color:var(--ink-dim);font-size:13px}
+  /* Palpite de resultado (1X2) */
+  .cg-1x2{margin-bottom:16px}
+  .cg-1x2-h{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px}
+  .cg-1x2-bar{display:flex;height:24px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.06)}
+  .cg-1x2-bar>div{min-width:3px}
+  .cg-1x2-leg{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12.5px;color:var(--ink-dim)}
+  .cg-1x2-leg span{display:flex;align-items:center;gap:5px}
+  .cg-1x2-leg i{width:9px;height:9px;border-radius:2px;display:inline-block;flex:0 0 auto}
+  .cg-1x2-leg b{color:var(--ink)}
   /* sub-título dentro de uma seção (ex.: Estatísticas unificada) */
   .sub-h{font-size:14px;font-weight:800;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:8px}
   .sub-h:first-of-type{margin-top:4px}
@@ -397,7 +406,6 @@
 <body>
 
 <div class="brandstrip"></div>
-<div class="demo-banner">⚠️ PROTÓTIPO · dados de exemplo (placeholder) — jogadores, pontos e probabilidades são fictícios e servem só para mostrar o visual</div>
 
 <header class="nav">
   <div class="wrap nav-in">
@@ -438,14 +446,6 @@
     <div class="special-alert" id="specialAlert" hidden>
       <span class="sa-star">⭐</span>
       <span class="sa-txt" id="saTxt">—</span>
-    </div>
-
-    <div class="statebar">
-      <span class="sb-lab">👀 Visualização do protótipo:</span>
-      <div class="seg" id="stateToggle">
-        <button class="seg-btn active" data-s="pre">Pré-Copa (zerado)</button>
-        <button class="seg-btn" data-s="demo">Simulação ao vivo</button>
-      </div>
     </div>
 
     <div class="hero-grid">
@@ -543,9 +543,9 @@
 <!-- ============ ESTATÍSTICAS (unificada: jogo de agora + corrida + movimentação + números) ============ -->
 <section id="stats" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">O jogo de agora nas apostas, a corrida pelo título e os números do bolão</span></div>
+    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">O que os 88 palpites revelam — atualizado a cada jogo</span></div>
 
-    <div class="cg-wrap" id="cgStats" hidden></div>
+    <div id="cgStats" hidden></div>
 
     <h3 class="sub-h">🏁 Corrida pelo título</h3>
     <div class="prob-wrap">
@@ -645,6 +645,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260615e" defer></script>
+<script src="app.js?v=20260615i" defer></script>
 </body>
 </html>

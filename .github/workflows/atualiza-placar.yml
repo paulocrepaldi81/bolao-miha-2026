@@ -120,7 +120,11 @@ jobs:
             if git push; then echo "push ok (tentativa $i)"; exit 0; fi
             echo "push rejeitado — re-empilhando sobre o remoto (tentativa $i)"
             git fetch origin main
-            git reset --soft origin/main
+            # --mixed (não --soft!): reseta HEAD *e o índice* para o remoto mais recente.
+            # Com --soft o índice mantinha a árvore do checkout antigo do robô e o recommit
+            # acabava incluindo app.js/index.html VELHOS, revertendo o frontend (1X2 sumia,
+            # banner de protótipo voltava). Com --mixed só os dados frescos são re-empilhados.
+            git reset --mixed origin/main
             git add $FILES
             if git diff --cached --quiet; then echo "remoto já tem dados equivalentes — ok."; exit 0; fi
             git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
