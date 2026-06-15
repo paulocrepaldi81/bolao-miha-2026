@@ -50,6 +50,10 @@ jobs:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
         run: python fetch_results.py
 
+      - name: Conferir placares numa 2ª fonte independente (ESPN)
+        working-directory: engine
+        run: python cross_check.py
+
       - name: Apurar categorias extras (cartões, gols contra, artilharia, parciais)
         working-directory: engine
         env:
@@ -66,7 +70,7 @@ jobs:
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json landing-page/data.json
+          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json landing-page/data.json
           if git diff --cached --quiet; then
             echo "Sem mudanças nos dados."
           else
@@ -81,3 +85,25 @@ jobs:
           path: landing-page
       - id: deployment
         uses: actions/deploy-pages@v4
+
+      # ALERTA: roda DEPOIS de publicar (o site sempre sai no ar, já com o aviso
+      # de divergência). Se as duas fontes discordarem num jogo encerrado, este
+      # passo FALHA de propósito — e o GitHub manda e-mail automático ao dono do
+      # repositório. O alerta persiste a cada rodada até alguém resolver (corrigir
+      # o placar com lock=sim em results.csv).
+      - name: Alertar se houver divergência entre fontes
+        working-directory: engine
+        run: |
+          python - <<'PY'
+          import json, sys, os
+          p = "data/cross_check.json"
+          if not os.path.exists(p):
+              print("Sem relatório de conferência — ok."); sys.exit(0)
+          c = json.load(open(p, encoding="utf-8"))
+          if c.get("status") == "divergencia":
+              print("⛔ DIVERGÊNCIA ENTRE FONTES — confira os placares:")
+              for d in c.get("discrepancies", []):
+                  print(f"   {d['match_id']} {d['teams']}: {d['oficial']} ≠ {d['espn']}")
+              sys.exit(1)   # falha de propósito → e-mail de alerta do GitHub
+          print(f"✓ Conferência ok: {c.get('agree')}/{c.get('compared')} batem em 2 fontes.")
+          PY

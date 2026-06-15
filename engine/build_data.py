@@ -101,6 +101,25 @@ def load_history(path):
     return []
 
 
+def load_cross_check(path):
+    """Resumo da conferência independente (ESPN) p/ o bloco 'Auditoria' do site."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            c = json.load(f)
+    except Exception:
+        return None
+    return {
+        "status": c.get("status", "ok"),
+        "source_a": c.get("source_a"), "source_b": c.get("source_b"),
+        "source_b_ok": c.get("source_b_ok", True),
+        "compared": c.get("compared", 0), "agree": c.get("agree", 0),
+        "discrepancies": c.get("discrepancies", []),
+        "checked_at": c.get("checked_at"),
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bets", default="./bets", help="pasta com as planilhas preenchidas")
@@ -118,6 +137,7 @@ def main():
     roster = load_roster(os.path.join(DATA, "roster.csv"))
     history = load_history(os.path.join(DATA, "history.json"))
     prev_snapshot = history[-1]["ranks"] if history else {}
+    audit = load_cross_check(os.path.join(DATA, "cross_check.json"))
 
     bets, scored, all_issues = [], [], []
     bets_json = os.path.join(DATA, "bets_extracted.json")
@@ -180,6 +200,7 @@ def main():
             "rule_version": "v2.1", "freshness": "ok",
         },
         "latest_result": build_latest(catalog, results),
+        "audit": audit,
         "final_result": real_final,
         "extras_summary": build_extras_summary(bets, facts),
         "participants": participants,

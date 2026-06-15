@@ -281,11 +281,36 @@ function render(){
   document.getElementById('a-check').textContent = fmtDateTime(DATA.meta.last_source_check);
   document.getElementById('a-rule').textContent = DATA.meta.rule_version;
   document.getElementById('f-updated').textContent = fmtDateTime(DATA.meta.last_data_update);
+  renderCrossCheck();
   // aba padrão: 'Encerrados' se já houver jogos, senão 'Próximos'
   const hasFinished = DATA.matches.some(m=>m.status==='finished');
   const defTab = hasFinished ? 'finished' : 'scheduled';
   document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.f===defTab));
   renderMatches(defTab);
+}
+
+// ---- Conferência independente (2 fontes: football-data × ESPN) ----
+function renderCrossCheck(){
+  const el = document.getElementById('a-crosscheck');
+  if(!el) return;
+  const a = DATA.audit;
+  if(!a){
+    el.innerHTML = 'Discrepâncias em aberto: <b class="ok">nenhuma</b> · conferência de 2 fontes ativa a cada rodada.';
+    return;
+  }
+  const when = a.checked_at ? ' · conferido ' + fmtDateTime(a.checked_at) : '';
+  if(a.status === 'divergencia' && (a.discrepancies||[]).length){
+    const list = a.discrepancies.map(d =>
+      `<li>${d.teams}: oficial <b>${d.oficial}</b> ≠ <b>${d.espn}</b>${d.lock?' (correção manual ativa)':''}</li>`).join('');
+    el.innerHTML = `<b style="color:#ff6b6b">⚠ Divergência entre fontes detectada</b> — em verificação pelo organizador:
+      <ul style="margin:6px 0 0 16px">${list}</ul>
+      <div style="margin-top:6px;color:var(--ink-faint)">football-data.org × ESPN${when}. O organizador foi avisado automaticamente.</div>`;
+  } else if(a.status === 'fonte_indisponivel'){
+    el.innerHTML = `Conferência da 2ª fonte (ESPN) temporariamente indisponível — placares seguem pela fonte oficial (football-data.org).${when}`;
+  } else {
+    el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
+      (football-data.org × ESPN) — nenhuma divergência.${when}`;
+  }
 }
 
 // ---- Prêmio acumulado (apenas apostas pagas × valor da aposta) ----
