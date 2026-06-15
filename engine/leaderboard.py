@@ -37,15 +37,15 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot):
         C.PTS_ART_BONUS if not all(facts.get(k) not in (None, "") for k in
                                    ("artilheiro_nome", "artilheiro_equipe", "artilheiro_gols")) else 0,
     ]) + C.PTS_CURIOSIDADE * sum(1 for k in C.CURIOSIDADES if facts.get(k) in (None, ""))
-    knockout_open = True   # v1: sem resultados de mata-mata ainda
-    knockout_potential = C.KNOCKOUT_POTENTIAL if knockout_open else 0
+    # "máx possível" REAL: só o que o motor de fato pontua = jogos de grupo restantes +
+    # classificação final (30) + categorias extras. O mata-mata jogo-a-jogo ainda não é
+    # pontuado (v1); quando entrar (v2), os pontos dele somam aqui de verdade — sem placeholder.
 
     for s in scored:
         info = roster.get(s["alias"].lower(), {"paid": False, "order": 9999})
         s["paid"] = info["paid"]
         s["order"] = info["order"]
-        s["points_available"] = (rem_groups + (30 if final_open else 0)
-                                 + extras_open_max + knockout_potential)
+        s["points_available"] = rem_groups + (30 if final_open else 0) + extras_open_max
         s["max_possible"] = s["total"] + s["points_available"]
 
     # Ordenação + desempate determinístico
