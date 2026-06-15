@@ -38,7 +38,7 @@ EN_PT = {
     "spain": "Espanha", "cape verde": "Cabo Verde", "saudi arabia": "Arábia Saudita",
     "uruguay": "Uruguai", "france": "França", "senegal": "Senegal", "iraq": "Iraque",
     "norway": "Noruega", "argentina": "Argentina", "algeria": "Argélia", "austria": "Áustria",
-    "jordan": "Jordânia", "portugal": "Portugal", "dr congo": "RD Congo", "uzbekistan": "Uzbequistão",
+    "jordan": "Jordânia", "portugal": "Portugal", "dr congo": "RD Congo", "congo dr": "RD Congo", "uzbekistan": "Uzbequistão",
     "colombia": "Colômbia", "england": "Inglaterra", "ghana": "Gana", "croatia": "Croácia", "panama": "Panamá",
 }
 FLAG = {
@@ -90,6 +90,10 @@ def fetch_events():
         pt = lambda c: EN_PT.get((c.get("team", {}).get("displayName") or "").strip().lower())
         h, a = pt(home), pt(away)
         if not h or not a:
+            # Descarte NÃO-silencioso: se a ESPN renomear um time (acento/abreviação), o log do
+            # CI mostra o nome cru pra gente mapear — foi assim que o "Congo DR" passou batido.
+            print(f"  (sem tradução p/ pôster, jogo ignorado: "
+                  f"{home.get('team', {}).get('displayName')!r} x {away.get('team', {}).get('displayName')!r})")
             continue
         t = e.get("status", {}).get("type", {})
         out.append({
@@ -158,7 +162,7 @@ def pick_rounds(events):
     - jogos_da_rodada = TODOS os jogos do próximo dia de SP com jogo (agendado, AO VIVO e
       já encerrado nesse dia) — assim nada cai no vão (era o bug do jogo ao vivo sumindo).
     - resultados = jogos encerrados do último dia de SP ANTERIOR ao dia da rodada."""
-    finished = [e for e in events if e["state"] == "post" and e["hs"] is not None]
+    finished = [e for e in events if e["state"] == "post" and e["hs"] is not None and e["as"] is not None]
     upcoming = [e for e in events if e["state"] in ("pre", "in")]
     up_day = agenda_day(min(upcoming, key=lambda e: e["date"])["date"]) if upcoming else None
     next_round = sorted([e for e in events if agenda_day(e["date"]) == up_day],
@@ -251,12 +255,15 @@ def caricatura_html():
             '<path d="M31 52 Q37 56 43 52 L43 57 Q37 62 31 57Z" fill="#cfcfcf"/></svg>')
 
 
-def grp_chip(team):
-    g = TEAM_GROUP.get(team)
-    if not g:
+def grp_chip(j):
+    # Selo de GRUPO só quando os DOIS times são do mesmo grupo (fase de grupos). No mata-mata
+    # os times são de grupos diferentes, e marcar o grupo do mandante seria informação errada —
+    # então o selo é omitido (até virar rótulo de fase numa v2, se quisermos).
+    gh, ga = TEAM_GROUP.get(j["home"]), TEAM_GROUP.get(j["away"])
+    if not gh or gh != ga:
         return ""
     return (f'<span style="font-family:Anton,sans-serif;font-size:11px;color:#0a3d2c;background:#f4c430;'
-            f'border-radius:5px;padding:2px 7px;flex:0 0 auto;letter-spacing:.3px">GRUPO {g}</span>')
+            f'border-radius:5px;padding:2px 7px;flex:0 0 auto;letter-spacing:.3px">GRUPO {gh}</span>')
 
 
 def build_html(last_round, next_round, res_day, up_day):
@@ -270,20 +277,21 @@ def build_html(last_round, next_round, res_day, up_day):
 
     def res_row(j):
         win = j["hs"] != j["as"]
-        sc = (f'<span style="font-family:Anton,sans-serif;font-size:22px;'
-              f'color:{"#f4c430" if win else "#fff"}">{j["hs"]} × {j["as"]}</span>')
+        sc = (f'<span style="font-family:Anton,sans-serif;font-size:22px;min-width:64px;text-align:center;'
+              f'white-space:nowrap;color:{"#f4c430" if win else "#fff"}">{j["hs"]} × {j["as"]}</span>')
+        nm = "flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
         return (f'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
                 f'background:rgba(255,255,255,.06);border-radius:10px;padding:8px 14px">'
-                f'{grp_chip(j["home"])}'
-                f'<span style="flex:1">{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
-                f'<span style="flex:1;text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+                f'{grp_chip(j)}'
+                f'<span style="{nm}">{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
+                f'<span style="{nm};text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
     def jogo_row(j):
         # AGENDA: só o horário (sem placar), mesmo que o jogo já tenha começado/encerrado.
         tag = (f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:54px">'
                f'{sp_time(j["date"])}</b>')
         return (f'<div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.06);'
-                f'border-radius:10px;padding:8px 14px">{grp_chip(j["home"])}{tag}'
+                f'border-radius:10px;padding:8px 14px">{grp_chip(j)}{tag}'
                 f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} '
                 f'<span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
