@@ -14,9 +14,11 @@ Render: HTML → PNG via Playwright (chromium headless). Roda no workflow a-roda
 """
 import base64
 import datetime as dt
+import io
 import json
 import os
 import urllib.request
+from collections import deque
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "hoje.png")
@@ -156,8 +158,48 @@ def img_b64(name):
     return None
 
 
+def caricatura_b64():
+    """Lê a-rodada/ricardo.png e LIMPA automaticamente um fundo claro 'queimado' (o xadrez
+    de transparência que o Nano Banana às vezes exporta como pixels). Assim você só troca a
+    imagem na pasta e o pôster sai certo. Já-transparente ou fundo sólido escuro = mantém."""
+    p = os.path.join(HERE, "ricardo.png")
+    if not os.path.exists(p):
+        return None
+    try:
+        from PIL import Image
+        im = Image.open(p).convert("RGBA")
+        px = im.load(); w, h = im.size
+        corners = [px[1, 1], px[w - 2, 1], px[1, h - 2], px[w - 2, h - 2]]
+        light = lambda c: (max(c[:3]) - min(c[:3])) <= 24 and sum(c[:3]) / 3 >= 190
+        # já tem transparência nas bordas, ou fundo sólido NÃO-claro (ex.: verde) → usa como está
+        if any(c[3] < 250 for c in corners) or not all(light(c) for c in corners):
+            return "data:image/png;base64," + base64.b64encode(open(p, "rb").read()).decode()
+        # fundo claro opaco (xadrez/branco): flood-fill das bordas até o contorno do desenho
+        seen = bytearray(w * h)
+        dq = deque()
+        for x in range(w):
+            dq.append((x, 0)); dq.append((x, h - 1))
+        for y in range(h):
+            dq.append((0, y)); dq.append((w - 1, y))
+        while dq:
+            x, y = dq.pop()
+            if x < 0 or y < 0 or x >= w or y >= h or seen[y * w + x]:
+                continue
+            seen[y * w + x] = 1
+            c = px[x, y]
+            if not light(c):
+                continue
+            px[x, y] = (c[0], c[1], c[2], 0)
+            dq.extend([(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)])
+        buf = io.BytesIO(); im.save(buf, "PNG")
+        return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    except Exception as e:
+        print(f"  (limpeza da caricatura pulada: {e})")
+        return "data:image/png;base64," + base64.b64encode(open(p, "rb").read()).decode()
+
+
 def caricatura_html():
-    src = img_b64("ricardo.png")
+    src = caricatura_b64()
     if src:
         return (f'<img src="{src}" alt="Ricardo" style="width:88px;height:88px;border-radius:50%;'
                 f'object-fit:cover;border:3px solid #f4c430;flex:0 0 auto;background:#114a37"/>')
