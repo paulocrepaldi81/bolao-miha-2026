@@ -131,6 +131,17 @@ jobs:
           echo "::warning::push não concluiu após as tentativas; o site será publicado pelo deploy-pages mesmo assim. Sem alarme."
           exit 0
 
+      # CRÍTICO: o robô publica o Pages a cada rodada a partir do SEU checkout (que pode
+      # ser de um commit antigo). Sem isto, uma rodada antiga republica app.js/index.html
+      # velhos por cima e REVERTE o frontend (ex.: some o 1X2, volta a banner de protótipo).
+      # Então, antes de publicar, sincronizamos os ESTÁTICOS com o origin/main mais recente
+      # — mantendo o data.json fresco gerado nesta rodada.
+      - name: Sincronizar frontend mais recente antes de publicar
+        run: |
+          git fetch origin main -q || true
+          git checkout origin/main -- landing-page/index.html landing-page/app.js 2>/dev/null || true
+          echo "frontend sincronizado: $(grep -o 'app.js?v=[0-9a-z]*' landing-page/index.html | head -1)"
+
       # Publica o site no GitHub Pages a CADA rodada — assim o data.json fica
       # fresco na própria origem do site (sem depender do cache de 5 min do raw).
       - uses: actions/upload-pages-artifact@v3
