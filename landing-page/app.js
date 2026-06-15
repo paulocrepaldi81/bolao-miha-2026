@@ -308,15 +308,25 @@ function renderCurrentGameStats(){
   // Palpite de RESULTADO (1X2): quantos no mandante / empate / visitante
   let hw=0,dr=0,aw=0;
   preds.forEach(k=>{ const [h,a]=k.split('×').map(Number); if(h>a)hw++; else if(h<a)aw++; else dr++; });
-  const tot=preds.length, pc=n=>Math.round(n/tot*100);
+  const tot=preds.length;
+  // Legenda com arredondamento de maior-resto: os 3 %s somam exatamente 100 (a barra usa toFixed e já está certa).
+  const _raw=[hw,dr,aw].map(n=> tot? n/tot*100 : 0);
+  const _fl=_raw.map(Math.floor);
+  const _pcs=[..._fl];
+  if(tot){
+    const _rem=Math.round(100-_fl.reduce((a,b)=>a+b,0));
+    const _ord=_raw.map((v,i)=>[v-_fl[i],i]).sort((a,b)=>b[0]-a[0]);
+    for(let k=0;k<_rem;k++) _pcs[_ord[k%3][1]]++;
+  }
+  const [pcH,pcD,pcA]=_pcs;
   const seg=(n,color)=> n>0?`<div style="width:${(n/tot*100).toFixed(1)}%;background:${color}"></div>`:'';
   const r1x2=`<div class="cg-1x2">
     <div class="cg-1x2-h">Quem o bolão acha que ganha</div>
     <div class="cg-1x2-bar">${seg(hw,'#57d98a')}${seg(dr,'#e8b94e')}${seg(aw,'#5b9bff')}</div>
     <div class="cg-1x2-leg">
-      <span><i style="background:#57d98a"></i>${flag(m.home_team)}${m.home_team} <b>${hw}</b> · ${pc(hw)}%</span>
-      <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pc(dr)}%</span>
-      <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pc(aw)}%</span>
+      <span><i style="background:#57d98a"></i>${flag(m.home_team)}${m.home_team} <b>${hw}</b> · ${pcH}%</span>
+      <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pcD}%</span>
+      <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pcA}%</span>
     </div></div>`;
   box.innerHTML=head+r1x2+`<div class="cg-grid">${cards}</div>`
     +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;

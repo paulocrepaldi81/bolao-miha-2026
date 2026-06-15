@@ -52,10 +52,6 @@
   .live .dot{animation:pulse 1.4s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* ---- Placeholder banner ---- */
-  .demo-banner{background:repeating-linear-gradient(45deg,rgba(242,193,78,.16),rgba(242,193,78,.16) 14px,rgba(242,193,78,.08) 14px,rgba(242,193,78,.08) 28px);
-    border-bottom:1px solid rgba(242,193,78,.4);color:var(--gold);font-size:12.5px;font-weight:700;text-align:center;padding:8px 16px;letter-spacing:.3px}
-
   /* ---- Faixa de marca tri-nação ---- */
   .brandstrip{height:4px;background:var(--brand-grad)}
 
@@ -88,8 +84,6 @@
   .cd-sep{font-family:Anton;font-size:24px;color:var(--ink-faint);min-width:auto!important;align-self:flex-start;margin-top:2px}
   .cd-match{font-size:13px;font-weight:700;color:var(--ink-dim);margin-left:auto}
   @media(max-width:560px){.cd-match{width:100%;margin-left:0;order:3}}
-  .statebar{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .sb-lab{font-size:12px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
   .seg{display:inline-flex;background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
   .seg-btn{border:0;background:transparent;color:var(--ink-dim);font-weight:700;font-size:12.5px;
     padding:7px 14px;border-radius:999px;cursor:pointer;font-family:inherit}
@@ -216,9 +210,6 @@
   .move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
   .move-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
   .move-card .big{font-size:24px;font-weight:800;margin-top:6px}
-  .pain{grid-column:1/-1;background:linear-gradient(90deg,rgba(230,29,37,.13),var(--card));
-    border:1px solid rgba(230,29,37,.3);border-radius:var(--r);padding:18px}
-  .pain .tag{color:var(--coral);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.6px}
 
   /* ---- Stats ---- */
   /* ---- Palpites do jogo de agora ---- */
@@ -645,6 +636,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260615i" defer></script>
+<script src="app.js?v=20260615j" defer></script>
 </body>
 </html>
