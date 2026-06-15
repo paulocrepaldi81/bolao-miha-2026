@@ -1,0 +1,56 @@
+# "A RODADA" — pôster diário do Bolão Miha 2026 (TAREFA SEPARADA da landing page).
+#
+# Todo dia às 07:00 de Brasília (10:00 UTC): monta um PNG com os resultados da última
+# rodada + curiosidades + os jogos do dia (horário de SP) e publica num link fixo:
+#   https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/rodada/hoje.png
+# Você abre esse link no celular e encaminha pro grupo do WhatsApp.
+#
+# É independente do robô da landing: workflow próprio, pasta a-rodada/, e publica numa
+# branch dedicada ("rodada", force-push) — nunca toca na main nem na landing page.
+name: A Rodada (pôster diário)
+
+on:
+  schedule:
+    - cron: "0 10 * * *"   # 07:00 America/Sao_Paulo (UTC-3, sem horário de verão)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: a-rodada
+  cancel-in-progress: true
+
+jobs:
+  poster:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Playwright + fonte de emoji
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-color-emoji
+
+      - name: Gerar o pôster (hoje.png)
+        working-directory: a-rodada
+        run: python gen_rodada.py
+
+      - name: Publicar no link fixo (branch "rodada", force-push)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p /tmp/pub && cp a-rodada/hoje.png /tmp/pub/hoje.png
+          cd /tmp/pub
+          git init -q -b rodada
+          git config user.name "bolao-bot"
+          git config user.email "actions@github.com"
+          git add hoje.png
+          git commit -q -m "A Rodada — pôster de $(date -u +%F)"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" rodada
+          echo "Pôster publicado em: https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/rodada/hoje.png"

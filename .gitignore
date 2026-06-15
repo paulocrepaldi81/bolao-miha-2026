@@ -34,3 +34,7 @@ Screenshot*.png
 .claude/
 
 engine/data/audit_report.txt
+
+# A Rodada — artefatos gerados
+a-rodada/preview.html
+a-rodada/hoje.png
