@@ -279,20 +279,10 @@ def build_html(last_round, next_round, res_day, up_day):
                 f'<span style="flex:1;text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
     def jogo_row(j):
-        st = j["state"]
-        if st == "in":
-            tag = (f'<b style="font-family:Anton,sans-serif;font-size:17px;color:#ff7a7a;min-width:64px">'
-                   f'🔴 {j["hs"]}×{j["as"]}</b>')
-            bg = "rgba(230,29,37,.14)"
-        elif st == "post":
-            tag = (f'<b style="font-family:Anton,sans-serif;font-size:17px;color:#9ccdb9;min-width:64px">'
-                   f'✓ {j["hs"]}×{j["as"]}</b>')
-            bg = "rgba(255,255,255,.05)"
-        else:
-            tag = (f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:64px">'
-                   f'{sp_time(j["date"])}</b>')
-            bg = "rgba(255,255,255,.06)"
-        return (f'<div style="display:flex;align-items:center;gap:11px;background:{bg};'
+        # AGENDA: só o horário (sem placar), mesmo que o jogo já tenha começado/encerrado.
+        tag = (f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:54px">'
+               f'{sp_time(j["date"])}</b>')
+        return (f'<div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.06);'
                 f'border-radius:10px;padding:8px 14px">{grp_chip(j["home"])}{tag}'
                 f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} '
                 f'<span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
