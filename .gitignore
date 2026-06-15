@@ -32,3 +32,5 @@ Screenshot*.png
 
 # Dev-only preview tooling (Claude Code)
 .claude/
+
+engine/data/audit_report.txt
