@@ -101,17 +101,30 @@ jobs:
           print("status:", c.get("status"), "| divergência nova?", new)
           PY
 
-      - name: Versionar dados (commit se houve mudança)
+      - name: Versionar dados (commit + push resiliente a corrida do pinger)
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          git add engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json
+          FILES="engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json"
+          git add $FILES
           if git diff --cached --quiet; then
             echo "Sem mudanças nos dados."
-          else
-            git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
-            git push
+            exit 0
           fi
+          git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
+          # O pinger dispara com frequência → dois runs podem tentar dar push quase juntos.
+          # Se o remoto andou, re-empilha NOSSOS dados (frescos) por cima e tenta de novo.
+          for i in 1 2 3 4 5; do
+            if git push; then echo "push ok"; exit 0; fi
+            echo "push rejeitado (corrida do pinger) — re-empilhando sobre o remoto (tentativa $i)"
+            git fetch origin main
+            git reset --soft origin/main
+            git add $FILES
+            if git diff --cached --quiet; then echo "remoto já tem dados equivalentes — ok."; exit 0; fi
+            git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
+            sleep 2
+          done
+          echo "push falhou após 5 tentativas"; exit 1
 
       # Publica o site no GitHub Pages a CADA rodada — assim o data.json fica
       # fresco na própria origem do site (sem depender do cache de 5 min do raw).
