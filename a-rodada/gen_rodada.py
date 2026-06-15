@@ -134,6 +134,17 @@ def sp_daykey(iso):
         return iso[:10]
 
 
+def agenda_day(iso):
+    """'Dia da agenda' em SP, mas com o corte às 06h (não à meia-noite): jogos de madrugada
+    (00h/01h SP) contam para o dia ANTERIOR — é o que rolou 'enquanto você dormia'. Existem
+    jogos às 00h e 01h SP na Copa; sem isso eles cairiam no dia errado."""
+    try:
+        sp = dt.datetime.fromisoformat(iso.replace("Z", "+00:00")) - dt.timedelta(hours=3)
+        return (sp - dt.timedelta(hours=6)).strftime("%Y-%m-%d")
+    except Exception:
+        return iso[:10]
+
+
 def label_day(daykey):
     try:
         d = dt.date.fromisoformat(daykey)
@@ -149,14 +160,14 @@ def pick_rounds(events):
     - resultados = jogos encerrados do último dia de SP ANTERIOR ao dia da rodada."""
     finished = [e for e in events if e["state"] == "post" and e["hs"] is not None]
     upcoming = [e for e in events if e["state"] in ("pre", "in")]
-    up_day = sp_daykey(min(upcoming, key=lambda e: e["date"])["date"]) if upcoming else None
-    next_round = sorted([e for e in events if sp_daykey(e["date"]) == up_day],
+    up_day = agenda_day(min(upcoming, key=lambda e: e["date"])["date"]) if upcoming else None
+    next_round = sorted([e for e in events if agenda_day(e["date"]) == up_day],
                         key=lambda e: e["date"]) if up_day else []
-    fin_days = sorted({sp_daykey(e["date"]) for e in finished})
+    fin_days = sorted({agenda_day(e["date"]) for e in finished})
     if up_day:
         fin_days = [d for d in fin_days if d < up_day]
     res_day = fin_days[-1] if fin_days else None
-    last_round = sorted([e for e in finished if sp_daykey(e["date"]) == res_day],
+    last_round = sorted([e for e in finished if agenda_day(e["date"]) == res_day],
                         key=lambda e: e["date"]) if res_day else []
     return last_round, next_round, res_day, up_day
 
@@ -313,11 +324,11 @@ def build_html(last_round, next_round, res_day, up_day):
     {ball_header}
   </div>
   <div style="position:relative;z-index:1;padding:6px 20px 20px">
-    {sec("📋 RESULTADOS DA RODADA", res_extra)}
+    {sec("📋 JOGOS DO DIA ANTERIOR", res_extra)}
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
     <div style="font-size:14px;color:#e9f5ef;line-height:1.8">{curis}</div>
-    {sec("📅 JOGOS DA RODADA", jogos_extra)}
+    {sec("📅 JOGOS DO DIA", jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>
   <div style="position:relative;z-index:1;background:#0c4a35;padding:12px 20px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">⚽ Classificação ao vivo no site do bolão · boa sorte! 🏆</div>
