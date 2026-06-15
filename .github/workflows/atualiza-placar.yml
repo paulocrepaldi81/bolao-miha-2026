@@ -68,6 +68,13 @@ jobs:
         # Dados REAIS (88 apostas) — sem --placeholder. O site mostra tudo de verdade.
         run: python build_data.py --from-json --out ../landing-page/data.json
 
+      # Auditoria automática: se o data.json vier estruturalmente quebrado/vazio, FALHA
+      # aqui (→ e-mail do GitHub) ANTES de commitar/publicar — a última versão boa fica
+      # no ar. Não publicamos dado ruim.
+      - name: Validar dados gerados (auditoria automática)
+        working-directory: engine
+        run: python validate_data.py
+
       - name: Versionar dados (commit se houve mudança)
         run: |
           git config user.name "bolao-bot"

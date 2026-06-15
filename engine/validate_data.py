@@ -1,0 +1,149 @@
+"""
+Validação automática do data.json gerado — roda no robô a CADA execução, logo após
+o build_data e ANTES do commit/deploy. Se algo ESTRUTURAL vier quebrado, o passo
+falha (→ e-mail do GitHub) e o site NÃO publica dado ruim: a última versão boa
+continua no ar.
+
+CRÍTICO (falha o passo, bloqueia o publish):
+  contagem de apostas/jogos errada · ranks não-únicos · aposta sem palpites ·
+  jogo encerrado sem placar · nº de categorias extras errado · campos faltando ·
+  estatística apontando apelido inexistente · modo protótipo ligado por engano.
+
+AVISO (não bloqueia — pode estar legitimamente vazio):
+  movimentação vazia (início) · sem jogo ao vivo · 2ª fonte indisponível ·
+  extras ainda não definidas.
+
+Saída: data/audit_report.txt (sempre) + código !=0 só em caso CRÍTICO.
+"""
+import json
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DATA = os.path.join(HERE, "data")
+OUT = os.path.join(HERE, "..", "landing-page", "data.json")
+REPORT = os.path.join(DATA, "audit_report.txt")
+
+REQUIRED_FIELDS = ("score", "rank", "phase1_points", "exact_scores",
+                   "correct_outcomes", "max_possible", "points_available")
+
+
+def main():
+    crit, warn = [], []
+
+    try:
+        with open(OUT, encoding="utf-8") as f:
+            d = json.load(f)
+    except Exception as e:
+        write_report([f"data.json não pôde ser lido/parseado: {e}"], [])
+        print(f"⛔ CRÍTICO: data.json ilegível: {e}")
+        sys.exit(1)
+
+    # contagens esperadas (derivadas, não hardcoded)
+    try:
+        from catalog import get_catalog
+        ncat = len(get_catalog())
+    except Exception:
+        ncat = None
+    nbets = None
+    bets_json = os.path.join(DATA, "bets_extracted.json")
+    if os.path.exists(bets_json):
+        try:
+            nbets = len(json.load(open(bets_json, encoding="utf-8"))["bets"])
+        except Exception:
+            nbets = None
+
+    P = d.get("participants", [])
+    M = d.get("matches", [])
+    ex = d.get("extras_summary", [])
+    aliases = {p.get("alias") for p in P}
+
+    def C(cond, msg):
+        if not cond:
+            crit.append(msg)
+
+    def W(cond, msg):
+        if not cond:
+            warn.append(msg)
+
+    # ---- META ----
+    C(d.get("meta", {}).get("is_placeholder") is False,
+      f"meta.is_placeholder não é False (modo protótipo?): {d.get('meta', {}).get('is_placeholder')}")
+
+    # ---- PARTICIPANTES ----
+    C(len(P) > 0, "data.json sem participantes")
+    if nbets is not None:
+        C(len(P) == nbets, f"nº de apostas no site ({len(P)}) != apostas extraídas ({nbets})")
+    ranks = sorted(p.get("rank") for p in P if isinstance(p.get("rank"), int))
+    C(ranks == list(range(1, len(P) + 1)), "ranks não são 1..N únicos/sequenciais")
+    missing = {}
+    nopicks = []
+    for p in P:
+        for fld in REQUIRED_FIELDS:
+            if fld not in p:
+                missing[fld] = missing.get(fld, 0) + 1
+        if not (p.get("picks") or {}).get("groups"):
+            nopicks.append(p.get("alias"))
+    C(not missing, f"apostas com campos faltando: {missing}")
+    C(not nopicks, f"{len(nopicks)} aposta(s) sem palpites (picks.groups): {nopicks[:5]}")
+
+    # ---- JOGOS ----
+    if ncat is not None:
+        C(len(M) == ncat, f"nº de jogos ({len(M)}) != catálogo ({ncat})")
+    C(all(m.get("match_id") for m in M), "há jogo sem match_id")
+    badfin = [m.get("match_id") for m in M
+              if m.get("status") == "finished" and (m.get("home_score") is None or m.get("away_score") is None)]
+    C(not badfin, f"jogo(s) encerrado(s) sem placar: {badfin}")
+
+    # ---- CATEGORIAS EXTRAS ----
+    C(len(ex) == 11, f"nº de categorias extras ({len(ex)}) != 11")
+    # vencedores só podem existir quando a categoria tem valor real definido
+    bad_winners = [x.get("key") for x in ex if x.get("winners") and x.get("real") in (None, "")]
+    C(not bad_winners, f"categoria com 'winners' sem valor real definido: {bad_winners}")
+
+    # ---- ESTATÍSTICAS ----
+    for key in ("best_exact", "cursed"):
+        s = d.get("stats", {}).get(key)
+        if s:
+            C(s.get("alias") in aliases, f"stats.{key} aponta apelido inexistente: {s.get('alias')}")
+
+    # ---- AVISOS (não bloqueiam) ----
+    mv = d.get("movement", {})
+    W(mv.get("biggest_jump") or mv.get("biggest_drop"), "movimentação vazia (normal no início da Copa)")
+    au = d.get("audit")
+    W(au and au.get("status") != "fonte_indisponivel", "conferência de 2ª fonte indisponível nesta rodada")
+    W(any(x.get("real") not in (None, "") for x in ex), "nenhuma categoria extra definida ainda (normal no início)")
+
+    write_report(crit, warn)
+    if crit:
+        print(f"⛔ AUDITORIA: {len(crit)} problema(s) CRÍTICO(s) — publish bloqueado:")
+        for c in crit:
+            print("   •", c)
+        sys.exit(1)
+    print(f"✅ AUDITORIA OK · {len(P)} apostas · {len(M)} jogos · {len(ex)} categorias"
+          + (f" · {len(warn)} aviso(s)" if warn else ""))
+    for w in warn:
+        print("   ⚠", w)
+    sys.exit(0)
+
+
+def write_report(crit, warn):
+    lines = ["AUDITORIA AUTOMÁTICA DO data.json", "=" * 34, ""]
+    lines.append("STATUS: " + ("⛔ CRÍTICO" if crit else "✅ OK"))
+    if crit:
+        lines.append("\nProblemas críticos (bloqueiam a publicação):")
+        lines += [f"  • {c}" for c in crit]
+    if warn:
+        lines.append("\nAvisos (não bloqueiam):")
+        lines += [f"  ⚠ {w}" for w in warn]
+    if not crit and not warn:
+        lines.append("\nNenhum problema.")
+    try:
+        with open(REPORT, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+    except Exception:
+        pass
+
+
+if __name__ == "__main__":
+    main()
