@@ -10,9 +10,13 @@
 name: Atualiza placar
 
 on:
-  # Gatilho via workflow_dispatch — acionado pelo PINGER externo (cron-job.org)
-  # a cada 10 min, de forma confiável. Também roda pelo botão "Run workflow".
-  # (O agendador nativo do GitHub foi removido por ser irregular p/ alta frequência.)
+  # BASE: agendador do GitHub (grátis, automático). Timing pode variar 10-40 min,
+  # mas garante atualização recorrente sozinho durante toda a Copa.
+  schedule:
+    - cron: "*/10 0-6,15-23 * * *"   # ~a cada 10 min na janela dos jogos (12h-04h BRT)
+    - cron: "0 9,12 * * *"           # 2 atualizações leves de manhã (BRT)
+  # UPGRADE opcional: o pinger externo (cron-job.org) chama via workflow_dispatch
+  # para timing cravado. O botão "Run workflow" também usa este gatilho.
   workflow_dispatch: {}
 
 permissions:
