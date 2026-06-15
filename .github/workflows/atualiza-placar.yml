@@ -104,7 +104,7 @@ jobs:
           print("status:", c.get("status"), "| divergência nova?", new)
           PY
 
-      - name: Versionar dados (commit + push resiliente a corrida do pinger)
+      - name: Versionar dados (commit + push best-effort — nunca derruba o run)
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
@@ -115,19 +115,21 @@ jobs:
             exit 0
           fi
           git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
-          # O pinger dispara com frequência → dois runs podem tentar dar push quase juntos.
-          # Se o remoto andou, re-empilha NOSSOS dados (frescos) por cima e tenta de novo.
-          for i in 1 2 3 4 5; do
-            if git push; then echo "push ok"; exit 0; fi
-            echo "push rejeitado (corrida do pinger) — re-empilhando sobre o remoto (tentativa $i)"
+          # Se o remoto andou (pushes concorrentes), re-empilha NOSSOS dados frescos e tenta de novo.
+          for i in 1 2 3 4 5 6 7 8; do
+            if git push; then echo "push ok (tentativa $i)"; exit 0; fi
+            echo "push rejeitado — re-empilhando sobre o remoto (tentativa $i)"
             git fetch origin main
             git reset --soft origin/main
             git add $FILES
             if git diff --cached --quiet; then echo "remoto já tem dados equivalentes — ok."; exit 0; fi
             git commit -m "🤖 placar atualizado ($(date -u +%H:%M) UTC)"
-            sleep 2
+            sleep 3
           done
-          echo "push falhou após 5 tentativas"; exit 1
+          # IMPORTANTE: NÃO falha o run. O site ao vivo é publicado pelo deploy-pages (abaixo),
+          # que não depende do git push. Um push perdido se auto-corrige no próximo run.
+          echo "::warning::push não concluiu após as tentativas; o site será publicado pelo deploy-pages mesmo assim. Sem alarme."
+          exit 0
 
       # Publica o site no GitHub Pages a CADA rodada — assim o data.json fica
       # fresco na própria origem do site (sem depender do cache de 5 min do raw).
