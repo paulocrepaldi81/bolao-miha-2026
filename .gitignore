@@ -41,3 +41,6 @@ a-rodada/hoje.png
 
 # Exceção: a caricatura oficial do Ricardo PODE ser commitada (apesar de *.png)
 !a-rodada/ricardo.png
+
+# Exceção: asset oficial da bola TRIONDA pode ser commitado (apesar de *.png)
+!a-rodada/trionda.png

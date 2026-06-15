@@ -149,67 +149,86 @@ def curiosidades(jogos):
     return cur[:3]
 
 
+def img_b64(name):
+    p = os.path.join(HERE, name)
+    if os.path.exists(p):
+        return "data:image/png;base64," + base64.b64encode(open(p, "rb").read()).decode()
+    return None
+
+
 def caricatura_html():
-    png = os.path.join(HERE, "ricardo.png")
-    if os.path.exists(png):
-        b64 = base64.b64encode(open(png, "rb").read()).decode()
-        return (f'<img src="data:image/png;base64,{b64}" alt="Ricardo" '
-                f'style="width:74px;height:74px;border-radius:50%;object-fit:cover;'
-                f'border:2px solid #f4c430;flex:0 0 auto"/>')
-    # mascote vetorial (placeholder até a caricatura oficial chegar)
-    return ('<svg width="74" height="74" viewBox="0 0 74 74" style="flex:0 0 auto">'
-            '<circle cx="37" cy="37" r="36" fill="#114a37" stroke="#f4c430" stroke-width="2"/>'
-            '<ellipse cx="37" cy="40" rx="17" ry="18" fill="#e8b48c"/>'
-            '<path d="M20 34 Q37 12 54 34 Q50 24 37 22 Q24 24 20 34Z" fill="#d9a07a"/>'
-            '<rect x="25" y="37" width="11" height="8" rx="2" fill="none" stroke="#222" stroke-width="2"/>'
-            '<rect x="38" y="37" width="11" height="8" rx="2" fill="none" stroke="#222" stroke-width="2"/>'
-            '<line x1="36" y1="40" x2="38" y2="40" stroke="#222" stroke-width="2"/>'
-            '<path d="M31 50 Q37 54 43 50 L43 55 Q37 60 31 55Z" fill="#cfcfcf"/></svg>')
+    src = img_b64("ricardo.png")
+    if src:
+        return (f'<img src="{src}" alt="Ricardo" style="width:88px;height:88px;border-radius:50%;'
+                f'object-fit:cover;border:3px solid #f4c430;flex:0 0 auto;background:#114a37"/>')
+    # mascote vetorial (placeholder até a caricatura oficial do Ricardo chegar)
+    return ('<svg width="88" height="88" viewBox="0 0 74 74" style="flex:0 0 auto;border-radius:50%;'
+            'border:3px solid #f4c430;background:#114a37">'
+            '<ellipse cx="37" cy="42" rx="17" ry="18" fill="#e8b48c"/>'
+            '<path d="M20 36 Q37 14 54 36 Q50 26 37 24 Q24 26 20 36Z" fill="#d9a07a"/>'
+            '<rect x="25" y="39" width="11" height="8" rx="2" fill="none" stroke="#222" stroke-width="2"/>'
+            '<rect x="38" y="39" width="11" height="8" rx="2" fill="none" stroke="#222" stroke-width="2"/>'
+            '<line x1="36" y1="42" x2="38" y2="42" stroke="#222" stroke-width="2"/>'
+            '<path d="M31 52 Q37 56 43 52 L43 57 Q37 62 31 57Z" fill="#cfcfcf"/></svg>')
 
 
 def build_html(last_round, next_round):
     label = sp_date_label(next_round[0]["date"]) if next_round else (
         sp_date_label(last_round[0]["date"]) if last_round else "")
+    ball = img_b64("trionda.png")
+    ball_header = (f'<img src="{ball}" alt="" style="width:62px;height:62px;flex:0 0 auto">' if ball else "")
+    ball_wm = (f'<img src="{ball}" alt="" style="position:absolute;width:300px;height:300px;'
+               f'right:-70px;bottom:-70px;opacity:.06;z-index:0;pointer-events:none">' if ball else "")
 
     def res_row(j):
         win = j["hs"] != j["as"]
-        sc = f'<b style="color:{"#f4c430" if win else "#fff"}">{j["hs"]} × {j["as"]}</b>'
+        sc = (f'<span style="font-family:Anton,sans-serif;font-size:22px;'
+              f'color:{"#f4c430" if win else "#fff"}">{j["hs"]} × {j["as"]}</span>')
         return (f'<div style="display:flex;justify-content:space-between;align-items:center;'
-                f'background:rgba(255,255,255,.06);border-radius:8px;padding:7px 12px">'
-                f'<span>{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
-                f'<span style="text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+                f'background:rgba(255,255,255,.06);border-radius:10px;padding:8px 14px">'
+                f'<span style="flex:1">{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
+                f'<span style="flex:1;text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
     def jogo_row(j, first):
-        bg = "rgba(244,196,48,.12)" if first else "rgba(255,255,255,.06)"
-        return (f'<div style="display:flex;align-items:center;gap:10px;background:{bg};'
-                f'border-radius:8px;padding:7px 12px">'
-                f'<b style="color:#f4c430;min-width:52px">{sp_time(j["date"])}</b>'
-                f'<span>{FLAG.get(j["home"],"")} {j["home"]} × {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+        bg = "rgba(244,196,48,.14)" if first else "rgba(255,255,255,.06)"
+        return (f'<div style="display:flex;align-items:center;gap:12px;background:{bg};'
+                f'border-radius:10px;padding:8px 14px">'
+                f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:54px">{sp_time(j["date"])}</b>'
+                f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} <span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
     resultados = "".join(res_row(j) for j in last_round) or '<div style="color:#bfe3d2">Sem jogos na rodada anterior.</div>'
-    curis = "<br>".join("• " + c for c in curiosidades(last_round))
+    curis = "<br>".join("● " + c for c in curiosidades(last_round))
     jogos = "".join(jogo_row(j, i == 0) for i, j in enumerate(next_round)) or '<div style="color:#bfe3d2">Sem jogos hoje.</div>'
 
+    def sec(txt, extra=""):
+        return (f'<div style="font-family:Anton,sans-serif;font-size:17px;letter-spacing:.5px;color:#f4c430;'
+                f'margin:18px 0 9px;display:flex;align-items:center;gap:8px">{txt}'
+                f'<span style="flex:1;height:2px;background:rgba(244,196,48,.25);border-radius:2px"></span>{extra}</div>')
+
     return f"""<!doctype html><html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <style>*{{margin:0;box-sizing:border-box}}body{{background:#06281c}}</style></head>
-<body><div id="poster" style="width:560px;font-family:'Segoe UI',system-ui,sans-serif;background:#0a3d2c;color:#fff">
-  <div style="background:#0c4a35;padding:16px 18px;display:flex;align-items:center;gap:14px;border-bottom:3px solid #f4c430">
+<body><div id="poster" style="position:relative;overflow:hidden;width:600px;font-family:'Segoe UI',system-ui,sans-serif;background:#0a3d2c;color:#fff">
+  {ball_wm}
+  <div style="position:relative;z-index:1;background:#0c4a35;padding:18px 20px;display:flex;align-items:center;gap:16px;border-bottom:4px solid #f4c430">
     {caricatura_html()}
-    <div>
-      <div style="font-size:12px;letter-spacing:2px;color:#f4c430;font-weight:800">BOLÃO MIHA 2026</div>
-      <div style="font-size:30px;font-weight:900;line-height:1;letter-spacing:1px">A RODADA ⚽</div>
-      <div style="font-size:12px;color:#bfe3d2;margin-top:3px">{label} · por Ricardo Mihalik</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:12px;letter-spacing:3px;color:#f4c430;font-weight:800">BOLÃO MIHA 2026</div>
+      <div style="font-family:Anton,sans-serif;font-size:42px;line-height:.95;letter-spacing:1px">A RODADA</div>
+      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{label} · por Ricardo Mihalik</div>
     </div>
+    {ball_header}
   </div>
-  <div style="padding:16px 18px">
-    <div style="font-size:14px;font-weight:800;color:#f4c430;margin-bottom:8px">📋 ONTEM NA RODADA</div>
-    <div style="display:grid;gap:6px;font-size:15px">{resultados}</div>
-    <div style="font-size:14px;font-weight:800;color:#f4c430;margin:16px 0 8px">🔥 CURIOSIDADES DA RODADA</div>
-    <div style="font-size:13.5px;color:#e9f5ef;line-height:1.7">{curis}</div>
-    <div style="font-size:14px;font-weight:800;color:#f4c430;margin:16px 0 8px">📅 HOJE TEM JOGO <span style="font-size:11px;color:#bfe3d2;font-weight:600">(horário de Brasília)</span></div>
-    <div style="display:grid;gap:6px;font-size:15px">{jogos}</div>
+  <div style="position:relative;z-index:1;padding:6px 20px 20px">
+    {sec("📋 RESULTADOS DA RODADA")}
+    <div style="display:grid;gap:7px">{resultados}</div>
+    {sec("🔥 CURIOSIDADES")}
+    <div style="font-size:14px;color:#e9f5ef;line-height:1.8">{curis}</div>
+    {sec("📅 JOGOS DE HOJE", '<span style="font-family:Segoe UI,system-ui;font-size:11px;color:#bfe3d2;font-weight:600;letter-spacing:0">horário de Brasília</span>')}
+    <div style="display:grid;gap:7px">{jogos}</div>
   </div>
-  <div style="background:#0c4a35;padding:11px 18px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">A classificação atualiza ao vivo no site do bolão 🏆</div>
+  <div style="position:relative;z-index:1;background:#0c4a35;padding:12px 20px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">⚽ Classificação ao vivo no site do bolão · boa sorte! 🏆</div>
 </div></body></html>"""
 
 

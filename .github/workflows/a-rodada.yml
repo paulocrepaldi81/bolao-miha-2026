@@ -11,7 +11,10 @@ name: A Rodada (pôster diário)
 
 on:
   schedule:
-    - cron: "0 10 * * *"   # 07:00 America/Sao_Paulo (UTC-3, sem horário de verão)
+    # 06:45 America/Sao_Paulo (UTC-3, BR não tem horário de verão). É um pouco antes das
+    # 7h DE PROPÓSITO: o agendador do GitHub às vezes atrasa, então o pôster fica pronto
+    # ANTES das 7. Para timing cravado, dá pra somar um ping diário do cron-job.org.
+    - cron: "45 9 * * *"
   workflow_dispatch: {}
 
 permissions:
