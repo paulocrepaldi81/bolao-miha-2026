@@ -191,6 +191,116 @@ const fmtDateTime = iso => {
 };
 const arrow = c => c>0?`<span class="pill up">▲ ${c}</span>` : c<0?`<span class="pill down">▼ ${Math.abs(c)}</span>` : `<span class="pill flat">— 0</span>`;
 
+// EN→PT p/ casar os nomes da ESPN (ao vivo no navegador) com os jogos do data.json
+const EN_TO_PT = {
+  "mexico":"México","south africa":"África do Sul","south korea":"Coreia do Sul","korea republic":"Coreia do Sul",
+  "czechia":"Rep Tcheca","czech republic":"Rep Tcheca","canada":"Canadá","bosnia and herzegovina":"Bósnia",
+  "bosnia-herzegovina":"Bósnia","bosnia":"Bósnia","qatar":"Catar","switzerland":"Suíça","brazil":"Brasil",
+  "morocco":"Marrocos","haiti":"Haiti","scotland":"Escócia","united states":"EUA","usa":"EUA","paraguay":"Paraguai",
+  "australia":"Austrália","türkiye":"Turquia","turkey":"Turquia","germany":"Alemanha","curaçao":"Curaçao","curacao":"Curaçao",
+  "ivory coast":"Costa do Marfim","côte d'ivoire":"Costa do Marfim","cote d'ivoire":"Costa do Marfim","ecuador":"Equador",
+  "netherlands":"Holanda","japan":"Japão","sweden":"Suécia","tunisia":"Tunísia","belgium":"Bélgica","egypt":"Egito",
+  "iran":"Irã","ir iran":"Irã","new zealand":"Nova Zelândia","spain":"Espanha","cape verde":"Cabo Verde","cabo verde":"Cabo Verde",
+  "saudi arabia":"Arábia Saudita","uruguay":"Uruguai","france":"França","senegal":"Senegal","iraq":"Iraque","norway":"Noruega",
+  "argentina":"Argentina","algeria":"Argélia","austria":"Áustria","jordan":"Jordânia","portugal":"Portugal","dr congo":"RD Congo",
+  "congo dr":"RD Congo","uzbekistan":"Uzbequistão","colombia":"Colômbia","england":"Inglaterra","ghana":"Gana",
+  "croatia":"Croácia","panama":"Panamá"
+};
+
+// ===== AO VIVO DE VERDADE: o navegador busca a ESPN direto (oficial, tempo real) =====
+// É o PRIMÁRIO p/ exibir placar ao vivo. Se a ESPN falhar, fica o dado do robô (BACKUP),
+// sem erro. NUNCA mexe em pontos/classificação — só atualiza a EXIBIÇÃO de jogos não
+// encerrados. O robô (pinger) segue como fonte oficial da pontuação.
+let liveTimer=null;
+async function liveOverlay(){
+  let evs;
+  try{
+    const r=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',{cache:'no-store'});
+    if(!r.ok) return;
+    evs=(await r.json()).events||[];
+  }catch(e){ return; }   // ESPN indisponível → mantém o dado do robô, sem quebrar nada
+  if(!Array.isArray(DATA.matches)) return;
+  const key=(x,y)=>[x,y].sort().join('|');
+  const idx={}; DATA.matches.forEach(m=>{ idx[key(m.home_team,m.away_team)]=m; });
+  const pt=c=>EN_TO_PT[(((c.team||{}).displayName)||'').trim().toLowerCase()];
+  let touched=false;
+  evs.forEach(e=>{
+    const comp=(e.competitions||[])[0]; if(!comp) return;
+    const cs=comp.competitors||[]; if(cs.length!==2) return;
+    const t=(e.status||{}).type||{};
+    if(t.state!=='in') return;                       // só jogos em andamento
+    const a=pt(cs[0]), b=pt(cs[1]); if(!a||!b) return;
+    const m=idx[key(a,b)]; if(!m || m.status==='finished') return;  // encerrado = robô manda (tem pontos)
+    const by={}; cs.forEach(c=>{ by[pt(c)]=parseInt(c.score); });
+    const hs=by[m.home_team], as=by[m.away_team];
+    if(Number.isFinite(hs) && Number.isFinite(as)){
+      if(m.status!=='live'||m.home_score!==hs||m.away_score!==as||m.minute!==(e.status||{}).displayClock){
+        m.status='live'; m.home_score=hs; m.away_score=as;
+        m.minute=(e.status||{}).displayClock||t.shortDetail||''; touched=true;
+      }
+    }
+  });
+  if(touched){
+    renderLiveStrip(); renderCurrentGameStats();
+    const tab=document.querySelector('#matchTabs .tab.active')?.dataset.f||'scheduled';
+    renderMatches(tab);
+  }
+}
+function startLivePolling(){ if(liveTimer) clearInterval(liveTimer); liveOverlay(); liveTimer=setInterval(liveOverlay, 45000); }
+
+// ===== Palpites do jogo de agora (estatísticas do jogo atual/ao vivo) =====
+// Olha TODAS as apostas para o jogo que está rolando (ou o próximo) e mostra placar
+// mais escolhido, mais ousado e a aposta solitária — só QUANTIDADES, sem nomes.
+function currentGameMatch(){
+  const ms=DATA.matches||[];
+  const live=ms.filter(m=>m.status==='live')
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
+  if(live.length) return {m:live[0], live:true, more:live.length-1};
+  const nowMs=Date.now();
+  const next=ms.filter(m=>m.status==='scheduled'&&m.kickoff_sao_paulo&&new Date(m.kickoff_sao_paulo).getTime()>nowMs-2.5*3600e3)
+    .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
+  return next?{m:next, live:false, more:0}:null;
+}
+function renderCurrentGameStats(){
+  const box=document.getElementById('cgStats'); if(!box) return;
+  const cur=currentGameMatch();
+  if(!cur){ box.hidden=true; box.innerHTML=''; return; }
+  const m=cur.m;
+  const sum=k=>{ const [h,a]=k.split('×').map(Number); return h+a; };
+  const preds=[];
+  (DATA.participants||[]).forEach(p=>{
+    const g=p.picks&&p.picks.groups&&p.picks.groups[m.match_id];
+    if(g&&g[0]!=null&&g[1]!=null) preds.push(g[0]+'×'+g[1]);
+  });
+  box.hidden=false;
+  const moreTag = cur.more>0?` <span class="cg-more">+${cur.more} ao vivo</span>`:'';
+  const status = cur.live
+    ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${m.minute||'em andamento'}</span>`
+    : `<span class="chip chip-sched">📅 próximo</span> <span class="cg-min">${fmtDateTime(m.kickoff_sao_paulo)}</span>`;
+  const score = cur.live ? `<b>${m.home_score??0}×${m.away_score??0}</b>` : '×';
+  const head=`<div class="cg-head">
+    <div class="cg-match">${flag(m.home_team)}${m.home_team} ${score} ${m.away_team}${flagA(m.away_team)}${moreTag}</div>
+    <div class="cg-status">${status}</div></div>`;
+  if(!preds.length){
+    box.innerHTML=head+`<div class="cg-empty">Sem palpites de placar para este jogo (o bolão crava placar só na 1ª fase).</div>`;
+    return;
+  }
+  const counts=new Map();
+  preds.forEach(k=>counts.set(k,(counts.get(k)||0)+1));
+  const ents=[...counts.entries()];
+  const most   =ents.reduce((x,y)=> y[1]>x[1]?y:x);
+  const boldest=ents.reduce((x,y)=> (sum(y[0])>sum(x[0])||(sum(y[0])===sum(x[0])&&y[1]>x[1]))?y:x);
+  const lonely =ents.reduce((x,y)=> (y[1]<x[1]||(y[1]===x[1]&&sum(y[0])>sum(x[0])))?y:x);
+  const card=(ic,lab,k,n,sub)=>`<div class="cg-card"><div class="cg-ic">${ic}</div>
+    <div class="cg-cl">${lab}</div><div class="cg-sc">${k}</div>
+    <div class="cg-n">${n} aposta${n!==1?'s':''}</div><div class="cg-sub">${sub}</div></div>`;
+  box.innerHTML=head+`<div class="cg-grid">
+    ${card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria')}
+    ${card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados')}
+    ${card('🎲','Aposta solitária',lonely[0],lonely[1],lonely[1]===1?'só uma cravou esse':'o menos escolhido')}
+  </div><div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
+}
+
 function render(){
   const P = [...DATA.participants].sort((a,b)=>a.rank-b.rank);
   // hero
@@ -253,11 +363,8 @@ function render(){
   const st = DATA.stats || {};
   const stat = o => o ? `${o.alias} · ${o.val}` : '—';
   document.getElementById('s-exact').textContent = stat(st.best_exact);
-  document.getElementById('s-optim').textContent = stat(st.optimistic);
   document.getElementById('s-cursed').textContent = stat(st.cursed);
-  document.getElementById('s-elim').textContent  = st.elimination || '—';
-  document.getElementById('s-first').textContent = stat(st.longest_first);
-  document.getElementById('s-fav').textContent   = st.fav_score || '2 × 1';
+  renderCurrentGameStats();
   // corrida pelo título — modelo simples: pontos atuais × máximo ainda possível
   const ranked = [...P].sort((a,b)=> b.score - a.score || (b.max_possible??0)-(a.max_possible??0));
   const TOPP = 10;
@@ -736,5 +843,6 @@ async function boot(){
   }catch(e){}
   renderFame();
   render();
+  startLivePolling();   // ao vivo de verdade (ESPN direto) por cima do dado do robô
 }
 boot();

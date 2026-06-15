@@ -221,6 +221,24 @@
   .pain .tag{color:var(--coral);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.6px}
 
   /* ---- Stats ---- */
+  /* ---- Palpites do jogo de agora ---- */
+  .cg-wrap{background:linear-gradient(180deg,rgba(95,224,138,.07),var(--card));border:1px solid var(--line-2);
+    border-radius:var(--r);padding:18px;margin-bottom:16px}
+  .cg-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .cg-match{font-weight:800;font-size:17px}
+  .cg-match b{font-family:Anton;font-size:19px;margin:0 4px}
+  .cg-more{font-size:11px;color:var(--ink-faint);font-weight:700}
+  .cg-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim)}
+  .cg-min{font-family:Anton;color:#FF6B72}
+  .cg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .cg-card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;text-align:center}
+  .cg-ic{font-size:20px}
+  .cg-cl{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+  .cg-sc{font-family:Anton;font-size:30px;color:var(--ink);line-height:1.1;margin:4px 0}
+  .cg-n{font-weight:800;color:var(--green)}
+  .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
+  .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
+  .cg-empty{color:var(--ink-dim);font-size:13px}
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .stat .ico{font-size:20px}
@@ -534,14 +552,11 @@
 <!-- ============ STATS ============ -->
 <section id="stats" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">Atualiza a cada resultado</span></div>
+    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">As apostas do jogo de agora + números do bolão</span></div>
+    <div class="cg-wrap" id="cgStats" hidden></div>
     <div class="stat-grid">
       <div class="stat"><div class="ico">🎯</div><div class="lab">Melhor taxa de placar exato</div><div class="val" id="s-exact">—</div><div class="extra">vira respeito no grupo</div></div>
-      <div class="stat"><div class="ico">🌈</div><div class="lab">Mais otimista</div><div class="val" id="s-optim">—</div><div class="extra">maior média de gols nos palpites</div></div>
       <div class="stat"><div class="ico">🧤</div><div class="lab">Pé-frio da rodada</div><div class="val" id="s-cursed">—</div><div class="extra">ainda caçando o acerto (acontece)</div></div>
-      <div class="stat"><div class="ico">🧮</div><div class="lab">Mais perto da eliminação</div><div class="val" id="s-elim">—</div><div class="extra">matematicamente sofrendo</div></div>
-      <div class="stat"><div class="ico">⏱️</div><div class="lab">Mais tempo na liderança</div><div class="val" id="s-first">—</div><div class="extra">o rei da montanha</div></div>
-      <div class="stat"><div class="ico">🎲</div><div class="lab">Placar favorito do bolão</div><div class="val" id="s-fav">2 × 1</div><div class="extra">o eterno chute seguro</div></div>
     </div>
   </div>
 </section>
