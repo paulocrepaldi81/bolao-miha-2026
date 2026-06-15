@@ -289,17 +289,22 @@ function renderCurrentGameStats(){
   const counts=new Map();
   preds.forEach(k=>counts.set(k,(counts.get(k)||0)+1));
   const ents=[...counts.entries()];
-  const most   =ents.reduce((x,y)=> y[1]>x[1]?y:x);
-  const boldest=ents.reduce((x,y)=> (sum(y[0])>sum(x[0])||(sum(y[0])===sum(x[0])&&y[1]>x[1]))?y:x);
-  const lonely =ents.reduce((x,y)=> (y[1]<x[1]||(y[1]===x[1]&&sum(y[0])>sum(x[0])))?y:x);
+  // os 3 cards mostram placares SEMPRE DIFERENTES (cada métrica exclui os já mostrados),
+  // pra não repetir o mesmo placar (ex.: o mais ousado também ser o único).
+  const most    = ents.reduce((x,y)=> y[1]>x[1]?y:x);
+  const restB   = ents.filter(e=> e[0]!==most[0]);
+  const boldest = restB.length ? restB.reduce((x,y)=> (sum(y[0])>sum(x[0])||(sum(y[0])===sum(x[0])&&y[1]>x[1]))?y:x) : null;
+  const usados  = new Set([most[0], boldest && boldest[0]]);
+  const restL   = ents.filter(e=> !usados.has(e[0]));
+  const lonely  = restL.length ? restL.reduce((x,y)=> (y[1]<x[1]||(y[1]===x[1]&&sum(y[0])>sum(x[0])))?y:x) : null;
   const card=(ic,lab,k,n,sub)=>`<div class="cg-card"><div class="cg-ic">${ic}</div>
     <div class="cg-cl">${lab}</div><div class="cg-sc">${k}</div>
     <div class="cg-n">${n} aposta${n!==1?'s':''}</div><div class="cg-sub">${sub}</div></div>`;
-  box.innerHTML=head+`<div class="cg-grid">
-    ${card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria')}
-    ${card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados')}
-    ${card('🎲','Aposta solitária',lonely[0],lonely[1],lonely[1]===1?'só uma cravou esse':'o menos escolhido')}
-  </div><div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
+  let cards = card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria');
+  if(boldest) cards += card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados');
+  if(lonely)  cards += card('🎲', lonely[1]===1?'Aposta solitária':'Placar menos escolhido', lonely[0], lonely[1], lonely[1]===1?'só uma cravou esse':'o menos escolhido');
+  box.innerHTML=head+`<div class="cg-grid">${cards}</div>`
+    +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
 }
 
 function render(){
