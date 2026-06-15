@@ -357,7 +357,6 @@ function render(){
   const mv = DATA.movement;
   document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
   document.getElementById('bigDrop').textContent = mv.biggest_drop ? `${mv.biggest_drop.alias} ▼${Math.abs(mv.biggest_drop.delta)}` : '—';
-  document.getElementById('longestFirst').textContent = mv.longest_first || '—';
   document.getElementById('painRound').textContent = mv.pain_of_round;
   // stats
   const st = DATA.stats || {};
@@ -588,13 +587,23 @@ function renderLiveStrip(){
     <div class="matches">${live.map(matchCardHTML).join('')}</div>`;
 }
 
+let matchExpanded=false;
+const MATCH_LIMIT=9;   // mostra ~3 linhas; o resto fica atrás de "Ver todos" (anti-scroll)
 function renderMatches(filter){
   const list = DATA.matches.filter(m=>m.status===filter)
     .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
   const el = document.getElementById('matchList');
+  const more = document.getElementById('matchMore');
   const empty = filter==='scheduled' ? 'Sem próximos jogos no momento.' : 'Nenhum jogo encerrado ainda.';
-  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; return; }
-  el.innerHTML = list.map(matchCardHTML).join('');
+  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; if(more) more.hidden=true; return; }
+  const collapsed = !matchExpanded && list.length>MATCH_LIMIT;
+  const view = collapsed ? list.slice(0,MATCH_LIMIT) : list;
+  el.innerHTML = view.map(matchCardHTML).join('');
+  if(more){
+    if(collapsed){ more.hidden=false; more.textContent=`Ver todos os ${list.length} jogos ▾`; }
+    else if(matchExpanded && list.length>MATCH_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
+    else more.hidden=true;
+  }
 }
 
 // Hall da Fama (estático — independe do estado pré/demo)
@@ -785,7 +794,11 @@ document.addEventListener('click',e=>{ if(!e.target.closest('.ma-search')) docum
 document.getElementById('matchTabs').addEventListener('click',e=>{
   const b=e.target.closest('.tab'); if(!b)return;
   document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.remove('active'));
-  b.classList.add('active'); renderMatches(b.dataset.f);
+  b.classList.add('active'); matchExpanded=false; renderMatches(b.dataset.f);
+});
+document.getElementById('matchMore').addEventListener('click',()=>{
+  matchExpanded=!matchExpanded;
+  renderMatches(document.querySelector('#matchTabs .tab.active')?.dataset.f||'scheduled');
 });
 
 // alternar estado de visualização (pré-copa / simulação)

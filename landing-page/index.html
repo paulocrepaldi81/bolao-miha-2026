@@ -239,6 +239,9 @@
   .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
   .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
   .cg-empty{color:var(--ink-dim);font-size:13px}
+  /* sub-título dentro de uma seção (ex.: Estatísticas unificada) */
+  .sub-h{font-size:14px;font-weight:800;color:var(--ink);margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+  .sub-h:first-of-type{margin-top:4px}
   .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .stat .ico{font-size:20px}
@@ -402,12 +405,11 @@
     <nav class="nav-links">
       <a href="#minha-aposta">Minha Aposta</a>
       <a href="#leaderboard">Classificação</a>
+      <a href="#prize">Prêmio</a>
       <a href="#matches">Jogos</a>
-      <a href="#movement">Movimentação</a>
       <a href="#stats">Estatísticas</a>
       <a href="#extras">Extras</a>
       <a href="#historia">Hall da Fama</a>
-      <a href="#prob">Chances</a>
       <a href="#audit">Fontes</a>
     </nav>
   </div>
@@ -470,21 +472,6 @@
   </div>
 </div>
 
-<!-- ============ PRÊMIO ACUMULADO ============ -->
-<section id="prize" style="padding-top:30px;padding-bottom:10px">
-  <div class="wrap">
-    <div class="prize-card">
-      <div class="prize-left">
-        <div class="prize-lab">💰 Prêmio acumulado em jogo</div>
-        <div class="prize-amount" id="prizeAmount">R$ 0</div>
-        <div class="prize-sub" id="prizeSub">—</div>
-      </div>
-      <div class="prize-split" id="prizeSplit"></div>
-    </div>
-    <div class="prize-foot" id="prizeFoot"></div>
-  </div>
-</section>
-
 <!-- ============ MINHA APOSTA ============ -->
 <section id="minha-aposta" style="padding-bottom:10px">
   <div class="wrap">
@@ -523,8 +510,24 @@
   </div>
 </section>
 
+<!-- ============ PRÊMIO ACUMULADO ============ -->
+<section id="prize" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="sec-head"><h2 class="display">Prêmio acumulado</h2><span class="kick">O que está em jogo · só apostas pagas concorrem à grana</span></div>
+    <div class="prize-card">
+      <div class="prize-left">
+        <div class="prize-lab">💰 Prêmio acumulado em jogo</div>
+        <div class="prize-amount" id="prizeAmount">R$ 0</div>
+        <div class="prize-sub" id="prizeSub">—</div>
+      </div>
+      <div class="prize-split" id="prizeSplit"></div>
+    </div>
+    <div class="prize-foot" id="prizeFoot"></div>
+  </div>
+</section>
+
 <!-- ============ MATCH CENTER ============ -->
-<section id="matches" style="background:var(--bg-2)">
+<section id="matches">
   <div class="wrap">
     <div class="sec-head"><h2 class="display">Central de jogos</h2><span class="kick">Horários em São Paulo (BRT, GMT−3) · atualiza junto com o robô</span></div>
     <div class="live-strip" id="liveStrip" hidden></div>
@@ -533,27 +536,36 @@
       <button class="tab" data-f="finished">Encerrados</button>
     </div>
     <div class="matches" id="matchList"></div>
+    <button class="lb-more" id="matchMore" hidden></button>
   </div>
 </section>
 
-<!-- ============ MOVEMENT ============ -->
-<section id="movement">
+<!-- ============ ESTATÍSTICAS (unificada: jogo de agora + corrida + movimentação + números) ============ -->
+<section id="stats" style="background:var(--bg-2)">
   <div class="wrap">
-    <div class="sec-head"><h2 class="display">Movimentação da rodada</h2><span class="kick">Quem subiu, quem despencou</span></div>
+    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">O jogo de agora nas apostas, a corrida pelo título e os números do bolão</span></div>
+
+    <div class="cg-wrap" id="cgStats" hidden></div>
+
+    <h3 class="sub-h">🏁 Corrida pelo título</h3>
+    <div class="prob-wrap">
+      <div class="prob-list" id="probList"></div>
+      <div class="method">
+        <b>Como funciona.</b> <span id="methodText">—</span>
+        <div style="margin-top:12px;color:var(--ink-faint);font-size:12.5px">
+          A barra cheia = <b>pontos já conquistados</b>; a parte clara = <b>pontos ainda em jogo</b>. Quem não consegue mais alcançar o líder aparece como <b>eliminado</b>. Sem chutes de probabilidade — só a matemática dos pontos, recalculada a cada resultado.
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-h">📊 Movimentação da rodada</h3>
     <div class="move-grid">
       <div class="move-card"><div class="lab" style="color:var(--ink-faint);font-size:12px;font-weight:700">📈 Maior salto</div><div class="big up" id="bigJump">—</div></div>
       <div class="move-card"><div class="lab" style="color:var(--ink-faint);font-size:12px;font-weight:700">📉 Maior tombo</div><div class="big down" id="bigDrop">—</div></div>
-      <div class="move-card"><div class="lab" style="color:var(--ink-faint);font-size:12px;font-weight:700">⏱️ Mais tempo em 1º</div><div class="big" id="longestFirst">—</div></div>
       <div class="pain"><div class="tag">😖 Dor da rodada</div><div style="font-size:18px;font-weight:700;margin-top:6px" id="painRound">—</div></div>
     </div>
-  </div>
-</section>
 
-<!-- ============ STATS ============ -->
-<section id="stats" style="background:var(--bg-2)">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="display">Estatísticas (e algumas zoeiras)</h2><span class="kick">As apostas do jogo de agora + números do bolão</span></div>
-    <div class="cg-wrap" id="cgStats" hidden></div>
+    <h3 class="sub-h">🎯 Números do bolão</h3>
     <div class="stat-grid">
       <div class="stat"><div class="ico">🎯</div><div class="lab">Melhor taxa de placar exato</div><div class="val" id="s-exact">—</div><div class="extra">vira respeito no grupo</div></div>
       <div class="stat"><div class="ico">🧤</div><div class="lab">Pé-frio da rodada</div><div class="val" id="s-cursed">—</div><div class="extra">ainda caçando o acerto (acontece)</div></div>
@@ -570,7 +582,7 @@
 </section>
 
 <!-- ============ HALL DA FAMA ============ -->
-<section id="historia">
+<section id="historia" style="background:var(--bg-2)">
   <div class="wrap">
     <div class="sec-head"><h2 class="display">Hall da Fama</h2><span class="kick">Campeões das edições anteriores</span></div>
     <div class="fame-chips">
@@ -583,24 +595,8 @@
   </div>
 </section>
 
-<!-- ============ PROBABILITY ============ -->
-<section id="prob">
-  <div class="wrap">
-    <div class="sec-head"><h2 class="display">Corrida pelo título</h2><span class="kick">Pontos atuais × máximo ainda possível</span></div>
-    <div class="prob-wrap">
-      <div class="prob-list" id="probList"></div>
-      <div class="method">
-        <b>Como funciona.</b> <span id="methodText">—</span>
-        <div style="margin-top:12px;color:var(--ink-faint);font-size:12.5px">
-          A barra cheia = <b>pontos já conquistados</b>; a parte clara = <b>pontos ainda em jogo</b>. Quem não consegue mais alcançar o líder aparece como <b>eliminado</b>. Sem chutes de probabilidade — só a matemática dos pontos, recalculada a cada resultado.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ AUDIT ============ -->
-<section id="audit" style="background:var(--bg-2)">
+<section id="audit">
   <div class="wrap">
     <div class="sec-head"><h2 class="display">Auditoria & fontes</h2><span class="kick">Transparência total</span></div>
     <div class="audit">
