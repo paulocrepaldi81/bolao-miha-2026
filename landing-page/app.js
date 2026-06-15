@@ -303,21 +303,7 @@ function renderCurrentGameStats(){
   let cards = card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria');
   if(boldest) cards += card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados');
   if(lonely)  cards += card('🎲', lonely[1]===1?'Aposta solitária':'Placar menos escolhido', lonely[0], lonely[1], lonely[1]===1?'só uma cravou esse':'o menos escolhido');
-
-  // Palpite de RESULTADO (1X2): quantos no mandante / empate / visitante
-  let hw=0,dr=0,aw=0;
-  preds.forEach(k=>{ const [h,a]=k.split('×').map(Number); if(h>a)hw++; else if(h<a)aw++; else dr++; });
-  const tot=preds.length, pc=n=>Math.round(n/tot*100);
-  const seg=(n,color)=> n>0?`<div style="width:${(n/tot*100).toFixed(1)}%;background:${color}"></div>`:'';
-  const r1x2=`<div class="cg-1x2">
-    <div class="cg-1x2-h">Quem o bolão acha que ganha</div>
-    <div class="cg-1x2-bar">${seg(hw,'#57d98a')}${seg(dr,'#e8b94e')}${seg(aw,'#5b9bff')}</div>
-    <div class="cg-1x2-leg">
-      <span><i style="background:#57d98a"></i>${flag(m.home_team)}${m.home_team} <b>${hw}</b> · ${pc(hw)}%</span>
-      <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pc(dr)}%</span>
-      <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pc(aw)}%</span>
-    </div></div>`;
-  box.innerHTML=head+r1x2+`<div class="cg-grid">${cards}</div>`
+  box.innerHTML=head+`<div class="cg-grid">${cards}</div>`
     +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
 }
 
