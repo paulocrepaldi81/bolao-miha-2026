@@ -350,7 +350,6 @@ function render(){
   renderPrize();
   // leaderboard (escalável até 70+ apostas)
   renderLeaderboard();
-  renderBomPalpite();
   renderExtras();
   renderMinhaAposta();
   // movement
@@ -511,19 +510,6 @@ function renderLeaderboard(){
   if(collapsed){ more.hidden=false; more.textContent=`Ver todas as ${list.length} apostas ▾`; }
   else if(lbExpanded && !q && list.length>LB_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
   else more.hidden=true;
-}
-// Bom de Palpite — ranking só da 1ª fase (top 5)
-function renderBomPalpite(){
-  const P = [...DATA.participants]
-    .map(p => ({...p, ph1: p.phase1_points ?? p.score}))
-    .sort((a,b) => b.ph1 - a.ph1 || b.score - a.score)
-    .slice(0, 5);
-  document.getElementById('bpList').innerHTML = P.map((p,i) => `
-    <div class="bp-row">
-      <span class="bp-rk">${i+1}</span>
-      <span class="bp-nm">${i===0?'🏁 ':''}${p.alias}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
-      <span class="bp-pts">${p.ph1} pts</span>
-    </div>`).join('') || '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
 }
 
 // Categorias Extras — o que já aconteceu na real + quem pontuou
