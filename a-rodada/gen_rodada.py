@@ -52,6 +52,19 @@ FLAG = {
     "Uzbequistão": "🇺🇿", "Colômbia": "🇨🇴", "Inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Gana": "🇬🇭", "Croácia": "🇭🇷",
     "Panamá": "🇵🇦", "Catar": "🇶🇦", "Suíça": "🇨🇭", "Coreia do Sul": "🇰🇷", "Rep Tcheca": "🇨🇿",
 }
+TEAM_GROUP = {
+    "Coreia do Sul": "A", "México": "A", "Rep Tcheca": "A", "África do Sul": "A",
+    "Bósnia": "B", "Canadá": "B", "Catar": "B", "Suíça": "B", "Brasil": "C",
+    "Escócia": "C", "Haiti": "C", "Marrocos": "C", "Austrália": "D", "EUA": "D",
+    "Paraguai": "D", "Turquia": "D", "Alemanha": "E", "Costa do Marfim": "E",
+    "Curaçao": "E", "Equador": "E", "Holanda": "F", "Japão": "F", "Suécia": "F",
+    "Tunísia": "F", "Bélgica": "G", "Egito": "G", "Irã": "G", "Nova Zelândia": "G",
+    "Arábia Saudita": "H", "Cabo Verde": "H", "Espanha": "H", "Uruguai": "H",
+    "França": "I", "Iraque": "I", "Noruega": "I", "Senegal": "I", "Argentina": "J",
+    "Argélia": "J", "Jordânia": "J", "Áustria": "J", "Colômbia": "K", "Portugal": "K",
+    "RD Congo": "K", "Uzbequistão": "K", "Croácia": "L", "Gana": "L", "Inglaterra": "L",
+    "Panamá": "L",
+}
 DIAS = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
          "agosto", "setembro", "outubro", "novembro", "dezembro"]
@@ -121,18 +134,31 @@ def sp_daykey(iso):
         return iso[:10]
 
 
+def label_day(daykey):
+    try:
+        d = dt.date.fromisoformat(daykey)
+        return f"{DIAS[d.weekday()].capitalize()}, {d.day} de {MESES[d.month - 1]}"
+    except Exception:
+        return ""
+
+
 def pick_rounds(events):
+    """Retorna (resultados, jogos_da_rodada, dia_resultados, dia_rodada).
+    - jogos_da_rodada = TODOS os jogos do próximo dia de SP com jogo (agendado, AO VIVO e
+      já encerrado nesse dia) — assim nada cai no vão (era o bug do jogo ao vivo sumindo).
+    - resultados = jogos encerrados do último dia de SP ANTERIOR ao dia da rodada."""
     finished = [e for e in events if e["state"] == "post" and e["hs"] is not None]
-    scheduled = [e for e in events if e["state"] == "pre"]
-    last_round = []
-    if finished:
-        last_day = sp_daykey(finished[-1]["date"])
-        last_round = [e for e in finished if sp_daykey(e["date"]) == last_day]
-    next_round = []
-    if scheduled:
-        next_day = sp_daykey(scheduled[0]["date"])
-        next_round = [e for e in scheduled if sp_daykey(e["date"]) == next_day]
-    return last_round, next_round
+    upcoming = [e for e in events if e["state"] in ("pre", "in")]
+    up_day = sp_daykey(min(upcoming, key=lambda e: e["date"])["date"]) if upcoming else None
+    next_round = sorted([e for e in events if sp_daykey(e["date"]) == up_day],
+                        key=lambda e: e["date"]) if up_day else []
+    fin_days = sorted({sp_daykey(e["date"]) for e in finished})
+    if up_day:
+        fin_days = [d for d in fin_days if d < up_day]
+    res_day = fin_days[-1] if fin_days else None
+    last_round = sorted([e for e in finished if sp_daykey(e["date"]) == res_day],
+                        key=lambda e: e["date"]) if res_day else []
+    return last_round, next_round, res_day, up_day
 
 
 def curiosidades(jogos):
@@ -214,9 +240,18 @@ def caricatura_html():
             '<path d="M31 52 Q37 56 43 52 L43 57 Q37 62 31 57Z" fill="#cfcfcf"/></svg>')
 
 
-def build_html(last_round, next_round):
-    label = sp_date_label(next_round[0]["date"]) if next_round else (
-        sp_date_label(last_round[0]["date"]) if last_round else "")
+def grp_chip(team):
+    g = TEAM_GROUP.get(team)
+    if not g:
+        return ""
+    return (f'<span style="font-family:Anton,sans-serif;font-size:11px;color:#0a3d2c;background:#f4c430;'
+            f'border-radius:5px;padding:2px 7px;flex:0 0 auto;letter-spacing:.3px">GRUPO {g}</span>')
+
+
+def build_html(last_round, next_round, res_day, up_day):
+    lbl_jogos = label_day(up_day)
+    lbl_res = label_day(res_day)
+    small = "font-family:Segoe UI,system-ui;font-size:11px;color:#bfe3d2;font-weight:600;letter-spacing:0"
     ball = img_b64("trionda.png")
     ball_header = (f'<img src="{ball}" alt="" style="width:62px;height:62px;flex:0 0 auto">' if ball else "")
     ball_wm = (f'<img src="{ball}" alt="" style="position:absolute;width:300px;height:300px;'
@@ -226,27 +261,42 @@ def build_html(last_round, next_round):
         win = j["hs"] != j["as"]
         sc = (f'<span style="font-family:Anton,sans-serif;font-size:22px;'
               f'color:{"#f4c430" if win else "#fff"}">{j["hs"]} × {j["as"]}</span>')
-        return (f'<div style="display:flex;justify-content:space-between;align-items:center;'
+        return (f'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
                 f'background:rgba(255,255,255,.06);border-radius:10px;padding:8px 14px">'
+                f'{grp_chip(j["home"])}'
                 f'<span style="flex:1">{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
                 f'<span style="flex:1;text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
-    def jogo_row(j, first):
-        bg = "rgba(244,196,48,.14)" if first else "rgba(255,255,255,.06)"
-        return (f'<div style="display:flex;align-items:center;gap:12px;background:{bg};'
-                f'border-radius:10px;padding:8px 14px">'
-                f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:54px">{sp_time(j["date"])}</b>'
-                f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} <span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+    def jogo_row(j):
+        st = j["state"]
+        if st == "in":
+            tag = (f'<b style="font-family:Anton,sans-serif;font-size:17px;color:#ff7a7a;min-width:64px">'
+                   f'🔴 {j["hs"]}×{j["as"]}</b>')
+            bg = "rgba(230,29,37,.14)"
+        elif st == "post":
+            tag = (f'<b style="font-family:Anton,sans-serif;font-size:17px;color:#9ccdb9;min-width:64px">'
+                   f'✓ {j["hs"]}×{j["as"]}</b>')
+            bg = "rgba(255,255,255,.05)"
+        else:
+            tag = (f'<b style="font-family:Anton,sans-serif;font-size:18px;color:#f4c430;min-width:64px">'
+                   f'{sp_time(j["date"])}</b>')
+            bg = "rgba(255,255,255,.06)"
+        return (f'<div style="display:flex;align-items:center;gap:11px;background:{bg};'
+                f'border-radius:10px;padding:8px 14px">{grp_chip(j["home"])}{tag}'
+                f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} '
+                f'<span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
 
     resultados = "".join(res_row(j) for j in last_round) or '<div style="color:#bfe3d2">Sem jogos na rodada anterior.</div>'
     curis = "<br>".join("● " + c for c in curiosidades(last_round))
-    jogos = "".join(jogo_row(j, i == 0) for i, j in enumerate(next_round)) or '<div style="color:#bfe3d2">Sem jogos hoje.</div>'
+    jogos = "".join(jogo_row(j) for j in next_round) or '<div style="color:#bfe3d2">Sem jogos nesta rodada.</div>'
 
     def sec(txt, extra=""):
         return (f'<div style="font-family:Anton,sans-serif;font-size:17px;letter-spacing:.5px;color:#f4c430;'
                 f'margin:18px 0 9px;display:flex;align-items:center;gap:8px">{txt}'
                 f'<span style="flex:1;height:2px;background:rgba(244,196,48,.25);border-radius:2px"></span>{extra}</div>')
 
+    res_extra = f'<span style="{small}">{lbl_res}</span>' if lbl_res else ""
+    jogos_extra = f'<span style="{small}">{lbl_jogos} · horário de Brasília</span>'
     return f"""<!doctype html><html><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
@@ -258,16 +308,16 @@ def build_html(last_round, next_round):
     <div style="flex:1;min-width:0">
       <div style="font-size:12px;letter-spacing:3px;color:#f4c430;font-weight:800">BOLÃO MIHA 2026</div>
       <div style="font-family:Anton,sans-serif;font-size:42px;line-height:.95;letter-spacing:1px">A RODADA</div>
-      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{label} · por Ricardo Mihalik</div>
+      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{lbl_jogos or lbl_res} · por Ricardo Mihalik</div>
     </div>
     {ball_header}
   </div>
   <div style="position:relative;z-index:1;padding:6px 20px 20px">
-    {sec("📋 RESULTADOS DA RODADA")}
+    {sec("📋 RESULTADOS DA RODADA", res_extra)}
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
     <div style="font-size:14px;color:#e9f5ef;line-height:1.8">{curis}</div>
-    {sec("📅 JOGOS DE HOJE", '<span style="font-family:Segoe UI,system-ui;font-size:11px;color:#bfe3d2;font-weight:600;letter-spacing:0">horário de Brasília</span>')}
+    {sec("📅 JOGOS DA RODADA", jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>
   <div style="position:relative;z-index:1;background:#0c4a35;padding:12px 20px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">⚽ Classificação ao vivo no site do bolão · boa sorte! 🏆</div>
@@ -286,8 +336,8 @@ def render_png(html):
 
 def main():
     events = fetch_events()
-    last_round, next_round = pick_rounds(events)
-    html = build_html(last_round, next_round)
+    last_round, next_round, res_day, up_day = pick_rounds(events)
+    html = build_html(last_round, next_round, res_day, up_day)
     if os.environ.get("RODADA_HTML_ONLY"):
         with open(os.path.join(HERE, "preview.html"), "w", encoding="utf-8") as f:
             f.write(html)
