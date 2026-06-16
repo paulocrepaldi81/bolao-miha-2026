@@ -55,6 +55,7 @@ def fetch_espn_events():
     from catalog import get_catalog
     pairs = {frozenset((m["home"], m["away"])): m for m in get_catalog()}
     out = {}
+    scorers = {}   # artilharia (ESPN, completa): {nome: {"goals": n, "team": pt}} acumulada
     for a, b in WINDOWS:
         req = urllib.request.Request(ESPN.format(a=a, b=b), headers={"User-Agent": "bolao-miha-bot"})
         with urllib.request.urlopen(req, timeout=30) as r:
@@ -79,8 +80,20 @@ def fetch_espn_events():
             if not m:
                 continue
             t = ev.get("status", {}).get("type", {})
+            state = t.get("state")
             events = []
             for det in comp.get("details", []):
+                # Artilharia (ESPN = fonte completa): conta gols de jogos que começaram (post/in);
+                # pênalti CONTA, gol contra NÃO conta pra ninguém. Assim agrupa empates corretamente.
+                gtype = ((det.get("type") or {}).get("text") or "").lower()
+                if state in ("post", "in") and (det.get("scoringPlay") or "goal" in gtype) and not det.get("ownGoal"):
+                    a0 = (det.get("athletesInvolved") or [{}])[0]
+                    gnm = a0.get("displayName") or a0.get("shortName")
+                    if gnm:
+                        gtid = str((a0.get("team") or {}).get("id") or det.get("team", {}).get("id") or "")
+                        rec = scorers.setdefault(gnm, {"goals": 0, "team": None})
+                        rec["goals"] += 1
+                        rec["team"] = rec["team"] or id2pt.get(gtid)
                 if not (det.get("redCard") or det.get("ownGoal")):
                     continue
                 ath = (det.get("athletesInvolved") or [{}])[0]
@@ -95,7 +108,7 @@ def fetch_espn_events():
                 })
             out[m["match_id"]] = {"date": ev.get("date") or "", "completed": bool(t.get("completed")),
                                   "events": events}
-    return out
+    return out, scorers
 
 
 def main():
@@ -137,29 +150,52 @@ def main():
         partials["mais_goleadora"] = f"{ba[0]} ({ba[1]} gols)"
         partials["menos_vazada"] = f"{bd[0]} ({bd[1]} sofrido(s))"
 
-    # ---------- 2) Artilharia via football-data ----------
-    if token:
-        try:
-            sc = fd_get("/competitions/WC/scorers?limit=3", token)
-            scorers = sc.get("scorers", [])
-            if scorers:
-                s = scorers[0]
-                nome = s.get("player", {}).get("name", "?")
-                equipe = EN_PT.get((s.get("team", {}).get("name") or "").lower(),
-                                   s.get("team", {}).get("name", "?"))
-                gols = s.get("goals", "?")
-                partials["artilheiro_nome"] = f"{nome} ({equipe}) — {gols} gol(s)"
-                partials["artilheiro_equipe"] = equipe
-                partials["artilheiro_gols"] = f"{gols} (parcial)"
-        except Exception as e:
-            print(f"  (artilharia indisponível: {e})")
+    # ---------- 2) Artilharia: calculada via ESPN logo após buscar os lances (seção 3). ----------
 
     # ---------- 3) Lances (1º expulso / 1º gol contra) via ESPN ----------
     try:
-        espn = fetch_espn_events()
+        espn, scorers_espn = fetch_espn_events()
     except Exception as e:
-        espn = {}
+        espn, scorers_espn = {}, {}
         print(f"  ⚠ ESPN (lances) indisponível: {e}")
+
+    # ---------- Artilharia (ESPN = completa, detecta empate na liderança) ----------
+    if scorers_espn:
+        mx = max(v["goals"] for v in scorers_espn.values())
+        leaders = sorted([(n, v["team"]) for n, v in scorers_espn.items() if v["goals"] == mx],
+                         key=lambda x: x[0])
+        if len(leaders) == 1:
+            nm, eq = leaders[0]
+            partials["artilheiro_nome"] = f"{nm} ({eq or '?'}) — {mx} gol(s)"
+            partials["artilheiro_equipe"] = eq or "?"
+            partials["artilheiro_gols"] = f"{mx} (parcial)"
+        else:
+            nomes = ", ".join(f"{n} ({eq or '?'})" for n, eq in leaders[:5])
+            extra = f" +{len(leaders) - 5}" if len(leaders) > 5 else ""
+            eqs = sorted({eq for _, eq in leaders if eq})
+            partials["artilheiro_nome"] = f"Empatados em 1º: {len(leaders)} com {mx} gols — {nomes}{extra}"
+            partials["artilheiro_equipe"] = eqs[0] if len(eqs) == 1 else f"vários ({len(eqs)} seleções)"
+            partials["artilheiro_gols"] = f"{mx} (parcial · {len(leaders)} empatados)"
+        print(f"✔ artilharia ESPN: {mx} gol(s) · {len(leaders)} líder(es) na ponta")
+    elif token:
+        # fallback raro (ESPN sem gols): football-data, agora também agrupando empates
+        try:
+            fds = fd_get("/competitions/WC/scorers?limit=15", token).get("scorers", [])
+            if fds:
+                mxg = fds[0].get("goals")
+                tied = [s for s in fds if s.get("goals") == mxg]
+                if len(tied) == 1:
+                    s = tied[0]
+                    eq = EN_PT.get((s.get("team", {}).get("name") or "").lower(), s.get("team", {}).get("name", "?"))
+                    partials["artilheiro_nome"] = f"{s.get('player', {}).get('name', '?')} ({eq}) — {mxg} gol(s)"
+                    partials["artilheiro_equipe"] = eq
+                    partials["artilheiro_gols"] = f"{mxg} (parcial)"
+                else:
+                    nomes = ", ".join(s.get("player", {}).get("name", "?") for s in tied[:5])
+                    partials["artilheiro_nome"] = f"Empatados em 1º: {len(tied)} com {mxg} gols — {nomes}"
+                    partials["artilheiro_gols"] = f"{mxg} (parcial · {len(tied)} empatados)"
+        except Exception as e:
+            print(f"  (artilharia football-data indisponível: {e})")
 
     n_finished = sum(1 for v in espn.values() if v["completed"])
     # todos os eventos de jogos ENCERRADOS, em ordem cronológica (data do jogo, minuto)
