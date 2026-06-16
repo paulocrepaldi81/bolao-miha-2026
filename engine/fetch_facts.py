@@ -172,6 +172,18 @@ def main():
         else:
             partials["menos_vazada"] = f"{len(least)} seleções com {mnc} sofrido(s): " + _join(least)
 
+        # RESOLUÇÃO OFICIAL ao fechar a 1ª fase (72/72): crava o fato. Empate → LISTA (todos os
+        # empatados contam como corretos; quem apostou em qualquer um deles pontua). Só define
+        # uma vez (não sobrescreve algo já cravado).
+        if len(finished) == len(catalog):
+            for key, value in (("mais_goleadora", tops[0] if len(tops) == 1 else tops),
+                               ("menos_vazada", least[0] if len(least) == 1 else least),
+                               ("mais_gols_jogo", mxg)):
+                if facts.get(key) in (None, ""):
+                    facts[key] = value
+                    changed_facts = True
+                    print(f"✔ DEFINIDO {key} = {value} (72/72 da 1ª fase)")
+
     # ---------- 2) Artilharia: calculada via ESPN logo após buscar os lances (seção 3). ----------
 
     # ---------- 3) Lances (1º expulso / 1º gol contra) via ESPN ----------

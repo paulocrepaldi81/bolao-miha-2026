@@ -284,10 +284,17 @@ def build_extras_summary(bets, facts):
         real = facts.get(key)
         winners = []
         if real not in (None, ""):
+            # _match_fact é lista-aware: empate (real = lista) → quem cravou qualquer um pontua.
             winners = sorted(b["alias"] for b in bets
                              if _match_fact(b["extras"].get(key), real))
+        # exibição do "real": empate vira "Empate: A, B, C"
+        if isinstance(real, (list, tuple, set)):
+            rl = [str(x) for x in real]
+            real_disp = rl[0] if len(rl) == 1 else "Empate: " + ", ".join(rl)
+        else:
+            real_disp = real if real not in (None, "") else None
         out.append({"key": key, "label": label, "points": pts,
-                    "real": real if real not in (None, "") else None,
+                    "real": real_disp,
                     "partial": partials.get(key) if real in (None, "") else None,
                     "winners": winners})
     return out

@@ -72,11 +72,19 @@ def score_extras(pred, facts):
 
 
 def _eq(a, b):
+    # b pode ser uma LISTA de respostas corretas (empate no resultado real): basta o palpite
+    # bater com QUALQUER uma delas. Assim, se vários times/jogadores empatam, quem apostou em
+    # qualquer um dos empatados pontua.
+    if isinstance(b, (list, tuple, set)):
+        return any(_eq(a, x) for x in b)
     return a is not None and b is not None and str(a).strip().lower() == str(b).strip().lower()
 
 
 def _match_fact(pred, real):
-    """Curiosidade pode ser número (empates, pênaltis...) ou nome de seleção."""
+    """Curiosidade pode ser número (empates, pênaltis...) ou nome de seleção.
+    `real` pode ser uma LISTA de valores corretos (empate): quem cravou QUALQUER um pontua."""
+    if isinstance(real, (list, tuple, set)):
+        return any(_match_fact(pred, x) for x in real)
     if isinstance(real, (int, float)) or isinstance(pred, (int, float)):
         try:
             return int(pred) == int(real)
