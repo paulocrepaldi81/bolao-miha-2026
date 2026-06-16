@@ -1,6 +1,6 @@
 # "A RODADA" — pôster diário do Bolão Miha 2026 (TAREFA SEPARADA da landing page).
 #
-# Todo dia às 06:45 de Brasília (09:45 UTC): monta um PNG com os resultados da última
+# Toda manhã (pôster pronto antes das 7h BRT): monta um PNG com os resultados da última
 # rodada + curiosidades + os jogos do dia (horário de SP) e publica num link fixo:
 #   https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/rodada/hoje.png
 # Você abre esse link no celular e encaminha pro grupo do WhatsApp.
@@ -11,10 +11,11 @@ name: A Rodada (pôster diário)
 
 on:
   schedule:
-    # 06:45 America/Sao_Paulo (UTC-3, BR não tem horário de verão). É um pouco antes das
-    # 7h DE PROPÓSITO: o agendador do GitHub às vezes atrasa, então o pôster fica pronto
-    # ANTES das 7. Para timing cravado, dá pra somar um ping diário do cron-job.org.
-    - cron: "45 9 * * *"
+    # IMPORTANTE: cron DIÁRIO único o GitHub costuma ATRASAR horas ou PULAR (foi o que
+    # aconteceu — nenhuma run agendada disparou). Então tentamos a cada 15 min na janela da
+    # manhã: 09:00–12:59 UTC = 06:00–09:59 BRT. O passo "guard" garante publicar só 1x/dia,
+    # então o pôster fica pronto ANTES das 7h de forma confiável (igual ao robô da landing).
+    - cron: "*/15 9-12 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -22,29 +23,50 @@ permissions:
 
 concurrency:
   group: a-rodada
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   poster:
     runs-on: ubuntu-latest
     steps:
+      - name: Já publicado hoje? (idempotente — cron roda várias vezes, publica 1x)
+        id: guard
+        run: |
+          TODAY=$(date -u +%F)
+          LASTDATE=""
+          if git clone --depth 1 --branch rodada --single-branch "https://github.com/${GITHUB_REPOSITORY}.git" /tmp/rcheck >/dev/null 2>&1; then
+            LASTDATE=$(git -C /tmp/rcheck log -1 --format=%cd --date=format:%F 2>/dev/null || echo "")
+          fi
+          if [ "$LASTDATE" = "$TODAY" ] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Pôster de $TODAY já publicado — pulando esta tentativa."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Vai gerar o pôster de $TODAY (último publicado: ${LASTDATE:-nenhum})."
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
 
       - uses: actions/setup-python@v5
+        if: steps.guard.outputs.skip != 'true'
         with:
           python-version: "3.12"
 
       - name: Instalar Playwright + Pillow + fonte de emoji
+        if: steps.guard.outputs.skip != 'true'
         run: |
           pip install playwright pillow
           python -m playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-color-emoji
 
       - name: Gerar o pôster (hoje.png)
+        if: steps.guard.outputs.skip != 'true'
         working-directory: a-rodada
         run: python gen_rodada.py
 
       - name: Publicar no link fixo (branch "rodada", force-push)
+        if: steps.guard.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
