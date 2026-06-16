@@ -332,6 +332,69 @@ function renderCurrentGameStats(){
     +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
 }
 
+let pelLens='pontos', pelDraw=null;
+function renderPelotao(){
+  const svg=document.getElementById('pelChart');
+  if(!svg || !DATA.participants || !DATA.participants.length) return;
+  const P=DATA.participants;
+  const scores=P.map(p=>p.score).filter(v=>typeof v==='number');
+  if(!scores.length) return;
+  const outs=P.map(p=>p.correct_outcomes||0), exas=P.map(p=>p.exact_scores||0);
+  const med=a=>{const s=[...a].sort((x,y)=>x-y);return s[Math.floor((s.length-1)/2)];};
+  const short=s=>{s=String(s);return s.length>16?s.slice(0,15)+'…':s;};
+  const binize=(v,maxBins)=>{const mn=Math.min(...v),mx=Math.max(...v),w=Math.max(1,Math.ceil((mx-mn+1)/maxBins)),b=[];
+    for(let lo=mn;lo<=mx;lo+=w){const hi=lo+w-1;b.push({lo,hi,lab:w===1?`${lo}`:`${lo}–${hi}`,n:0});}
+    v.forEach(x=>{b[Math.min(b.length-1,Math.floor((x-mn)/w))].n++;});return b;};
+  const discrete=v=>{const mn=Math.min(...v),mx=Math.max(...v),b=[];
+    for(let x=mn;x<=mx;x++)b.push({lo:x,hi:x,lab:`${x}`,n:v.filter(y=>y===x).length});return b;};
+  const idxOf=(bins,val)=>bins.findIndex(b=>val>=b.lo&&val<=b.hi);
+  const ranked=[...P].sort((a,b)=>b.score-a.score), leader=ranked[0], gap=ranked[1]?leader.score-ranked[1].score:0;
+  const ss=[...scores].sort((a,b)=>a-b), q=p=>ss[Math.floor(p*(ss.length-1))];
+  const dOut=discrete(outs), dExa=discrete(exas);
+  const TK={
+    pontos:`O pelotão se concentra entre ${q(.25)} e ${q(.75)} pts. O líder (${short(leader.alias)}, ${leader.score}) abriu ${gap} ponto${gap!==1?'s':''} de frente${gap>=4?' e corre destacado na ponta':''}.`,
+    acertos:`O miolo do bolão acerta cerca de ${med(outs)} resultados. Os extremos são poucos — é onde a disputa se decide.`,
+    exatos:`Placar exato é raro: poucos cravam muitos e a maioria fica na base. Vale ouro no desempate.`
+  };
+  const XL={pontos:'pontos totais',acertos:'nº de resultados certos',exatos:'nº de placares exatos'};
+  const GOLD='#F4C430',GREEN='#27B14B',FAINT='#8B919C',DIM='#BFC4CC';
+  const lg=(c,t,dash)=>`<span style="display:flex;align-items:center;gap:5px"><span style="${dash?`width:14px;border-top:1.4px dashed ${c}`:`width:11px;height:11px;border-radius:2px;background:${c}`}"></span>${t}</span>`;
+  pelDraw=function(){
+    // px reais (viewBox = largura medida) → fontes legíveis em qualquer tela; nº de barras adapta no mobile
+    const pr=(svg.parentNode&&svg.parentNode.clientWidth)||svg.clientWidth||640;
+    const W=Math.max(300,Math.min(Math.round(pr),(window.innerWidth||9999))), H=320;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    let bins, medVal, leaderBin=-1;
+    if(pelLens==='pontos'){bins=binize(scores, W<360?6:W<480?8:12); medVal=med(scores); leaderBin=idxOf(bins,leader.score);}
+    else if(pelLens==='acertos'){bins=dOut; medVal=med(outs);}
+    else {bins=dExa; medVal=med(exas);}
+    const n=bins.length, maxN=Math.max(...bins.map(x=>x.n),1), scale=maxN*1.15;
+    const x0=24,x1=W-24,top=54,base=276,pw=x1-x0,ph=base-top,slot=pw/n,bw=Math.min(slot*0.66,46);
+    let s=`<line x1="${x0}" y1="${base}" x2="${x1}" y2="${base}" stroke="rgba(255,255,255,.16)"/>`;
+    const mIdx=idxOf(bins,medVal);
+    if(mIdx>=0){const mx=(x0+slot*mIdx+slot/2).toFixed(1);
+      s+=`<line x1="${mx}" y1="${top-4}" x2="${mx}" y2="${base}" stroke="${FAINT}" stroke-dasharray="3 3"/>`;
+      s+=`<text x="${mx}" y="${top-9}" fill="${FAINT}" font-size="11.5" text-anchor="middle">mediana ${medVal}</text>`;}
+    bins.forEach((d,i)=>{const h=d.n/scale*ph, x=x0+slot*i+(slot-bw)/2, y=base-h, isL=i===leaderBin, cx=(x0+slot*i+slot/2).toFixed(1);
+      if(d.n>0){s+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${isL?GREEN:GOLD}"/>`;
+        s+=`<text x="${cx}" y="${(y-5).toFixed(1)}" fill="${isL?GREEN:DIM}" font-size="12" font-weight="500" text-anchor="middle">${d.n}</text>`;}
+      s+=`<text x="${cx}" y="${base+17}" fill="${FAINT}" font-size="11.5" text-anchor="middle">${d.lab}</text>`;});
+    if(leaderBin>=0){const lx=x0+slot*leaderBin+slot/2, lab=W<480?`Líder ${leader.score} →`:`Líder · ${short(leader.alias)} ${leader.score} →`;
+      s+=`<text x="${Math.min(lx,x1-2).toFixed(0)}" y="${top}" fill="${GREEN}" font-size="12" font-weight="500" text-anchor="end">${lab}</text>`;}
+    s+=`<text x="${x0}" y="${base+34}" fill="${FAINT}" font-size="11">${XL[pelLens]} →  (cada barra = nº de pessoas)</text>`;
+    svg.innerHTML=s;
+    document.getElementById('pelTake').textContent=TK[pelLens];
+    const leg=[lg(GOLD,'pessoas'),lg(FAINT,'mediana',true)];
+    if(leaderBin>=0)leg.push(lg(GREEN,'líder'));
+    document.getElementById('pelLegend').innerHTML=leg.join('');
+    document.querySelectorAll('#pelTabs .pel-tab').forEach(t=>t.classList.toggle('active',t.dataset.k===pelLens));
+  };
+  const tabs=document.getElementById('pelTabs');
+  if(tabs && !tabs._wired){tabs._wired=1;tabs.addEventListener('click',e=>{const btn=e.target.closest('.pel-tab');if(!btn)return;pelLens=btn.dataset.k;pelDraw&&pelDraw();});}
+  if(!window._pelResize){window._pelResize=1;let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>pelDraw&&pelDraw(),150);});}
+  pelDraw();
+}
+
 function render(){
   const P = [...DATA.participants].sort((a,b)=>a.rank-b.rank);
   // hero
@@ -381,6 +444,7 @@ function render(){
   renderPrize();
   // leaderboard (escalável até 70+ apostas)
   renderLeaderboard();
+  renderPelotao();
   renderBomPalpite();
   renderExtras();
   renderMinhaAposta();

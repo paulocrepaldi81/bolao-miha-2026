@@ -211,6 +211,16 @@
   .move-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
   .move-card .big{font-size:24px;font-weight:800;margin-top:6px}
 
+  /* ---- O Pelotão (histograma) ---- */
+  #pelotao .pel-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 20px}
+  .pel-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .pel-tab{font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid var(--line-2);background:transparent;color:var(--ink-dim);cursor:pointer}
+  .pel-tab.active{background:var(--gold);color:#0C0D10;border-color:var(--gold)}
+  .pel-chartwrap{position:relative;width:100%;min-width:0;overflow:hidden}
+  .pel-chartwrap svg{display:block;width:100%;height:auto}
+  .pel-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-dim);margin:2px 2px 0}
+  .pel-take{margin-top:12px;padding:11px 14px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+
   /* ---- Stats ---- */
   /* ---- Palpites do jogo de agora ---- */
   .cg-wrap{background:linear-gradient(180deg,rgba(95,224,138,.07),var(--card));border:1px solid var(--line-2);
@@ -501,6 +511,23 @@
   </div>
 </section>
 
+<!-- ============ O PELOTÃO (distribuição / histograma) ============ -->
+<section id="pelotao">
+  <div class="wrap">
+    <div class="sec-head"><h2 class="display">O Pelotão</h2><span class="kick">A foto da disputa: onde está cada palpiteiro — atualiza a cada jogo</span></div>
+    <div class="pel-card">
+      <div class="pel-tabs" id="pelTabs">
+        <button class="pel-tab active" data-k="pontos">Pontos</button>
+        <button class="pel-tab" data-k="acertos">Acertos de resultado</button>
+        <button class="pel-tab" data-k="exatos">Placares exatos</button>
+      </div>
+      <div class="pel-chartwrap"><svg id="pelChart" viewBox="0 0 640 320" width="100%" role="img" aria-label="Distribuição dos palpiteiros do bolão"></svg></div>
+      <div class="pel-legend" id="pelLegend"></div>
+      <div class="pel-take" id="pelTake"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ PRÊMIO ACUMULADO ============ -->
 <section id="prize" style="background:var(--bg-2)">
   <div class="wrap">
@@ -636,6 +663,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260615j" defer></script>
+<script src="app.js?v=20260615k" defer></script>
 </body>
 </html>
