@@ -135,10 +135,19 @@ def main():
             changed_facts = True
             print(f"✔ DEFINIDO empates_1f = {draws} (72/72 jogos encerrados)")
 
-        top = max(finished, key=lambda x: int(x[1]["home_score"]) + int(x[1]["away_score"]))
-        m, r = top
-        partials["mais_gols_jogo"] = (f"{int(r['home_score'])+int(r['away_score'])} gols "
-                                      f"({m['home']} {r['home_score']}×{r['away_score']} {m['away']})")
+        # join honesto de uma lista de empatados (lista até 6 e resume o resto)
+        def _join(items, cap=6):
+            return ", ".join(items[:cap]) + (f" +{len(items) - cap}" if len(items) > cap else "")
+
+        # MAIS GOLS NUM JOGO (com empate)
+        gols_jogo = lambda r: int(r["home_score"]) + int(r["away_score"])
+        mxg = max(gols_jogo(r) for _, r in finished)
+        jogos_mxg = [f"{m['home']} {r['home_score']}×{r['away_score']} {m['away']}"
+                     for m, r in finished if gols_jogo(r) == mxg]
+        partials["mais_gols_jogo"] = (f"{mxg} gols ({jogos_mxg[0]})" if len(jogos_mxg) == 1
+                                      else f"{mxg} gols — {len(jogos_mxg)} jogos: " + "; ".join(jogos_mxg[:4])
+                                           + (f" +{len(jogos_mxg) - 4}" if len(jogos_mxg) > 4 else ""))
+
         gp, gc = {}, {}
         for m, r in finished:
             h, a = int(r["home_score"]), int(r["away_score"])
@@ -146,9 +155,22 @@ def main():
             gp[m["away"]] = gp.get(m["away"], 0) + a
             gc[m["home"]] = gc.get(m["home"], 0) + a
             gc[m["away"]] = gc.get(m["away"], 0) + h
-        ba, bd = max(gp.items(), key=lambda x: x[1]), min(gc.items(), key=lambda x: x[1])
-        partials["mais_goleadora"] = f"{ba[0]} ({ba[1]} gols)"
-        partials["menos_vazada"] = f"{bd[0]} ({bd[1]} sofrido(s))"
+
+        # MAIS GOLEADORA (com empate)
+        mxsco = max(gp.values())
+        tops = sorted([t for t, g in gp.items() if g == mxsco])
+        partials["mais_goleadora"] = (f"{tops[0]} ({mxsco} gols)" if len(tops) == 1
+                                      else f"{len(tops)} seleções com {mxsco} gols: " + _join(tops))
+
+        # MENOS VAZADA (com empate; só entre quem já jogou — gc só tem quem entrou em campo)
+        mnc = min(gc.values())
+        least = sorted([t for t, c in gc.items() if c == mnc])
+        if len(least) == 1:
+            partials["menos_vazada"] = f"{least[0]} ({mnc} sofrido(s))"
+        elif mnc == 0:
+            partials["menos_vazada"] = f"{len(least)} seleções ainda sem sofrer gol: " + _join(least)
+        else:
+            partials["menos_vazada"] = f"{len(least)} seleções com {mnc} sofrido(s): " + _join(least)
 
     # ---------- 2) Artilharia: calculada via ESPN logo após buscar os lances (seção 3). ----------
 
