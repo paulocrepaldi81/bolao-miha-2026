@@ -10,12 +10,15 @@
 name: A Rodada (pôster diário)
 
 on:
+  # GATILHO PRINCIPAL: roda LOGO APÓS o robô da landing ("Atualiza placar"), que dispara a cada
+  # 5 min via pinger externo (cron-job.org) e é confiável. O cron NATIVO do GitHub está MORTO
+  # pra este repo (nenhuma run agendada disparou nunca), então não dá pra confiar no schedule.
+  # O passo "guard" garante publicar só 1x/dia, na janela da manhã (06–09 BRT).
+  workflow_run:
+    workflows: ["Atualiza placar"]
+    types: [completed]
   schedule:
-    # IMPORTANTE: cron DIÁRIO único o GitHub costuma ATRASAR horas ou PULAR (foi o que
-    # aconteceu — nenhuma run agendada disparou). Então tentamos a cada 15 min na janela da
-    # manhã: 09:00–12:59 UTC = 06:00–09:59 BRT. O passo "guard" garante publicar só 1x/dia,
-    # então o pôster fica pronto ANTES das 7h de forma confiável (igual ao robô da landing).
-    - cron: "*/15 9-12 * * *"
+    - cron: "*/15 9-12 * * *"   # backup, caso o cron do GitHub volte a funcionar
   workflow_dispatch: {}
 
 permissions:
@@ -29,20 +32,27 @@ jobs:
   poster:
     runs-on: ubuntu-latest
     steps:
-      - name: Já publicado hoje? (idempotente — cron roda várias vezes, publica 1x)
+      - name: Publicar agora? (1x/dia na janela da manhã; manual sempre)
         id: guard
         run: |
           TODAY=$(date -u +%F)
+          HOUR=$((10#$(date -u +%H)))   # hora UTC em base 10 (evita erro com 08/09)
           LASTDATE=""
           if git clone --depth 1 --branch rodada --single-branch "https://github.com/${GITHUB_REPOSITORY}.git" /tmp/rcheck >/dev/null 2>&1; then
             LASTDATE=$(git -C /tmp/rcheck log -1 --format=%cd --date=format:%F 2>/dev/null || echo "")
           fi
-          if [ "$LASTDATE" = "$TODAY" ] && [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Pôster de $TODAY já publicado — pulando esta tentativa."
-          else
+          PUB=false
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PUB=true                                                       # manual: sempre gera
+          elif [ "$LASTDATE" != "$TODAY" ] && [ "$HOUR" -ge 9 ] && [ "$HOUR" -lt 13 ]; then
+            PUB=true                                                       # automático: 1x/dia, 09–12 UTC (06–09 BRT)
+          fi
+          if [ "$PUB" = "true" ]; then
             echo "skip=false" >> "$GITHUB_OUTPUT"
-            echo "Vai gerar o pôster de $TODAY (último publicado: ${LASTDATE:-nenhum})."
+            echo "Vai gerar o pôster de $TODAY (último: ${LASTDATE:-nenhum}, ${HOUR}h UTC, evento ${{ github.event_name }})."
+          else
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Pulando (último: ${LASTDATE:-nenhum}, hoje $TODAY, ${HOUR}h UTC, evento ${{ github.event_name }})."
           fi
 
       - uses: actions/checkout@v4
