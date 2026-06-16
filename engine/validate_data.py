@@ -74,8 +74,15 @@ def main():
     C(len(P) > 0, "data.json sem participantes")
     if nbets is not None:
         C(len(P) == nbets, f"nº de apostas no site ({len(P)}) != apostas extraídas ({nbets})")
-    ranks = sorted(p.get("rank") for p in P if isinstance(p.get("rank"), int))
-    C(ranks == list(range(1, len(P) + 1)), "ranks não são 1..N únicos/sequenciais")
+    # Ranking de COMPETIÇÃO: empate em pontos = mesma posição (ex.: 1,1,3). NÃO exige 1..N único.
+    # Valida que o rank de cada aposta bate com a regra: rank = 1 + nº de apostas com MAIS pontos.
+    C(all(isinstance(p.get("rank"), int) for p in P), "há aposta sem rank inteiro")
+    def _exp_rank(p):
+        sc = p.get("score")
+        return 1 + sum(1 for o in P if isinstance(o.get("score"), (int, float))
+                       and isinstance(sc, (int, float)) and o["score"] > sc)
+    bad_rank = [p.get("alias") for p in P if p.get("rank") != _exp_rank(p)]
+    C(not bad_rank, f"rank(s) inconsistente(s) com a pontuação (empate=mesma posição): {bad_rank[:5]}")
     missing = {}
     nopicks = []
     for p in P:
