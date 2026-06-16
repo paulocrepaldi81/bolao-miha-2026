@@ -2,9 +2,10 @@
 Monta a classificação a partir das apostas pontuadas:
 ranking + desempate + movimentação (vs rodada anterior) + pontos em jogo / vivo.
 
-Desempate (PROVISÓRIO — a confirmar com o organizador):
-  1) mais pontos  2) mais placares exatos  3) mais acertos de vencedor
-  4) ordem de envio (quem entregou antes fica na frente)
+Desempate (regra do dono): EMPATE em pontos = MESMA posição (mesmo rank). Os empatados
+DIVIDEM, em partes iguais, os prêmios das posições que ocupam (ex.: 3 empatados em 1º dividem
+1º+2º+3º; 5 empatados em 4º dividem o 4º). A ordem da LISTA dentro do empate é só visual
+(mais placares exatos → mais acertos → ordem de envio).
 """
 import config as C
 
@@ -54,15 +55,19 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot):
 
     out = []
     for i, s in enumerate(scored, start=1):
+        # Ranking de COMPETIÇÃO: mesmos pontos = mesmo rank (ex.: 1,1,3). Reflete a regra de
+        # prêmio (empatados dividem os prêmios das posições que ocupam). A ordem da lista é a do
+        # sort acima (estável); só o NÚMERO do rank empata.
+        rank = 1 + sum(1 for o in scored if o["total"] > s["total"])
         prev = prev_snapshot.get(s["alias"], {})
-        prev_rank = prev.get("rank", i)
+        prev_rank = prev.get("rank", rank)
         out.append({
             "alias": s["alias"],
             "score": s["total"],
             "phase1_points": s["group_pts"],
-            "rank": i,
+            "rank": rank,
             "previous_rank": prev_rank,
-            "rank_change": prev_rank - i,
+            "rank_change": prev_rank - rank,
             "last_match_points": max(0, s["total"] - prev.get("total", s["total"])),
             "exact_scores": s["exact_scores"],
             "correct_outcomes": s["correct_outcomes"],

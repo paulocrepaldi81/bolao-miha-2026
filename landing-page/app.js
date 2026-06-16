@@ -242,12 +242,22 @@ async function liveOverlay(){
     }
   });
   if(touched){
-    renderLiveStrip(); renderCurrentGameStats();
+    renderLiveStrip(); renderCurrentGameStats(); renderHeroLive();
     const tab=document.querySelector('#matchTabs .tab.active')?.dataset.f||'scheduled';
     renderMatches(tab);
   }
 }
 function startLivePolling(){ if(liveTimer) clearInterval(liveTimer); liveOverlay(); liveTimer=setInterval(liveOverlay, 45000); }
+
+// Indicador simples no hero: aparece só quando há jogo AO VIVO (sem lotar a página).
+function renderHeroLive(){
+  const el=document.getElementById('heroLive'); if(!el) return;
+  const live=(DATA.matches||[]).filter(m=>m.status==='live');
+  if(!live.length){ el.hidden=true; el.innerHTML=''; return; }
+  const txt=live.map(m=>`${flag(m.home_team)}${m.home_team} <b>${m.home_score}×${m.away_score}</b> ${m.away_team}${flagA(m.away_team)}${m.minute?` · ${m.minute}`:''}`).join('   ·   ');
+  el.innerHTML=`<span class="hl-dot"></span><span class="hl-tag">Ao vivo</span><span class="hl-game">${txt}</span>`;
+  el.hidden=false;
+}
 
 // ===== Palpites do jogo de agora (estatísticas do jogo atual/ao vivo) =====
 // Olha TODAS as apostas para o jogo que está rolando (ou o próximo) e mostra placar
@@ -484,6 +494,7 @@ function render(){
   renderCrossCheck();
   // jogos ao vivo entram numa faixa destacada no topo (só quando existem)
   renderLiveStrip();
+  renderHeroLive();
   // aba padrão: 'Próximos' enquanto houver jogos por vir; senão 'Encerrados'
   const hasScheduled = DATA.matches.some(m=>m.status==='scheduled');
   const defTab = hasScheduled ? 'scheduled' : 'finished';
@@ -550,7 +561,7 @@ function renderPrize(){
       <span class="pamt">${base ? brl(Math.round(base*s.pct)) : '—'}</span>
     </div>`).join('');
   document.getElementById('prizeFoot').innerHTML =
-    `Como divide: a <b>Lanterna de Ouro</b> (último ao fim da 1ª fase) recebe a aposta de volta (${brl(refund||bet)}); os percentuais incidem sobre o <b>restante</b> (${brl(base)}). Os pontos da 1ª fase não zeram — o vencedor da fase segue elegível aos prêmios finais. Bolão de palpites entre amigos: sem odds, sem casa de apostas.`;
+    `Como divide: a <b>Lanterna de Ouro</b> (último ao fim da 1ª fase) recebe a aposta de volta (${brl(refund||bet)}); os percentuais incidem sobre o <b>restante</b> (${brl(base)}). <b>Empate:</b> quem empatar numa posição divide, em partes iguais, os prêmios das posições que o grupo ocupa (ex.: 3 em 1º dividem o 1º+2º+3º; 5 em 4º dividem o 4º). Os pontos da 1ª fase não zeram — o vencedor da fase segue elegível aos prêmios finais. Bolão de palpites entre amigos: sem odds, sem casa de apostas.`;
 }
 
 // ---- Classificação escalável (busca + filtro pagas/café + colapso) ----
@@ -563,7 +574,7 @@ function renderLeaderboard(){
     `${total} aposta${total!==1?'s':''} · ${paidN} para valer 💰 · ${freeN} café-com-leite ☕`;
   // prêmio em dinheiro: só pagantes — top 4 pela ordem geral
   const prizeSet=new Set(all.filter(p=>p.paid).slice(0,4).map(p=>p.alias));
-  const maxRank=total;
+  const maxRank=all.length?Math.max(...all.map(p=>p.rank)):0;   // com empate, o último rank ≠ nº de apostas
   let list=all;
   if(lbFilter==='paid') list=list.filter(p=>p.paid);
   else if(lbFilter==='free') list=list.filter(p=>!p.paid);
