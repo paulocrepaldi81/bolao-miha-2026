@@ -275,6 +275,9 @@ def build_html(last_round, next_round, res_day, up_day):
     ball_wm = (f'<img src="{ball}" alt="" style="position:absolute;width:300px;height:300px;'
                f'right:-70px;bottom:-70px;opacity:.06;z-index:0;pointer-events:none">' if ball else "")
 
+    # bandeira com largura fixa → nomes alinhados em coluna (régua vertical) nas duas seções
+    flg = lambda t: f'<span style="display:inline-block;width:22px;text-align:center">{FLAG.get(t, "")}</span>'
+
     def res_row(j):
         win = j["hs"] != j["as"]
         sc = (f'<span style="font-family:Anton,sans-serif;font-size:22px;min-width:64px;text-align:center;'
@@ -283,8 +286,8 @@ def build_html(last_round, next_round, res_day, up_day):
         return (f'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;'
                 f'background:rgba(255,255,255,.06);border-radius:10px;padding:8px 14px">'
                 f'{grp_chip(j)}'
-                f'<span style="{nm}">{FLAG.get(j["home"],"")} {j["home"]}</span>{sc}'
-                f'<span style="{nm};text-align:right">{j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+                f'<span style="{nm}">{flg(j["home"])} {j["home"]}</span>{sc}'
+                f'<span style="{nm};text-align:right">{j["away"]} {flg(j["away"])}</span></div>')
 
     def jogo_row(j):
         # AGENDA: só o horário (sem placar), mesmo que o jogo já tenha começado/encerrado.
@@ -292,8 +295,8 @@ def build_html(last_round, next_round, res_day, up_day):
                f'{sp_time(j["date"])}</b>')
         return (f'<div style="display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.06);'
                 f'border-radius:10px;padding:8px 14px">{grp_chip(j)}{tag}'
-                f'<span style="font-size:15px">{FLAG.get(j["home"],"")} {j["home"]} '
-                f'<span style="color:#7fae98">×</span> {j["away"]} {FLAG.get(j["away"],"")}</span></div>')
+                f'<span style="font-size:15px">{flg(j["home"])} {j["home"]} '
+                f'<span style="color:#7fae98">×</span> {j["away"]} {flg(j["away"])}</span></div>')
 
     resultados = "".join(res_row(j) for j in last_round) or '<div style="color:#bfe3d2">Sem jogos na rodada anterior.</div>'
     curis = "<br>".join("● " + c for c in curiosidades(last_round))
@@ -301,7 +304,7 @@ def build_html(last_round, next_round, res_day, up_day):
 
     def sec(txt, extra=""):
         return (f'<div style="font-family:Anton,sans-serif;font-size:17px;letter-spacing:.5px;color:#f4c430;'
-                f'margin:18px 0 9px;display:flex;align-items:center;gap:8px">{txt}'
+                f'margin:14px 0 8px;display:flex;align-items:center;gap:8px">{txt}'
                 f'<span style="flex:1;height:2px;background:rgba(244,196,48,.25);border-radius:2px"></span>{extra}</div>')
 
     res_extra = f'<span style="{small}">{lbl_res}</span>' if lbl_res else ""
@@ -317,7 +320,7 @@ def build_html(last_round, next_round, res_day, up_day):
     <div style="flex:1;min-width:0">
       <div style="font-size:12px;letter-spacing:3px;color:#f4c430;font-weight:800">BOLÃO MIHA 2026</div>
       <div style="font-family:Anton,sans-serif;font-size:42px;line-height:.95;letter-spacing:1px">A RODADA</div>
-      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{lbl_jogos or lbl_res} · por Ricardo Mihalik</div>
+      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{('Hoje · ' + lbl_jogos) if lbl_jogos else lbl_res} · por Ricardo Mihalik</div>
     </div>
     {ball_header}
   </div>
@@ -325,7 +328,7 @@ def build_html(last_round, next_round, res_day, up_day):
     {sec("📋 JOGOS DO DIA ANTERIOR", res_extra)}
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
-    <div style="font-size:14px;color:#e9f5ef;line-height:1.8">{curis}</div>
+    <div style="font-size:14px;color:#e9f5ef;line-height:1.6">{curis}</div>
     {sec("📅 JOGOS DO DIA", jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>
