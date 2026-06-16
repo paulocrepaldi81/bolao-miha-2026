@@ -909,6 +909,32 @@ const DATA_SOURCES = [
   './data.json',
   'https://raw.githubusercontent.com/paulocrepaldi81/bolao-miha-2026/main/landing-page/data.json'
 ];
+let lastStamp=null;
+// Auto-refresh AO VIVO: rebusca o data.json e só redesenha quando o robô publicou algo novo
+// (compara meta.last_data_update). Preserva a aba de jogos e pausa enquanto você digita na
+// busca/Minha Aposta, pra não atrapalhar. lbFilter/lbSearch/lbExpanded, maSelected e pelLens
+// são variáveis de módulo → o render() já os mantém.
+async function refreshData(){
+  const ae=document.activeElement;
+  if(ae && (ae.id==='lbSearch' || ae.id==='maInput')) return;   // não interrompe digitação
+  let live=null;
+  try{
+    const got=await Promise.all(DATA_SOURCES.map(async src=>{
+      try{ const r=await fetch(src+'?ts='+Date.now(),{cache:'no-store'}); if(r.ok) return await r.json(); }catch(e){}
+      return null;
+    }));
+    live=got.filter(Boolean).sort((a,b)=> new Date(b.meta?.last_data_update||0)-new Date(a.meta?.last_data_update||0))[0]||null;
+  }catch(e){ return; }
+  if(!live) return;
+  const stamp=live.meta && live.meta.last_data_update;
+  if(!stamp || stamp===lastStamp) return;          // nada novo → não mexe na tela
+  lastStamp=stamp;
+  DATA=live;
+  if(Array.isArray(live.history)) HISTORY.splice(0, HISTORY.length, ...live.history);
+  const tab=document.querySelector('#matchTabs .tab.active')?.dataset.f;   // única coisa que o render() reseta
+  render();
+  if(tab){ document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.f===tab)); renderMatches(tab); }
+}
 async function boot(){
   try{
     const got = await Promise.all(DATA_SOURCES.map(async src=>{
@@ -933,6 +959,8 @@ async function boot(){
   }catch(e){}
   renderFame();
   render();
+  lastStamp = (DATA.meta && DATA.meta.last_data_update) || null;
   startLivePolling();   // ao vivo de verdade (ESPN direto) por cima do dado do robô
+  setInterval(refreshData, 60000);  // a cada 60s: pontos/classificação/histograma novos do robô, sem reload
 }
 boot();
