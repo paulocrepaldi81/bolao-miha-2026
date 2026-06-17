@@ -405,6 +405,31 @@ function renderPelotao(){
   pelDraw();
 }
 
+// Favoritos ao título: agrega o palpite de CAMPEÃO de cada aposta (picks.final.champion).
+// 100% client-side (o dado já vem no data.json). %s por maior-resto somam exatamente 100.
+function renderFavoritos(){
+  const el=document.getElementById('favRows');
+  if(!el) return;
+  if(!DATA.participants || !DATA.participants.length){ el.innerHTML=''; return; }
+  const cnt={}; let tot=0;
+  DATA.participants.forEach(p=>{ const c=((p.picks||{}).final||{}).champion; if(c){ cnt[c]=(cnt[c]||0)+1; tot++; } });
+  const rows=Object.entries(cnt).sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0]));
+  if(!tot){ el.innerHTML='<div class="cg-empty">Os palpites de campeão entram aqui.</div>'; return; }
+  const fl=rows.map(([,n])=>Math.floor(n/tot*100));
+  const rem=Math.round(100-fl.reduce((a,b)=>a+b,0));
+  const ord=rows.map(([,n],i)=>[n/tot*100-fl[i],i]).sort((a,b)=>b[0]-a[0]);
+  const pcs=[...fl]; for(let k=0;k<rem;k++) pcs[ord[k%ord.length][1]]++;
+  const max=rows[0][1];
+  el.innerHTML=rows.map(([team,n],i)=>{
+    const w=Math.max(6,Math.round(n/max*100)), lead=i===0, col=lead?'var(--green)':'var(--gold)';
+    return `<div class="fav-row">
+      <div class="fav-team">${flag(team)} ${team}${lead?' <span class="fav-star">★</span>':''}</div>
+      <div class="fav-bar"><i style="width:${w}%;background:${col}"></i></div>
+      <div class="fav-val"><b style="color:${col}">${pcs[i]}%</b> · ${n}</div>
+    </div>`;
+  }).join('');
+}
+
 function render(){
   const P = [...DATA.participants].sort((a,b)=>a.rank-b.rank);
   // hero
@@ -455,6 +480,7 @@ function render(){
   // leaderboard (escalável até 70+ apostas)
   renderLeaderboard();
   renderPelotao();
+  renderFavoritos();
   renderBomPalpite();
   renderExtras();
   renderMinhaAposta();
