@@ -108,7 +108,7 @@ jobs:
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          FILES="engine/data/results.csv engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json"
+          FILES="engine/data/results.csv engine/data/fixtures_real.json engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json"
           git add $FILES
           if git diff --cached --quiet; then
             echo "Sem mudanças nos dados."

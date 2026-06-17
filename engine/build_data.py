@@ -52,6 +52,14 @@ def parse_kickoff(text, year=2026):
     return datetime(year, MONTHS[mon], d, hh, mm, tzinfo=SP).isoformat()
 
 
+def espn_kickoff_sp(iso):
+    """ISO UTC da ESPN (ex.: '2026-06-17T20:00Z') -> ISO no fuso de São Paulo."""
+    try:
+        return datetime.fromisoformat(str(iso).replace("Z", "+00:00")).astimezone(SP).isoformat()
+    except Exception:
+        return None
+
+
 def load_results(path):
     res = {}
     if not os.path.exists(path):
@@ -138,6 +146,16 @@ def main():
     roster = load_roster(os.path.join(DATA, "roster.csv"))
     history = load_history(os.path.join(DATA, "history.json"))
     audit = load_cross_check(os.path.join(DATA, "cross_check.json"))
+    # Agenda REAL (data + mando) da ESPN por match_id — usada SÓ p/ EXIBIÇÃO (datas/mando/
+    # orientação do palpite). A PONTUAÇÃO não lê isto: casa pelo par de times da planilha.
+    real_fix = {}
+    _fp = os.path.join(DATA, "fixtures_real.json")
+    if os.path.exists(_fp):
+        try:
+            with open(_fp, encoding="utf-8") as f:
+                real_fix = json.load(f)
+        except Exception:
+            real_fix = {}
 
     bets, scored, all_issues = [], [], []
     bets_json = os.path.join(DATA, "bets_extracted.json")
@@ -176,10 +194,15 @@ def main():
     matches = []
     for m in catalog:
         r = results.get(m["match_id"], {})
+        rf = real_fix.get(m["match_id"]) or {}
+        # ESPN manda na AGENDA (data + mando); a planilha manda no confronto. Exibe o mando/data
+        # reais da ESPN quando houver — corrige erro de agenda da planilha (ex.: Grupo L).
+        home = rf.get("home") or m["home"]
+        away = rf.get("away") or m["away"]
         matches.append({
             "match_id": m["match_id"],
-            "group": m["group"], "home_team": m["home"], "away_team": m["away"], "venue": "",
-            "kickoff_sao_paulo": parse_kickoff(m["date"]),
+            "group": m["group"], "home_team": home, "away_team": away, "venue": "",
+            "kickoff_sao_paulo": espn_kickoff_sp(rf.get("kickoff")) or parse_kickoff(m["date"]),
             "status": r.get("status", "scheduled"),
             "home_score": r.get("home_score"), "away_score": r.get("away_score"),
             "verified": r.get("verified", False), "is_special": m["special"],
@@ -188,13 +211,21 @@ def main():
     # ---- palpites individuais por aposta (alimenta a aba "Minha Aposta") ----
     bet_by_alias = {b["alias"]: b for b in bets}
     scored_by_alias = {s["alias"]: s for s in scored}
+    cat_home = {m["match_id"]: m["home"] for m in catalog}   # mando da planilha por jogo
     for p in participants:
         b = bet_by_alias.get(p["alias"]); s = scored_by_alias.get(p["alias"])
         if not b:
             continue
         groups = {}
         for mid, (ph, pa) in b["group_preds"].items():
-            groups[mid] = [ph, pa, (s["by_match"].get(mid, 0) if s else 0)]
+            pts = (s["by_match"].get(mid, 0) if s else 0)
+            rf = real_fix.get(mid) or {}
+            # se a ESPN inverteu o mando vs a planilha, troca [casa,fora] só p/ EXIBIR o palpite
+            # alinhado ao confronto mostrado. Os PONTOS (pts) não mudam (são por jogo).
+            if rf.get("home") and cat_home.get(mid) and rf["home"] != cat_home[mid]:
+                groups[mid] = [pa, ph, pts]
+            else:
+                groups[mid] = [ph, pa, pts]
         p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"]}
 
     # ---- estatísticas reais ----

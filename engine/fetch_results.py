@@ -92,7 +92,7 @@ def fetch_espn():
             cs = comp.get("competitors", [])
             if len(cs) != 2:
                 continue
-            score, names = {}, []
+            score, names, roles = {}, [], {}
             ok = True
             for c in cs:
                 raw = (c.get("team", {}).get("displayName")
@@ -102,6 +102,7 @@ def fetch_espn():
                     ok = False
                     break
                 names.append(pt)
+                roles[c.get("homeAway")] = pt          # mando REAL da ESPN (home/away)
                 try:
                     score[pt] = int(c.get("score"))
                 except (TypeError, ValueError):
@@ -116,7 +117,9 @@ def fetch_espn():
             state, completed = t.get("state"), bool(t.get("completed"))
             status = "finished" if completed else ("live" if state == "in" else "scheduled")
             out[m["match_id"]] = {"status": status, "score": score,
-                                  "home": m["home"], "away": m["away"]}
+                                  "home": m["home"], "away": m["away"],
+                                  "real_home": roles.get("home"), "real_away": roles.get("away"),
+                                  "real_kickoff": ev.get("date") or ""}
     return out, unmatched
 
 
@@ -158,6 +161,14 @@ def main():
         print("DRY-RUN — mudanças que seriam aplicadas:")
     else:
         save_results(rows, order)
+        # Agenda REAL da ESPN (data + mando) por match_id. A planilha pode ter a agenda errada
+        # (ex.: Grupo L). O build_data usa isto SÓ p/ EXIBIÇÃO (datas/mando/orientação do palpite).
+        # A PONTUAÇÃO não lê este arquivo — continua casando pelo par de times da planilha.
+        real = {mid: {"home": e.get("real_home"), "away": e.get("real_away"),
+                      "kickoff": e.get("real_kickoff")}
+                for mid, e in espn.items() if e.get("real_home") and e.get("real_away")}
+        with open(os.path.join(HERE, "data", "fixtures_real.json"), "w", encoding="utf-8") as f:
+            json.dump(real, f, ensure_ascii=False, indent=1)
 
     print(f"[ESPN] Atualizados: {len(updated)} | travados (lock): {len(locked)} | "
           f"sem casamento: {len(unmatched)}")
