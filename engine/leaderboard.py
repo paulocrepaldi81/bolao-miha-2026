@@ -22,11 +22,14 @@ def remaining_group_points(catalog, results):
     return total
 
 
-def build(scored, roster, catalog, results, real_final, facts, prev_snapshot):
+def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids=frozenset()):
     """
     scored: lista de dicts (saída de scoring.score_bet)
     roster: {alias_lower: {"paid":bool, "order":int}}
     prev_snapshot: {alias: {"rank":int, "total":int}}  (rodada anterior; pode ser {})
+    round_mids: set de match_ids da RODADA corrente (jogos da janela 05:00→04:59 SP do dia
+        seguinte) — usado só para somar "day_points" por aposta. É um valor PURAMENTE
+        informativo de exibição: não afeta rank, movimentação, eliminado nem estatística.
     Retorna lista de participantes prontos para o data.json + flags de movimento.
     """
     rem_groups = remaining_group_points(catalog, results)
@@ -69,6 +72,10 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot):
             "previous_rank": prev_rank,
             "rank_change": prev_rank - rank,
             "last_match_points": max(0, s["total"] - prev.get("total", s["total"])),
+            # pontos da pessoa NA RODADA corrente = soma dos pontos dos jogos dessa rodada
+            # (só jogos encerrados entram em by_match). Não soma final/artilheiro/curiosidades
+            # — "rodada" são os JOGOS do dia. Campo de exibição; não entra em nenhum cálculo.
+            "day_points": max(0, sum(s.get("by_match", {}).get(mid, 0) for mid in round_mids)),
             "exact_scores": s["exact_scores"],
             "correct_outcomes": s["correct_outcomes"],
             "max_possible": s["max_possible"],

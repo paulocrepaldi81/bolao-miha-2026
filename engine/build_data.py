@@ -188,7 +188,26 @@ def main():
             prev_snapshot = snap["ranks"]
             break
 
-    participants = LB.build(scored, roster, catalog, results, real_final, facts, prev_snapshot)
+    # ---- RODADA (janela 05:00 → 04:59 SP do dia seguinte) ----
+    # Cada jogo pertence à rodada da data de (kickoff_SP − 5h): assim um jogo de madrugada
+    # (ex.: 2h) ainda conta na rodada do dia anterior, e a rodada nova só começa às 5h.
+    # "Rodada corrente" = a rodada mais recente que JÁ tem jogo encerrado (sticky: entre
+    # rodadas segue mostrando a última com jogos; zera só quando o 1º jogo da nova encerra).
+    # 'now' não entra aqui de propósito — o sticky depende só de quais jogos já terminaram.
+    def _rodada_date(iso_sp):
+        return (datetime.fromisoformat(iso_sp) - timedelta(hours=5)).date().isoformat()
+    kickoff_by_mid = {}
+    for m in catalog:
+        k = espn_kickoff_sp((real_fix.get(m["match_id"]) or {}).get("kickoff")) or parse_kickoff(m["date"])
+        if k:
+            kickoff_by_mid[m["match_id"]] = k
+    finished_round = {mid: _rodada_date(k) for mid, k in kickoff_by_mid.items()
+                      if results.get(mid, {}).get("status") == "finished"
+                      and results.get(mid, {}).get("home_score") is not None}
+    cur_round = max(finished_round.values()) if finished_round else None
+    round_mids = frozenset(mid for mid, d in finished_round.items() if d == cur_round)
+
+    participants = LB.build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids)
 
     # ---- matches p/ a Central de Jogos ----
     matches = []
