@@ -220,6 +220,32 @@ const EN_TO_PT = {
 // sem erro. NUNCA mexe em pontos/classificação — só atualiza a EXIBIÇÃO de jogos não
 // encerrados. O robô (pinger) segue como fonte oficial da pontuação.
 let liveTimer=null;
+// CLIENTE EVENT-DRIVEN: quando um jogo que estava AO VIVO encerra, busca o data.json oficial na
+// hora e faz um "burst" (a cada 12s por ~3 min) até o robô publicar os pontos — sem esperar o
+// ciclo de 30s. NÃO recalcula nada no cliente; só acelera a busca do dado oficial (acurácia intocada).
+let prevLive = new Set(), burstUntil = 0, burstTimer = null;
+function startBurst(){
+  burstUntil = Date.now() + 180000;                 // janela de 3 min
+  refreshData();                                    // pega o oficial agora
+  if(!burstTimer) burstTimer = setInterval(()=>{
+    if(Date.now() > burstUntil){ clearInterval(burstTimer); burstTimer = null; return; }
+    refreshData();
+  }, 12000);
+}
+// SELO DE FRESCURA CONTEXTUAL: só avisa quando há AÇÃO (jogo ao vivo ou recém-encerrado) E o
+// data.json está parado há muito tempo. Assim NÃO grita de madrugada/entre jogos (quando é normal
+// o dado ficar parado) — só torna VISÍVEL uma falha do robô/pinger em vez de congelar em silêncio.
+function checkFreshness(){
+  const el = document.getElementById('freshWarn'); if(!el) return;
+  const upd = DATA.meta && DATA.meta.last_data_update;
+  const ageMin = upd ? (Date.now() - new Date(upd).getTime())/60000 : 1e9;
+  const liveNow = (DATA.matches||[]).some(m=>m.status==='live');
+  const recentlyEnded = burstUntil > 0 && Date.now() < burstUntil + 480000;   // até ~8 min após encerrar
+  if((liveNow || recentlyEnded) && ageMin > 12){
+    el.textContent = `⚠️ Tem jogo agora, mas os pontos não atualizam há ${Math.round(ageMin)} min — pode ser atraso na fonte. Reconferindo…`;
+    el.hidden = false;
+  } else el.hidden = true;
+}
 async function liveOverlay(){
   let evs;
   try{
@@ -231,7 +257,7 @@ async function liveOverlay(){
   const key=(x,y)=>[x,y].sort().join('|');
   const idx={}; DATA.matches.forEach(m=>{ idx[key(m.home_team,m.away_team)]=m; });
   const pt=c=>EN_TO_PT[(((c.team||{}).displayName)||'').trim().toLowerCase()];
-  let touched=false;
+  let touched=false; const nowLive=new Set();
   evs.forEach(e=>{
     const comp=(e.competitions||[])[0]; if(!comp) return;
     const cs=comp.competitors||[]; if(cs.length!==2) return;
@@ -239,6 +265,7 @@ async function liveOverlay(){
     if(t.state!=='in') return;                       // só jogos em andamento
     const a=pt(cs[0]), b=pt(cs[1]); if(!a||!b) return;
     const m=idx[key(a,b)]; if(!m || m.status==='finished') return;  // encerrado = robô manda (tem pontos)
+    nowLive.add(key(a,b));
     const by={}; cs.forEach(c=>{ by[pt(c)]=parseInt(c.score); });
     const hs=by[m.home_team], as=by[m.away_team];
     if(Number.isFinite(hs) && Number.isFinite(as)){
@@ -248,11 +275,16 @@ async function liveOverlay(){
       }
     }
   });
+  // jogo que ESTAVA ao vivo e sumiu da lista de 'in' → encerrou → busca o oficial na hora (burst)
+  const ended = [...prevLive].some(k=>!nowLive.has(k));
+  prevLive = nowLive;
+  if(ended) startBurst();
   if(touched){
     renderLiveStrip(); renderCurrentGameStats(); renderHeroLive();
     const tab=document.querySelector('#matchTabs .tab.active')?.dataset.f||'scheduled';
     renderMatches(tab);
   }
+  checkFreshness();
 }
 function startLivePolling(){ if(liveTimer) clearInterval(liveTimer); liveOverlay(); liveTimer=setInterval(liveOverlay, 45000); }
 
@@ -960,6 +992,7 @@ let lastStamp=null;
 // busca/Minha Aposta, pra não atrapalhar. lbFilter/lbSearch/lbExpanded, maSelected e pelLens
 // são variáveis de módulo → o render() já os mantém.
 async function refreshData(){
+  checkFreshness();   // atualiza o selo de frescura mesmo quando não há dado novo (badge de atraso)
   const ae=document.activeElement;
   if(ae && (ae.id==='lbSearch' || ae.id==='maInput')) return;   // não interrompe digitação
   let live=null;
