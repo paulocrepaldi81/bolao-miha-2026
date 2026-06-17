@@ -199,12 +199,17 @@ def main():
         # reais da ESPN quando houver — corrige erro de agenda da planilha (ex.: Grupo L).
         home = rf.get("home") or m["home"]
         away = rf.get("away") or m["away"]
+        hs, as_ = r.get("home_score"), r.get("away_score")
+        # o results.csv guarda o PLACAR na orientação da PLANILHA; se o mando inverteu vs a
+        # planilha, troca o placar JUNTO com os times (senão o placar sai do lado errado).
+        if rf.get("home") and rf["home"] != m["home"]:
+            hs, as_ = as_, hs
         matches.append({
             "match_id": m["match_id"],
             "group": m["group"], "home_team": home, "away_team": away, "venue": "",
             "kickoff_sao_paulo": espn_kickoff_sp(rf.get("kickoff")) or parse_kickoff(m["date"]),
             "status": r.get("status", "scheduled"),
-            "home_score": r.get("home_score"), "away_score": r.get("away_score"),
+            "home_score": hs, "away_score": as_,
             "verified": r.get("verified", False), "is_special": m["special"],
         })
 
@@ -242,7 +247,7 @@ def main():
             "last_data_update": now, "last_source_check": now,
             "rule_version": "v2.1", "freshness": "ok",
         },
-        "latest_result": build_latest(catalog, results),
+        "latest_result": build_latest(catalog, results, real_fix),
         "audit": audit,
         "final_result": real_final,
         "extras_summary": build_extras_summary(bets, facts),
@@ -331,17 +336,26 @@ def build_extras_summary(bets, facts):
     return out
 
 
-def build_latest(catalog, results):
+def build_latest(catalog, results, real_fix=None):
+    real_fix = real_fix or {}
     played = [(m, results[m["match_id"]]) for m in catalog
               if results.get(m["match_id"], {}).get("status") == "finished"
               and results.get(m["match_id"], {}).get("home_score") is not None]
     if not played:
         return None
-    # o "último resultado" é o jogo encerrado mais RECENTE (por horário), não o último do catálogo
-    played.sort(key=lambda x: parse_kickoff(x[0]["date"]) or "")
+    def kick(m):
+        rf = real_fix.get(m["match_id"]) or {}
+        return espn_kickoff_sp(rf.get("kickoff")) or parse_kickoff(m["date"]) or ""
+    # o "último resultado" é o jogo encerrado mais RECENTE (por horário REAL), não o do catálogo
+    played.sort(key=lambda x: kick(x[0]))
     m, r = played[-1]
-    return {"home_team": m["home"], "away_team": m["away"],
-            "home_score": r["home_score"], "away_score": r["away_score"],
+    rf = real_fix.get(m["match_id"]) or {}
+    home, away = (rf.get("home") or m["home"]), (rf.get("away") or m["away"])
+    hs, as_ = r["home_score"], r["away_score"]
+    if rf.get("home") and rf["home"] != m["home"]:   # mando invertido → placar acompanha
+        hs, as_ = as_, hs
+    return {"home_team": home, "away_team": away,
+            "home_score": hs, "away_score": as_,
             "note": "Resultado oficial computado."}
 
 
