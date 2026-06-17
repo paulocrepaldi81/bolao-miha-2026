@@ -52,16 +52,17 @@ FLAG = {
     "Uzbequistão": "🇺🇿", "Colômbia": "🇨🇴", "Inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Gana": "🇬🇭", "Croácia": "🇭🇷",
     "Panamá": "🇵🇦", "Catar": "🇶🇦", "Suíça": "🇨🇭", "Coreia do Sul": "🇰🇷", "Rep Tcheca": "🇨🇿",
 }
-# Escócia/Inglaterra usam emoji de SUBDIVISÃO que o Noto do CI costuma NÃO renderizar (vira
-# tofu/bandeira preta). Pra essas, um selo de 3 letras — robusto em qualquer fonte (igual à landing).
-SUBDIV = {"Escócia": "SCO", "Inglaterra": "ENG", "País de Gales": "WAL", "Irlanda do Norte": "NIR"}
+# Escócia/Inglaterra: emoji de SUBDIVISÃO o Noto do CI não renderiza (vira tofu/bandeira preta).
+# Pra essas, bandeira SVG inline (cruz de São Jorge / saltire) — idêntica à da landing, renderiza
+# em qualquer sistema. As demais seleções usam o emoji normal.
+SUBDIV_SVG = {
+    "Inglaterra": '<svg viewBox="0 0 30 20" width="19" height="13" style="vertical-align:-2px;border-radius:2px"><rect width="30" height="20" fill="#fff"/><rect x="12" width="6" height="20" fill="#ce1124"/><rect y="7" width="30" height="6" fill="#ce1124"/></svg>',
+    "Escócia":    '<svg viewBox="0 0 30 20" width="19" height="13" style="vertical-align:-2px;border-radius:2px"><rect width="30" height="20" fill="#0065bf"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4.5"/></svg>',
+}
 
 
 def flag(team):
-    if team in SUBDIV:
-        return (f'<span style="font-family:Anton,sans-serif;font-size:11px;background:rgba(255,255,255,.16);'
-                f'color:#fff;border-radius:4px;padding:1px 6px;letter-spacing:.5px">{SUBDIV[team]}</span>')
-    return FLAG.get(team, "")
+    return SUBDIV_SVG.get(team) or FLAG.get(team, "")
 
 
 TEAM_GROUP = {
