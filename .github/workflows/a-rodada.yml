@@ -80,6 +80,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          if [ ! -f a-rodada/hoje.png ]; then echo "Nenhum pôster novo gerado (torneio encerrado?) — nada a publicar."; exit 0; fi
           mkdir -p /tmp/pub && cp a-rodada/hoje.png /tmp/pub/hoje.png
           cd /tmp/pub
           git init -q -b rodada

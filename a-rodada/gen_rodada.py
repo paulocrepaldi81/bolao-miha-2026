@@ -52,6 +52,18 @@ FLAG = {
     "Uzbequistão": "🇺🇿", "Colômbia": "🇨🇴", "Inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Gana": "🇬🇭", "Croácia": "🇭🇷",
     "Panamá": "🇵🇦", "Catar": "🇶🇦", "Suíça": "🇨🇭", "Coreia do Sul": "🇰🇷", "Rep Tcheca": "🇨🇿",
 }
+# Escócia/Inglaterra usam emoji de SUBDIVISÃO que o Noto do CI costuma NÃO renderizar (vira
+# tofu/bandeira preta). Pra essas, um selo de 3 letras — robusto em qualquer fonte (igual à landing).
+SUBDIV = {"Escócia": "SCO", "Inglaterra": "ENG", "País de Gales": "WAL", "Irlanda do Norte": "NIR"}
+
+
+def flag(team):
+    if team in SUBDIV:
+        return (f'<span style="font-family:Anton,sans-serif;font-size:11px;background:rgba(255,255,255,.16);'
+                f'color:#fff;border-radius:4px;padding:1px 6px;letter-spacing:.5px">{SUBDIV[team]}</span>')
+    return FLAG.get(team, "")
+
+
 TEAM_GROUP = {
     "Coreia do Sul": "A", "México": "A", "Rep Tcheca": "A", "África do Sul": "A",
     "Bósnia": "B", "Canadá": "B", "Catar": "B", "Suíça": "B", "Brasil": "C",
@@ -276,7 +288,7 @@ def build_html(last_round, next_round, res_day, up_day):
                f'right:-70px;bottom:-70px;opacity:.06;z-index:0;pointer-events:none">' if ball else "")
 
     # bandeira com largura fixa → nomes alinhados em coluna (régua vertical) nas duas seções
-    flg = lambda t: f'<span style="display:inline-block;width:22px;text-align:center">{FLAG.get(t, "")}</span>'
+    flg = lambda t: f'<span style="display:inline-block;min-width:22px;text-align:center">{flag(t)}</span>'
 
     def res_row(j):
         win = j["hs"] != j["as"]
@@ -342,6 +354,7 @@ def render_png(html):
         b = p.chromium.launch()
         pg = b.new_page(device_scale_factor=2)
         pg.set_content(html, wait_until="networkidle")
+        pg.evaluate("async () => { try { await document.fonts.ready; } catch (e) {} }")  # garante a fonte Anton aplicada antes do print
         pg.locator("#poster").screenshot(path=OUT)
         b.close()
 
@@ -349,6 +362,15 @@ def render_png(html):
 def main():
     events = fetch_events()
     last_round, next_round, res_day, up_day = pick_rounds(events)
+    # Pós-Copa: sem jogos futuros E último resultado já antigo → não republica o pôster "morto"
+    # todos os dias. (O workflow só publica se hoje.png existir.)
+    if up_day is None and res_day:
+        try:
+            if (dt.date.today() - dt.date.fromisoformat(res_day)).days > 3:
+                print(f"Torneio encerrado (último dia com jogo: {res_day}) — sem pôster novo.")
+                return
+        except Exception:
+            pass
     html = build_html(last_round, next_round, res_day, up_day)
     if os.environ.get("RODADA_HTML_ONLY"):
         with open(os.path.join(HERE, "preview.html"), "w", encoding="utf-8") as f:
