@@ -157,16 +157,6 @@ const HISTORY = [
 ];
 
 const TAGLINES = [
-  "Matematicamente vivo, emocionalmente questionável.",
-  "Líder por enquanto. Não mande imprimir a faixa.",
-  "Em último, mas primeiro no clima.",
-  "Sendo carregado por um único placar exato.",
-  "A planilha diz que há esperança. O futebol diz que não.",
-  "Apostou no zebrão e agora reza pelo zebrão.",
-  "Confiante como quem colocou 3×0 e tomou de 0×1.",
-  "O grupo da morte aqui é o do bolão.",
-  "Café-com-leite com sonho de Lanterna de Ouro.",
-  "Cada empate dói um pouquinho na alma.",
   "Enquanto a bola não rola: o Palmeiras continua sem Mundial.",
   "Sonho de Copa: Ronaldo Fenômeno entrando em campo. Realidade: seu chute no 2×1.",
   "Romário olharia seu palpite e diria: 'Coê baixinho'.",
