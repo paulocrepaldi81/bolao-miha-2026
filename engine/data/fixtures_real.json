@@ -1,0 +1,362 @@
+{
+ "A1": {
+  "home": "México",
+  "away": "África do Sul",
+  "kickoff": "2026-06-11T19:00Z"
+ },
+ "A2": {
+  "home": "Coreia do Sul",
+  "away": "Rep Tcheca",
+  "kickoff": "2026-06-12T02:00Z"
+ },
+ "B1": {
+  "home": "Canadá",
+  "away": "Bósnia",
+  "kickoff": "2026-06-12T19:00Z"
+ },
+ "D1": {
+  "home": "EUA",
+  "away": "Paraguai",
+  "kickoff": "2026-06-13T01:00Z"
+ },
+ "B2": {
+  "home": "Catar",
+  "away": "Suíça",
+  "kickoff": "2026-06-13T19:00Z"
+ },
+ "C1": {
+  "home": "Brasil",
+  "away": "Marrocos",
+  "kickoff": "2026-06-13T22:00Z"
+ },
+ "C2": {
+  "home": "Haiti",
+  "away": "Escócia",
+  "kickoff": "2026-06-14T01:00Z"
+ },
+ "D2": {
+  "home": "Austrália",
+  "away": "Turquia",
+  "kickoff": "2026-06-14T04:00Z"
+ },
+ "E1": {
+  "home": "Alemanha",
+  "away": "Curaçao",
+  "kickoff": "2026-06-14T17:00Z"
+ },
+ "F1": {
+  "home": "Holanda",
+  "away": "Japão",
+  "kickoff": "2026-06-14T20:00Z"
+ },
+ "E2": {
+  "home": "Costa do Marfim",
+  "away": "Equador",
+  "kickoff": "2026-06-14T23:00Z"
+ },
+ "F2": {
+  "home": "Suécia",
+  "away": "Tunísia",
+  "kickoff": "2026-06-15T02:00Z"
+ },
+ "H1": {
+  "home": "Espanha",
+  "away": "Cabo Verde",
+  "kickoff": "2026-06-15T16:00Z"
+ },
+ "G1": {
+  "home": "Bélgica",
+  "away": "Egito",
+  "kickoff": "2026-06-15T19:00Z"
+ },
+ "H2": {
+  "home": "Arábia Saudita",
+  "away": "Uruguai",
+  "kickoff": "2026-06-15T22:00Z"
+ },
+ "G2": {
+  "home": "Irã",
+  "away": "Nova Zelândia",
+  "kickoff": "2026-06-16T01:00Z"
+ },
+ "I1": {
+  "home": "França",
+  "away": "Senegal",
+  "kickoff": "2026-06-16T19:00Z"
+ },
+ "I2": {
+  "home": "Iraque",
+  "away": "Noruega",
+  "kickoff": "2026-06-16T22:00Z"
+ },
+ "J1": {
+  "home": "Argentina",
+  "away": "Argélia",
+  "kickoff": "2026-06-17T01:00Z"
+ },
+ "J2": {
+  "home": "Áustria",
+  "away": "Jordânia",
+  "kickoff": "2026-06-17T04:00Z"
+ },
+ "K1": {
+  "home": "Portugal",
+  "away": "RD Congo",
+  "kickoff": "2026-06-17T17:00Z"
+ },
+ "L4": {
+  "home": "Inglaterra",
+  "away": "Croácia",
+  "kickoff": "2026-06-17T20:00Z"
+ },
+ "L3": {
+  "home": "Gana",
+  "away": "Panamá",
+  "kickoff": "2026-06-17T23:00Z"
+ },
+ "K2": {
+  "home": "Uzbequistão",
+  "away": "Colômbia",
+  "kickoff": "2026-06-18T02:00Z"
+ },
+ "A3": {
+  "home": "Rep Tcheca",
+  "away": "África do Sul",
+  "kickoff": "2026-06-18T16:00Z"
+ },
+ "B3": {
+  "home": "Suíça",
+  "away": "Bósnia",
+  "kickoff": "2026-06-18T19:00Z"
+ },
+ "B4": {
+  "home": "Canadá",
+  "away": "Catar",
+  "kickoff": "2026-06-18T22:00Z"
+ },
+ "A4": {
+  "home": "México",
+  "away": "Coreia do Sul",
+  "kickoff": "2026-06-19T01:00Z"
+ },
+ "D3": {
+  "home": "EUA",
+  "away": "Austrália",
+  "kickoff": "2026-06-19T19:00Z"
+ },
+ "C3": {
+  "home": "Escócia",
+  "away": "Marrocos",
+  "kickoff": "2026-06-19T22:00Z"
+ },
+ "C4": {
+  "home": "Brasil",
+  "away": "Haiti",
+  "kickoff": "2026-06-20T00:30Z"
+ },
+ "D4": {
+  "home": "Turquia",
+  "away": "Paraguai",
+  "kickoff": "2026-06-20T03:00Z"
+ },
+ "F3": {
+  "home": "Holanda",
+  "away": "Suécia",
+  "kickoff": "2026-06-20T17:00Z"
+ },
+ "E3": {
+  "home": "Alemanha",
+  "away": "Costa do Marfim",
+  "kickoff": "2026-06-20T20:00Z"
+ },
+ "E4": {
+  "home": "Equador",
+  "away": "Curaçao",
+  "kickoff": "2026-06-21T00:00Z"
+ },
+ "F4": {
+  "home": "Tunísia",
+  "away": "Japão",
+  "kickoff": "2026-06-21T04:00Z"
+ },
+ "H3": {
+  "home": "Espanha",
+  "away": "Arábia Saudita",
+  "kickoff": "2026-06-21T16:00Z"
+ },
+ "G3": {
+  "home": "Bélgica",
+  "away": "Irã",
+  "kickoff": "2026-06-21T19:00Z"
+ },
+ "H4": {
+  "home": "Uruguai",
+  "away": "Cabo Verde",
+  "kickoff": "2026-06-21T22:00Z"
+ },
+ "G4": {
+  "home": "Nova Zelândia",
+  "away": "Egito",
+  "kickoff": "2026-06-22T01:00Z"
+ },
+ "J3": {
+  "home": "Argentina",
+  "away": "Áustria",
+  "kickoff": "2026-06-22T17:00Z"
+ },
+ "I3": {
+  "home": "França",
+  "away": "Iraque",
+  "kickoff": "2026-06-22T21:00Z"
+ },
+ "I4": {
+  "home": "Noruega",
+  "away": "Senegal",
+  "kickoff": "2026-06-23T00:00Z"
+ },
+ "J4": {
+  "home": "Jordânia",
+  "away": "Argélia",
+  "kickoff": "2026-06-23T03:00Z"
+ },
+ "K3": {
+  "home": "Portugal",
+  "away": "Uzbequistão",
+  "kickoff": "2026-06-23T17:00Z"
+ },
+ "L1": {
+  "home": "Inglaterra",
+  "away": "Gana",
+  "kickoff": "2026-06-23T20:00Z"
+ },
+ "L2": {
+  "home": "Panamá",
+  "away": "Croácia",
+  "kickoff": "2026-06-23T23:00Z"
+ },
+ "K4": {
+  "home": "Colômbia",
+  "away": "RD Congo",
+  "kickoff": "2026-06-24T02:00Z"
+ },
+ "B6": {
+  "home": "Bósnia",
+  "away": "Catar",
+  "kickoff": "2026-06-24T19:00Z"
+ },
+ "B5": {
+  "home": "Suíça",
+  "away": "Canadá",
+  "kickoff": "2026-06-24T19:00Z"
+ },
+ "C6": {
+  "home": "Marrocos",
+  "away": "Haiti",
+  "kickoff": "2026-06-24T22:00Z"
+ },
+ "C5": {
+  "home": "Escócia",
+  "away": "Brasil",
+  "kickoff": "2026-06-24T22:00Z"
+ },
+ "A5": {
+  "home": "Rep Tcheca",
+  "away": "México",
+  "kickoff": "2026-06-25T01:00Z"
+ },
+ "A6": {
+  "home": "África do Sul",
+  "away": "Coreia do Sul",
+  "kickoff": "2026-06-25T01:00Z"
+ },
+ "E6": {
+  "home": "Curaçao",
+  "away": "Costa do Marfim",
+  "kickoff": "2026-06-25T20:00Z"
+ },
+ "E5": {
+  "home": "Equador",
+  "away": "Alemanha",
+  "kickoff": "2026-06-25T20:00Z"
+ },
+ "F6": {
+  "home": "Japão",
+  "away": "Suécia",
+  "kickoff": "2026-06-25T23:00Z"
+ },
+ "F5": {
+  "home": "Tunísia",
+  "away": "Holanda",
+  "kickoff": "2026-06-25T23:00Z"
+ },
+ "D6": {
+  "home": "Paraguai",
+  "away": "Austrália",
+  "kickoff": "2026-06-26T02:00Z"
+ },
+ "D5": {
+  "home": "Turquia",
+  "away": "EUA",
+  "kickoff": "2026-06-26T02:00Z"
+ },
+ "I5": {
+  "home": "Noruega",
+  "away": "França",
+  "kickoff": "2026-06-26T19:00Z"
+ },
+ "I6": {
+  "home": "Senegal",
+  "away": "Iraque",
+  "kickoff": "2026-06-26T19:00Z"
+ },
+ "H6": {
+  "home": "Cabo Verde",
+  "away": "Arábia Saudita",
+  "kickoff": "2026-06-27T00:00Z"
+ },
+ "H5": {
+  "home": "Uruguai",
+  "away": "Espanha",
+  "kickoff": "2026-06-27T00:00Z"
+ },
+ "G6": {
+  "home": "Egito",
+  "away": "Irã",
+  "kickoff": "2026-06-27T03:00Z"
+ },
+ "G5": {
+  "home": "Nova Zelândia",
+  "away": "Bélgica",
+  "kickoff": "2026-06-27T03:00Z"
+ },
+ "L6": {
+  "home": "Croácia",
+  "away": "Gana",
+  "kickoff": "2026-06-27T21:00Z"
+ },
+ "L5": {
+  "home": "Panamá",
+  "away": "Inglaterra",
+  "kickoff": "2026-06-27T21:00Z"
+ },
+ "K5": {
+  "home": "Colômbia",
+  "away": "Portugal",
+  "kickoff": "2026-06-27T23:30Z"
+ },
+ "K6": {
+  "home": "RD Congo",
+  "away": "Uzbequistão",
+  "kickoff": "2026-06-27T23:30Z"
+ },
+ "J6": {
+  "home": "Argélia",
+  "away": "Áustria",
+  "kickoff": "2026-06-28T02:00Z"
+ },
+ "J5": {
+  "home": "Jordânia",
+  "away": "Argentina",
+  "kickoff": "2026-06-28T02:00Z"
+ }
+}
