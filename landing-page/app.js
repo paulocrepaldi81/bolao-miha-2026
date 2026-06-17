@@ -185,6 +185,9 @@ const SUBDIV = { "Escócia":"SCO", "Inglaterra":"ENG", "País de Gales":"WAL", "
 const fEmoji = t => SUBDIV[t] ? `<span class="fmono">${SUBDIV[t]}</span>` : (FLAGS[t] || '');
 const flag  = t => { const f = fEmoji(t); return f ? f+' ' : ''; };   // prefixo (antes do nome)
 const flagA = t => { const f = fEmoji(t); return f ? ' '+f : ''; };   // sufixo (depois do nome)
+// Escapa dados de HUMANOS (apelido, da planilha) ou de 3ª parte (minuto, da ESPN) antes de
+// entrar em innerHTML — defesa contra XSS / quebra de layout.
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const fmtDateTime = iso => {
   const d = new Date(iso);
@@ -254,7 +257,7 @@ function renderHeroLive(){
   const el=document.getElementById('heroLive'); if(!el) return;
   const live=(DATA.matches||[]).filter(m=>m.status==='live');
   if(!live.length){ el.hidden=true; el.innerHTML=''; return; }
-  const txt=live.map(m=>`${flag(m.home_team)}${m.home_team} <b>${m.home_score}×${m.away_score}</b> ${m.away_team}${flagA(m.away_team)}${m.minute?` · ${m.minute}`:''}`).join('   ·   ');
+  const txt=live.map(m=>`${flag(m.home_team)}${m.home_team} <b>${m.home_score}×${m.away_score}</b> ${m.away_team}${flagA(m.away_team)}${m.minute?` · ${esc(m.minute)}`:''}`).join('   ·   ');
   el.innerHTML=`<span class="hl-dot"></span><span class="hl-tag">Ao vivo</span><span class="hl-game">${txt}</span>`;
   el.hidden=false;
 }
@@ -286,7 +289,7 @@ function renderCurrentGameStats(){
   box.hidden=false;
   const moreTag = cur.more>0?` <span class="cg-more">+${cur.more} ao vivo</span>`:'';
   const status = cur.live
-    ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${m.minute||'em andamento'}</span>`
+    ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${esc(m.minute||'em andamento')}</span>`
     : `<span class="chip chip-sched">📅 próximo</span> <span class="cg-min">${fmtDateTime(m.kickoff_sao_paulo)}</span>`;
   const score = cur.live ? `<b>${m.home_score??0}×${m.away_score??0}</b>` : '×';
   const head=`<h3 class="sub-h" style="margin-top:4px">🔥 O jogo de agora nas apostas</h3>
@@ -362,7 +365,7 @@ function renderPelotao(){
   const ss=[...scores].sort((a,b)=>a-b), q=p=>ss[Math.floor(p*(ss.length-1))];
   const dOut=discrete(outs), dExa=discrete(exas);
   const TK={
-    pontos:`O pelotão se concentra entre ${q(.25)} e ${q(.75)} pts. O líder (${short(leader.alias)}, ${leader.score}) abriu ${gap} ponto${gap!==1?'s':''} de frente${gap>=4?' e corre destacado na ponta':''}.`,
+    pontos:`O pelotão se concentra entre ${q(.25)} e ${q(.75)} pts. O líder (${esc(short(leader.alias))}, ${leader.score}) abriu ${gap} ponto${gap!==1?'s':''} de frente${gap>=4?' e corre destacado na ponta':''}.`,
     acertos:`O miolo do bolão acerta cerca de ${med(outs)} resultados. Os extremos são poucos — é onde a disputa se decide.`,
     exatos:`Placar exato é raro: poucos cravam muitos e a maioria fica na base. Vale ouro no desempate.`
   };
@@ -389,7 +392,7 @@ function renderPelotao(){
       if(d.n>0){s+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${isL?GREEN:GOLD}"/>`;
         s+=`<text x="${cx}" y="${(y-5).toFixed(1)}" fill="${isL?GREEN:DIM}" font-size="12" font-weight="500" text-anchor="middle">${d.n}</text>`;}
       s+=`<text x="${cx}" y="${base+17}" fill="${FAINT}" font-size="11.5" text-anchor="middle">${d.lab}</text>`;});
-    if(leaderBin>=0){const lx=x0+slot*leaderBin+slot/2, lab=W<480?`Líder ${leader.score} →`:`Líder · ${short(leader.alias)} ${leader.score} →`;
+    if(leaderBin>=0){const lx=x0+slot*leaderBin+slot/2, lab=W<480?`Líder ${leader.score} →`:`Líder · ${esc(short(leader.alias))} ${leader.score} →`;
       s+=`<text x="${Math.min(lx,x1-2).toFixed(0)}" y="${top}" fill="${GREEN}" font-size="12" font-weight="500" text-anchor="end">${lab}</text>`;}
     s+=`<text x="${x0}" y="${base+34}" fill="${FAINT}" font-size="11">${XL[pelLens]} →  (cada barra = nº de pessoas)</text>`;
     svg.innerHTML=s;
@@ -431,7 +434,8 @@ function renderFavoritos(){
 }
 
 function render(){
-  const P = [...DATA.participants].sort((a,b)=>a.rank-b.rank);
+  const P = [...(DATA.participants||[])].sort((a,b)=>a.rank-b.rank);
+  if(!P.length) return;   // data.json vazio/malformado → degrada (não derruba a página inteira)
   // hero
   const leader = P[0];
   document.getElementById('leaderName').textContent = leader.alias;
@@ -450,7 +454,7 @@ function render(){
   }
   // next match — só jogos FUTUROS (tolerância de 2h30 p/ jogo em andamento)
   const nowMs = Date.now();
-  const next = DATA.matches
+  const next = (DATA.matches||[])
     .filter(m=>m.status==='scheduled' && m.kickoff_sao_paulo && (new Date(m.kickoff_sao_paulo).getTime() > nowMs - 2.5*3600e3))
     .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
   if(next){
@@ -464,7 +468,7 @@ function render(){
     document.getElementById('nextWhen').textContent = 'Aguardando a definição dos próximos jogos.';
   }
   // radar de JOGO ESPECIAL (verde = vale 5 pts): alerta no hero + countdown destacado
-  const nextSpecial = DATA.matches
+  const nextSpecial = (DATA.matches||[])
     .filter(m=>m.is_special && m.status==='scheduled' && m.kickoff_sao_paulo && (new Date(m.kickoff_sao_paulo).getTime() > nowMs - 2.5*3600e3))
     .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
   const sa = document.getElementById('specialAlert');
@@ -505,7 +509,7 @@ function render(){
     const curW = (cur/scaleMax*100).toFixed(1), avW = (Math.max(0,mx-cur)/scaleMax*100).toFixed(1);
     const tag = p.eliminated ? '<span class="elim-tag">eliminado</span>' : '';
     return `<div class="prob-item">
-      <div class="nm">${p.alias}${tag}</div>
+      <div class="nm">${esc(p.alias)}${tag}</div>
       <div class="bar race"><i style="width:${curW}%"></i><u style="width:${avW}%"></u></div>
       <div class="pct">${cur}<span class="pct-mx">/${mx}</span></div>
     </div>`;
@@ -522,7 +526,7 @@ function render(){
   renderLiveStrip();
   renderHeroLive();
   // aba padrão: 'Próximos' enquanto houver jogos por vir; senão 'Encerrados'
-  const hasScheduled = DATA.matches.some(m=>m.status==='scheduled');
+  const hasScheduled = (DATA.matches||[]).some(m=>m.status==='scheduled');
   const defTab = hasScheduled ? 'scheduled' : 'finished';
   document.querySelectorAll('#matchTabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.f===defTab));
   renderMatches(defTab);
@@ -622,7 +626,7 @@ function renderLeaderboard(){
       return `<div class="lb-row ${cls}">
         <div class="rk">${p.rank}</div>
         <div class="who">
-          <div class="nm">${medal}${isLast?'🔦 ':''}${p.alias} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
+          <div class="nm">${medal}${isLast?'🔦 ':''}${esc(p.alias)} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
           <div class="meta">última rodada: +${p.last_match_points} pts · placares exatos: ${p.exact_scores ?? 0}</div>
         </div>
         <div class="lb-right">
@@ -653,7 +657,7 @@ function renderBomPalpite(){
   document.getElementById('bpList').innerHTML = P.map((p,i) => `
     <div class="bp-row">
       <span class="bp-rk">${i+1}</span>
-      <span class="bp-nm">${i===0?'🏁 ':''}${p.alias}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
+      <span class="bp-nm">${i===0?'🏁 ':''}${esc(p.alias)}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
       <span class="bp-pts">${p.ph1} pts</span>
     </div>`).join('') || '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
 }
@@ -695,7 +699,7 @@ function matchCardHTML(m){
   const special = m.is_special ? '<span class="chip chip-special">⭐ Especial · 5 pts</span>' : '';
   // rodapé: ao vivo mostra o minuto (se houver); encerrado mostra conferência; agendado, horário
   let foot;
-  if(m.status==='live') foot = `<span class="mlive-min">${m.minute?('🔴 '+m.minute):'🔴 em andamento'}</span><span class="verif">placar parcial</span>`;
+  if(m.status==='live') foot = `<span class="mlive-min">${m.minute?('🔴 '+esc(m.minute)):'🔴 em andamento'}</span><span class="verif">placar parcial</span>`;
   else if(m.status==='finished') foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">${m.verified?'<span class="ok">✓ conferido</span>':'<span class="warn">• conferindo</span>'}</span>`;
   else foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">a bola não rolou</span>`;
   return `<div class="mcard">
@@ -821,7 +825,7 @@ function renderMinhaAposta(){
 
   let h=`<div class="ma-hero">
     <div class="ma-av">${initials}</div>
-    <div class="ma-who"><div class="ma-name">${p.alias} ${mv}</div>
+    <div class="ma-who"><div class="ma-name">${esc(p.alias)} ${mv}</div>
       <div class="ma-sub">${p.rank}º de ${total}${p.eliminated?' · <span style="color:var(--coral)">eliminado</span>':''} ${prize}${paidBadge}</div></div>
     <div class="ma-score"><b>${p.score}</b><span>pontos</span></div></div>
   <div class="ma-break">
@@ -893,7 +897,7 @@ function maRenderSuggest(q){
   if(!q){ box.hidden=true; return; }
   box.hidden=false;
   box.innerHTML = hits.length
-    ? hits.map(p=>`<div class="ma-sugg" data-a="${p.alias.replace(/"/g,'&quot;')}"><span>${p.alias}</span><span class="r">${p.rank}º</span></div>`).join('')
+    ? hits.map(p=>`<div class="ma-sugg" data-a="${esc(p.alias)}"><span>${esc(p.alias)}</span><span class="r">${p.rank}º</span></div>`).join('')
     : `<div class="ma-empty-s">Nenhum apelido com “${q}”. Confere a grafia (igual à planilha).</div>`;
 }
 
