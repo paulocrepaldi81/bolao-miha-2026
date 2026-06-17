@@ -166,7 +166,15 @@ const TAGLINES = [
   "Confiante como quem colocou 3×0 e tomou de 0×1.",
   "O grupo da morte aqui é o do bolão.",
   "Café-com-leite com sonho de Lanterna de Ouro.",
-  "Cada empate dói um pouquinho na alma."
+  "Cada empate dói um pouquinho na alma.",
+  "Enquanto a bola não rola: o Palmeiras continua sem Mundial.",
+  "Sonho de Copa: Ronaldo Fenômeno entrando em campo. Realidade: seu chute no 2×1.",
+  "Romário olharia seu palpite e diria: 'Coê baixinho'.",
+  "Quem aposta 0×0 é gente que foge de emoção.",
+  "Hora de derrubar a Casa Mihalik.",
+  "The winter is coming e meus pontos não.",
+  "O bolão pune by Muricy.",
+  "Faça ou não faça. Tentativa não há."
 ];
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026
@@ -377,7 +385,14 @@ function renderCurrentGameStats(){
       <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pcD}%</span>
       <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pcA}%</span>
     </div></div>`;
-  box.innerHTML=head+r1x2+`<div class="cg-grid">${cards}</div>`
+  // 🎯 NA MOSCA AO VIVO: quantas apostas batem o placar EXATO agora — só quando o jogo está
+  // rolando; recalcula sozinho a cada mudança de placar (overlay ESPN) e some/zera no fim do jogo.
+  const liveKey = `${m.home_score??0}×${m.away_score??0}`;
+  const naMosca = cur.live ? preds.filter(k=>k===liveKey).length : 0;
+  const moscaLine = cur.live
+    ? `<div class="cg-mosca"><span class="cg-mosca-dot"></span><span>Se acabasse agora (<b>${m.home_score??0} × ${m.away_score??0}</b>): <b>${naMosca}</b> aposta${naMosca!==1?'s':''} ${naMosca?'cravando o placar exato 🎯':'nesse placar ainda 👀'}</span></div>`
+    : '';
+  box.innerHTML=head+moscaLine+r1x2+`<div class="cg-grid">${cards}</div>`
     +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
 }
 
@@ -974,7 +989,22 @@ document.getElementById('matchMore').addEventListener('click',()=>{
 
 // rotating tagline
 let ti=0; const tEl=document.getElementById('tagline');
-function rotate(){ tEl.textContent = TAGLINES[ti % TAGLINES.length]; ti++; }
+// Frases da LANTERNA: dinâmicas — usam o último colocado ATUAL. textContent (sem risco XSS).
+const LANTERNA_LINES = [
+  "🔦 {x} brilhando na lanterna: luz própria.",
+  "🔦 Temos campeão da lanterna: {x}. O bolão todo torce… pra você ficar.",
+  "🔦 {x} de novo na lanterna? Já dá pra pagar aluguel."
+];
+function taglinePool(){
+  const pool = [...TAGLINES];
+  const P = DATA.participants || [];
+  if(P.length){
+    const last = [...P].sort((a,b)=> (b.rank-a.rank) || (a.score-b.score))[0];
+    if(last && last.alias) LANTERNA_LINES.forEach(t => pool.push(t.replace('{x}', last.alias)));
+  }
+  return pool;
+}
+function rotate(){ const pool=taglinePool(); tEl.textContent = pool[ti % pool.length]; ti++; }
 rotate(); setInterval(rotate, 4200);
 
 // boot: carrega o placar direto do GitHub (não consome deploys da Netlify);
