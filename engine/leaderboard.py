@@ -73,7 +73,9 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot):
             "correct_outcomes": s["correct_outcomes"],
             "max_possible": s["max_possible"],
             "points_available": s["points_available"],
-            "eliminated": (s["total"] + s["points_available"]) < leader_total,
+            # + KNOCKOUT_POTENTIAL: o mata-mata ainda não pontua (v1), mas vale pontos de verdade —
+            # sem essa folga, ao fechar a 1ª fase alguém seria marcado "eliminado" sem estar.
+            "eliminated": (s["total"] + s["points_available"] + C.KNOCKOUT_POTENTIAL) < leader_total,
             "paid": s["paid"],
         })
     return out

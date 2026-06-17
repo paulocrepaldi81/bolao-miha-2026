@@ -84,9 +84,9 @@ def fetch_espn_events():
             events = []
             for det in comp.get("details", []):
                 # Artilharia (ESPN = fonte completa): conta gols de jogos que começaram (post/in);
-                # pênalti CONTA, gol contra NÃO conta pra ninguém. Assim agrupa empates corretamente.
-                gtype = ((det.get("type") or {}).get("text") or "").lower()
-                if state in ("post", "in") and (det.get("scoringPlay") or "goal" in gtype) and not det.get("ownGoal"):
+                # pênalti CONTA, gol contra NÃO conta pra ninguém. Usa só `scoringPlay` (sinal
+                # confiável) — evita o substring "goal" casar tipos como "Penalty - No Goal".
+                if state in ("post", "in") and det.get("scoringPlay") and not det.get("ownGoal"):
                     a0 = (det.get("athletesInvolved") or [{}])[0]
                     gnm = a0.get("displayName") or a0.get("shortName")
                     if gnm:

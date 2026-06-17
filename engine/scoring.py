@@ -34,12 +34,15 @@ def score_final(pred_final, real_final):
     """Classificação final. pred/real = dict {champion, vice, third} (nomes de seleções)."""
     if not real_final or not any(real_final.values()):
         return 0
-    real = {k: (v.strip() if v else v) for k, v in real_final.items()}
+    # comparação case-insensitive (igual às extras via _eq) — evita zerar 15/10/5 pts por
+    # uma maiúscula/acento divergente entre o que a planilha deduz e o que o organizador digita.
+    norm = lambda v: (v or "").strip().lower()
+    real = {k: norm(v) for k, v in real_final.items()}
     real_top3 = {v for v in real.values() if v}
     slot_pts = {"champion": C.PTS_CHAMP, "vice": C.PTS_VICE, "third": C.PTS_THIRD}
     pts = 0
     for slot, full in slot_pts.items():
-        guess = (pred_final.get(slot) or "").strip()
+        guess = norm(pred_final.get(slot))
         if not guess:
             continue
         if guess == real.get(slot):
