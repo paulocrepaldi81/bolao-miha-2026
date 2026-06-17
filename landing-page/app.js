@@ -180,9 +180,13 @@ const FLAGS = {
   "Portugal":"🇵🇹","RD Congo":"🇨🇩","Uzbequistão":"🇺🇿","Colômbia":"🇨🇴","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Gana":"🇬🇭",
   "Croácia":"🇭🇷","Panamá":"🇵🇦","Catar":"🇶🇦","Suíça":"🇨🇭","Coreia do Sul":"🇰🇷","Rep Tcheca":"🇨🇿"
 };
-// Bandeiras de sub-nações (Escócia/Inglaterra/Gales) quebram em Windows → usa selo de 3 letras
-const SUBDIV = { "Escócia":"SCO", "Inglaterra":"ENG", "País de Gales":"WAL", "Irlanda do Norte":"NIR" };
-const fEmoji = t => SUBDIV[t] ? `<span class="fmono">${SUBDIV[t]}</span>` : (FLAGS[t] || '');
+// Bandeiras de sub-nações (Escócia/Inglaterra) quebram como EMOJI no Windows/Noto → SVG inline,
+// que renderiza igual em qualquer sistema. As demais seleções usam o emoji de bandeira normal.
+const SUBDIV_SVG = {
+  "Inglaterra": '<svg viewBox="0 0 30 20" width="19" height="13" style="vertical-align:-2px;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.18)"><rect width="30" height="20" fill="#fff"/><rect x="12" width="6" height="20" fill="#ce1124"/><rect y="7" width="30" height="6" fill="#ce1124"/></svg>',
+  "Escócia":    '<svg viewBox="0 0 30 20" width="19" height="13" style="vertical-align:-2px;border-radius:2px"><rect width="30" height="20" fill="#0065bf"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4.5"/></svg>'
+};
+const fEmoji = t => SUBDIV_SVG[t] || FLAGS[t] || '';
 const flag  = t => { const f = fEmoji(t); return f ? f+' ' : ''; };   // prefixo (antes do nome)
 const flagA = t => { const f = fEmoji(t); return f ? ' '+f : ''; };   // sufixo (depois do nome)
 // Escapa dados de HUMANOS (apelido, da planilha) ou de 3ª parte (minuto, da ESPN) antes de
@@ -1002,6 +1006,6 @@ async function boot(){
   render();
   lastStamp = (DATA.meta && DATA.meta.last_data_update) || null;
   startLivePolling();   // ao vivo de verdade (ESPN direto) por cima do dado do robô
-  setInterval(refreshData, 60000);  // a cada 60s: pontos/classificação/histograma novos do robô, sem reload
+  setInterval(refreshData, 30000);  // a cada 30s: pega os dados novos do robô (final/pontos) rápido, sem reload
 }
 boot();
