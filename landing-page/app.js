@@ -668,7 +668,7 @@ function renderLeaderboard(){
         <div class="rk">${p.rank}</div>
         <div class="who">
           <div class="nm">${medal}${isLast?'🔦 ':''}${esc(p.alias)} ${arrow(p.rank_change)} ${prize}${free} ${hit}</div>
-          <div class="meta">última rodada: +${p.day_points ?? p.last_match_points ?? 0} pts · placares exatos: ${p.exact_scores ?? 0}</div>
+          <div class="meta">na rodada: +${p.day_points ?? p.last_match_points ?? 0} pts · placares exatos: ${p.exact_scores ?? 0}</div>
         </div>
         <div class="lb-right">
           <div class="pwin"><div class="v">${p.eliminated ? '<span style="color:var(--coral)">fora</span>' : (p.max_possible ?? '—')}</div><div class="l">máx possível</div></div>
@@ -872,7 +872,7 @@ function renderMinhaAposta(){
   <div class="ma-break">
     <div class="ma-kpi"><b>${ph1}</b><span>pts 1ª fase</span></div>
     <div class="ma-kpi"><b>${p.exact_scores??0}</b><span>placares exatos</span></div>
-    <div class="ma-kpi"><b>+${p.day_points ?? p.last_match_points ?? 0}</b><span>última rodada</span></div>
+    <div class="ma-kpi"><b>+${p.day_points ?? p.last_match_points ?? 0}</b><span>na rodada</span></div>
     <div class="ma-kpi"><b>${mx}</b><span>máx. possível</span></div>
   </div>
   <div class="ma-barwrap"><div class="ma-barlab"><span>corrida pelo título</span><span>${cur} / ${mx}</span></div>
