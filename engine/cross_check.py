@@ -71,7 +71,7 @@ def main():
             source_ok = False
             print(f"  ⚠ football-data indisponível: {e}")
 
-    discrepancies, pendente, compared, agree = [], [], 0, 0
+    discrepancies, resolvidas, pendente, compared, agree = [], [], [], 0, 0
     for mid, fd in fd_by_mid.items():
         row = results.get(mid, {})
         our_status = (row.get("status") or "scheduled").strip()
@@ -84,13 +84,22 @@ def main():
             if all(our.get(t) == fd["score"].get(t) for t in our):
                 agree += 1
             else:
-                discrepancies.append({
+                locked = str(row.get("lock", "")).strip().lower() in ("sim", "1", "true", "yes")
+                entry = {
                     "match_id": mid,
                     "teams": f"{fd['home']} x {fd['away']}",
                     "primaria": f"{hs}x{as_}  (ESPN)",
                     "secundaria": f"{fd['score'].get(fd['home'])}x{fd['score'].get(fd['away'])}  (football-data)",
-                    "lock": str(row.get("lock", "")).strip().lower() in ("sim", "1", "true", "yes"),
-                })
+                    "lock": locked,
+                }
+                if locked:
+                    # Organizador JÁ DECIDIU (lock=sim em results.csv): vale o placar da fonte
+                    # PRIMÁRIA (ESPN). A 2ª fonte ainda discorda, mas a divergência está
+                    # RESOLVIDA — conta como conferida e NÃO dispara alerta/banner vermelho.
+                    agree += 1
+                    resolvidas.append(entry)
+                else:
+                    discrepancies.append(entry)
         elif our_finished and not (fd["finished"] and fd["has_score"]):
             pendente.append(mid)   # ESPN já fechou; football-data (mais lenta) ainda sem placar
 
@@ -107,16 +116,20 @@ def main():
         "source_b_ok": source_ok,
         "status": status, "compared": compared, "agree": agree,
         "discrepancies": discrepancies,
+        "resolvidas": resolvidas,   # divergências decididas pelo organizador (vale a ESPN)
         "pendente_2a_fonte": sorted(pendente),
     }
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
     print(f"Conferência 2 fontes (ESPN × football-data) · {agree}/{compared} batem · "
-          f"2ª fonte ainda apurando: {len(pendente)} · status: {status}")
+          f"resolvidas (vale ESPN): {len(resolvidas)} · 2ª fonte ainda apurando: {len(pendente)} · status: {status}")
     for d in discrepancies:
         print(f"  ⛔ DIVERGÊNCIA {d['match_id']} {d['teams']}: {d['primaria']} ≠ {d['secundaria']}"
               + ("  [lock manual ativo]" if d["lock"] else ""))
+    for d in resolvidas:
+        print(f"  ✓ RESOLVIDA {d['match_id']} {d['teams']}: vale {d['primaria']} (ESPN); "
+              f"football-data marcou {d['secundaria']}")
     sys.exit(0)
 
 

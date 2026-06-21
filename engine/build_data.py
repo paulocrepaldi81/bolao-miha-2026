@@ -125,6 +125,7 @@ def load_cross_check(path):
         "source_b_ok": c.get("source_b_ok", True),
         "compared": c.get("compared", 0), "agree": c.get("agree", 0),
         "discrepancies": c.get("discrepancies", []),
+        "resolvidas": c.get("resolvidas", []),   # divergências decididas a favor da ESPN
         "checked_at": c.get("checked_at"),
     }
 

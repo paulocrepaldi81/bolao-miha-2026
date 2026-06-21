@@ -593,8 +593,12 @@ function renderCrossCheck(){
   } else if(a.status === 'fonte_indisponivel'){
     el.innerHTML = `Conferência da 2ª fonte temporariamente indisponível — placares seguem pela fonte primária (ESPN).${when}`;
   } else {
+    const resolvidas = a.resolvidas || [];
+    const extra = resolvidas.length ? `<div style="margin-top:6px;color:var(--ink-faint)">
+      Decidido pelo organizador (vale o placar da ESPN): ${resolvidas.map(d =>
+        `${d.teams} — <b>${d.primaria||d.oficial}</b> (≠ ${d.secundaria||d.espn})`).join('; ')}.</div>` : '';
     el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
-      (${pair}) — nenhuma divergência.${when}`;
+      (${pair}) — nenhuma divergência em aberto.${when}${extra}`;
   }
 }
 
