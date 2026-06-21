@@ -586,7 +586,7 @@ function renderCrossCheck(){
   const pair = `${a.source_a||'ESPN'} × ${a.source_b||'football-data.org'}`;
   if(a.status === 'divergencia' && (a.discrepancies||[]).length){
     const list = a.discrepancies.map(d =>
-      `<li>${d.teams}: <b>${d.primaria||d.oficial}</b> ≠ <b>${d.secundaria||d.espn}</b>${d.lock?' (correção manual ativa)':''}</li>`).join('');
+      `<li>${esc(String(d.teams))}: <b>${esc(String(d.primaria||d.oficial))}</b> ≠ <b>${esc(String(d.secundaria||d.espn))}</b>${d.lock?' (correção manual ativa)':''}</li>`).join('');
     el.innerHTML = `<b style="color:#ff6b6b">⚠ Divergência entre fontes detectada</b> — em verificação pelo organizador:
       <ul style="margin:6px 0 0 16px">${list}</ul>
       <div style="margin-top:6px;color:var(--ink-faint)">${pair}${when}. O organizador foi avisado automaticamente.</div>`;
@@ -595,7 +595,7 @@ function renderCrossCheck(){
   } else if((a.resolvidas || []).length){
     // Há divergência(s) DECIDIDA(s) pelo organizador (vale a ESPN): banner verde + nota transparente.
     const list = a.resolvidas.map(d =>
-      `${d.teams} — <b>${d.primaria||d.oficial}</b> (≠ ${d.secundaria||d.espn})`).join('; ');
+      `${esc(String(d.teams))} — <b>${esc(String(d.primaria||d.oficial))}</b> (≠ ${esc(String(d.secundaria||d.espn))})`).join('; ');
     el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
       (${pair}) — nenhuma divergência em aberto.${when}
       <div style="margin-top:6px;color:var(--ink-faint)">Decidido pelo organizador (vale o placar da ESPN): ${list}.</div>`;
@@ -739,12 +739,12 @@ function renderExtras(){
   document.getElementById('exGrid').innerHTML = list.map(x=>{
     const done = x.real !== null && x.real !== undefined && x.real !== '';
     const status = done
-      ? `<div class="ex-real">${flag(String(x.real))}${x.real}</div>
+      ? `<div class="ex-real">${flag(String(x.real))}${esc(String(x.real))}</div>
          <div class="ex-winners">${x.winners && x.winners.length
-            ? `🎉 Pontuaram (+${x.points}): <b>${x.winners.join('</b>, <b>')}</b>`
+            ? `🎉 Pontuaram (+${x.points}): <b>${x.winners.map(esc).join('</b>, <b>')}</b>`
             : 'Ninguém acertou esta. O futebol venceu.'}</div>`
       : (x.partial
-          ? `<div class="ex-status">📡 <b style="color:var(--blue)">Parcial ao vivo:</b> ${x.partial}</div>`
+          ? `<div class="ex-status">📡 <b style="color:var(--blue)">Parcial ao vivo:</b> ${esc(String(x.partial))}</div>`
           : `<div class="ex-status">⏳ Em aberto — definido ao longo da Copa</div>`);
     return `<div class="ex-card ${done?'done':''}">
       <div class="ex-top"><span class="ex-lab">${x.label}</span><span class="ex-pts">+${x.points} pts</span></div>
@@ -796,7 +796,7 @@ function renderLiveStrip(){
 let matchExpanded=false;
 const MATCH_LIMIT=9;   // mostra ~3 linhas; o resto fica atrás de "Ver todos" (anti-scroll)
 function renderMatches(filter){
-  const list = DATA.matches.filter(m=>m.status===filter)
+  const list = (DATA.matches||[]).filter(m=>m.status===filter)
     .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
   const el = document.getElementById('matchList');
   const more = document.getElementById('matchMore');
@@ -888,8 +888,11 @@ function renderMinhaAposta(){
   const initials=(p.alias.match(/[A-Za-zÀ-ÿ0-9]+/g)||['?']).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   const mv = p.rank_change>0?`<span class="pill up">▲ ${p.rank_change}</span>`:(p.rank_change<0?`<span class="pill down">▼ ${Math.abs(p.rank_change)}</span>`:'');
   const paidBadge = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
-  const paidTop4=[...all].filter(x=>x.paid).sort((a,b)=>a.rank-b.rank).slice(0,4).map(x=>x.alias);
-  const prize=(p.paid && paidTop4.includes(p.alias))?'<span class="chip chip-prize">💰 zona de prêmio</span>':'';
+  // zona de prêmio = MESMA fonte do leaderboard (in_the_money do motor; respeita empate na
+  // borda). Antes recalculava top-4 e divergia: empatado no 4º via 💰 na lista e não aqui.
+  const hasMoney=all.some(x=>x.in_the_money!==undefined);
+  const prizeSet=new Set((hasMoney?all.filter(x=>x.in_the_money):all.filter(x=>x.paid).slice(0,4)).map(x=>x.alias));
+  const prize=prizeSet.has(p.alias)?'<span class="chip chip-prize">💰 zona de prêmio</span>':'';
   const mx=p.max_possible??p.score, cur=p.score;
   const curW=(cur/Math.max(mx,1)*100).toFixed(1), avW=(Math.max(0,mx-cur)/Math.max(mx,1)*100).toFixed(1);
   const ph1=p.phase1_points??p.score;
@@ -933,7 +936,7 @@ function renderMinhaAposta(){
         const mark = (real!==null&&real!==undefined&&real!=='')
           ? (maNorm(real)===maNorm(g)?`<span class="ma-ok">✓ +${pt}</span>`:'<span class="ma-pend">não veio</span>')
           : '<span class="ma-pend">a definir</span>';
-        return `<div class="ma-final-row"><span><span class="pos">${lab}:</span> ${g!=='—'?flag(g):''}${g}</span>${mark}</div>`;
+        return `<div class="ma-final-row"><span><span class="pos">${lab}:</span> ${g!=='—'?flag(g):''}${esc(g)}</span>${mark}</div>`;
       }).join('')+`</div>`;
 
     const exVals=picks.extras||{};
@@ -945,7 +948,7 @@ function renderMinhaAposta(){
       let mark='<span class="ma-pend">a definir</span>';
       if(real!==null&&real!==undefined&&real!=='') mark=(maNorm(String(real))===maNorm(String(g)))?`<span class="ma-ok">✓ +${d.points}</span>`:'<span class="ma-pend">não veio</span>';
       else if(fact&&fact.partial) mark='<span class="ma-pend">📡 parcial</span>';
-      return `<div class="ma-final-row"><span><span class="pos">${d.label}</span><br>${g}</span>${mark}</div>`;
+      return `<div class="ma-final-row"><span><span class="pos">${d.label}</span><br>${esc(String(g))}</span>${mark}</div>`;
     }).filter(Boolean).join('');
     h+=`<div class="ma-sec"><h4>🎯 Minhas categorias extras</h4>${exRows||'<div class="ma-pend">Sem categorias preenchidas.</div>'}</div>`;
   }

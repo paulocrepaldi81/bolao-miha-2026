@@ -58,7 +58,9 @@ def score_extras(pred, facts):
     # Artilheiro
     nome_ok = facts.get("artilheiro_nome") and _eq(pred.get("artilheiro_nome"), facts["artilheiro_nome"])
     equipe_ok = facts.get("artilheiro_equipe") and _eq(pred.get("artilheiro_equipe"), facts["artilheiro_equipe"])
-    gols_ok = facts.get("artilheiro_gols") is not None and pred.get("artilheiro_gols") == facts["artilheiro_gols"]
+    # nº de gols via _match_fact (coerção int) — mesma robustez das curiosidades; evita que um
+    # "7" (texto) digitado no facts.json zere silenciosamente os 3 pts + o bônus de 5.
+    gols_ok = facts.get("artilheiro_gols") is not None and _match_fact(pred.get("artilheiro_gols"), facts["artilheiro_gols"])
     if nome_ok:
         pts += C.PTS_ART_NOME
     if equipe_ok:
