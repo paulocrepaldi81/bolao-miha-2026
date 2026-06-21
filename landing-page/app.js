@@ -849,7 +849,7 @@ function startCountdown(match){
 }
 
 // ===================== MINHA APOSTA =====================
-let maSelected = null, maTab = 'played';
+let maSelected = null, maTab = 'upcoming';   // abre em "A jogar": quem consulta quer ver o próximo/atual
 const maNorm = s => (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
 
 function maPickRow(e){
@@ -910,12 +910,13 @@ function renderMinhaAposta(){
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
     const played=entries.filter(e=>e.m.status==='finished');
     const upcoming=entries.filter(e=>e.m.status!=='finished');
-    if(maTab==='played' && !played.length && upcoming.length) maTab='upcoming';
+    // fim da 1ª fase (nada mais a jogar): cai pra "Já jogados" pra não abrir numa aba vazia
+    if(maTab==='upcoming' && !upcoming.length && played.length) maTab='played';
     const list=maTab==='played'?played:upcoming;
     h+=`<div class="ma-sec"><h4>⚽ Meus palpites — fase de grupos</h4>
       <div class="ma-tabs" id="maTabs">
-        <button class="ma-tab ${maTab==='played'?'active':''}" data-t="played">Já jogados (${played.length})</button>
         <button class="ma-tab ${maTab==='upcoming'?'active':''}" data-t="upcoming">A jogar (${upcoming.length})</button>
+        <button class="ma-tab ${maTab==='played'?'active':''}" data-t="played">Já jogados (${played.length})</button>
       </div>${list.length?list.map(maPickRow).join(''):'<div class="ma-pend">Nada nesta aba ainda.</div>'}</div>`;
 
     const rf=DATA.final_result||{}, fr=picks.final||{};
@@ -945,7 +946,7 @@ function renderMinhaAposta(){
 }
 
 function maSelect(alias){
-  maSelected=alias; maTab='played';
+  maSelected=alias; maTab='upcoming';
   try{ localStorage.setItem('minhaAposta', alias); }catch(e){}
   const inp=document.getElementById('maInput'); inp.value=alias;
   document.getElementById('maSuggest').hidden=true;
