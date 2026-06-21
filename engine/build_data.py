@@ -414,9 +414,11 @@ def build_stats(bets, scored, history):
     n_part = len(scored)
     mx_exact = max(s["exact_scores"] for s in scored)
     exact_holders = sorted((s["alias"] for s in scored if s["exact_scores"] == mx_exact)) if mx_exact else []
-    mn_correct = min(s["correct_outcomes"] for s in scored)
-    cursed_holders = sorted(s["alias"] for s in scored if s["correct_outcomes"] == mn_correct)
-    # pé-frio some SÓ no caso degenerado: mais da metade do bolão empatada no piso (sem outlier real)
+    # pé-frio do BOLÃO = quem cravou MENOS placares exatos no torneio (mirror do "mais exatos";
+    # métrica acumulada, por isso o rótulo é "do bolão", não "da rodada").
+    mn_exact = min(s["exact_scores"] for s in scored)
+    cursed_holders = sorted(s["alias"] for s in scored if s["exact_scores"] == mn_exact)
+    # some SÓ no caso degenerado: mais da metade do bolão empatada no piso (sem outlier real)
     cursed_suppress = len(cursed_holders) > n_part / 2
     # mais otimista = maior média de gols nos palpites
     def avg_goals(b):
@@ -437,9 +439,9 @@ def build_stats(bets, scored, history):
                        "holders": exact_holders, "count": len(exact_holders),
                        "alias": exact_holders[0], "val": f"{mx_exact} placares exatos"} if exact_holders else None,
         "optimistic": {"alias": opt["alias"], "val": f"média {avg_goals(opt):.1f} gols/palpite"} if opt else None,
-        "cursed": ({"value": mn_correct, "unit": "acertos de vencedor",
+        "cursed": ({"value": mn_exact, "unit": ("placar exato" if mn_exact == 1 else "placares exatos"),
                     "holders": cursed_holders, "count": len(cursed_holders),
-                    "alias": cursed_holders[0], "val": f"{mn_correct} acertos de vencedor"}
+                    "alias": cursed_holders[0], "val": f"{mn_exact} placares exatos"}
                    if not cursed_suppress else None),
         "elimination": "ninguém eliminado (fase de grupos)",
         "longest_first": {"alias": longest, "val": "mais rodadas em 1º"} if longest else None,

@@ -796,10 +796,10 @@ function renderNumberStats(){
   if(cu){
     const many = (cu.count || 1) > 1;
     cards.push(`<div class="stat stat-cold">
-      <div class="ico">🧤</div><div class="lab">Pé-frio da rodada</div>
-      <div class="val"><b>${cu.value}</b><span class="u">${esc(cu.unit || 'acertos de vencedor')}${cada(cu)}</span></div>
+      <div class="ico">🧤</div><div class="lab">Pé-frio do bolão</div>
+      <div class="val"><b>${cu.value}</b><span class="u">${esc(cu.unit || 'placares exatos')}${cada(cu)}</span></div>
       <div class="who">${names(cu)}</div>
-      <div class="extra">${many ? 'clube do pé-frio tá lotado — dá pra virar 🍀' : 'o menos do bolão até agora — dá pra virar 🍀'}</div>
+      <div class="extra">${many ? 'menos placares exatos do bolão — dá pra virar 🍀' : 'o menos cravado do bolão — dá pra virar 🍀'}</div>
     </div>`);
   }
   el.innerHTML = cards.join('') || '<div class="lb-empty">Sem números ainda — os jogos decidem.</div>';
