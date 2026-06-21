@@ -56,6 +56,17 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
     scored.sort(key=lambda s: (-s["total"], -s["exact_scores"], -s["correct_outcomes"], s["order"]))
     leader_total = scored[0]["total"] if scored else 0
 
+    # ---- Semântica ÚNICA de ranking/prêmio (motor manda; o front só exibe) ----
+    # Tudo abaixo é DERIVADO da mesma pontuação; cada bloco da página depois filtra o que lhe
+    # cabe (Classificação = total; Bom de Palpite = só 1ª fase). Centralizar aqui evita que a
+    # página recalcule rank/prêmio por conta própria e acabe divergindo entre blocos.
+    all_phase1   = [s["group_pts"] for s in scored]                 # 1ª fase de todos (pago ou não)
+    paid_totals  = [s["total"] for s in scored if s["paid"]]        # total só dos pagantes
+    paid_phase1  = [s["group_pts"] for s in scored if s["paid"]]    # 1ª fase só dos pagantes
+    # Bom de Palpite: maior pontuação de 1ª fase ENTRE PAGANTES (empate divide os 20%)
+    bp_top = max(paid_phase1) if paid_phase1 else None
+    bp_n   = sum(1 for v in paid_phase1 if v == bp_top) if bp_top is not None else 0
+
     out = []
     for i, s in enumerate(scored, start=1):
         # Ranking de COMPETIÇÃO: mesmos pontos = mesmo rank (ex.: 1,1,3). Reflete a regra de
@@ -64,6 +75,13 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
         rank = 1 + sum(1 for o in scored if o["total"] > s["total"])
         prev = prev_snapshot.get(s["alias"], {})
         prev_rank = prev.get("rank", rank)
+        # rank de competição da 1ª FASE (mesma lógica do rank geral, mas por group_pts) — base do
+        # Bom de Palpite. Inclui todos; o vencedor do prêmio (abaixo) é só entre pagantes.
+        phase1_rank = 1 + sum(1 for v in all_phase1 if v > s["group_pts"])
+        # posição de PRÊMIO entre PAGANTES (por total). Empate = mesma posição → empatados dividem.
+        prize_pos = (1 + sum(1 for v in paid_totals if v > s["total"])) if s["paid"] else None
+        in_money = bool(s["paid"] and prize_pos is not None and prize_pos <= 4)
+        is_bp = bool(s["paid"] and bp_top is not None and s["group_pts"] == bp_top)
         out.append({
             "alias": s["alias"],
             "score": s["total"],
@@ -84,5 +102,11 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
             # sem essa folga, ao fechar a 1ª fase alguém seria marcado "eliminado" sem estar.
             "eliminated": (s["total"] + s["points_available"] + C.KNOCKOUT_POTENTIAL) < leader_total,
             "paid": s["paid"],
+            # ---- flags de ranking/prêmio (derivadas; o front só lê, não recalcula) ----
+            "phase1_rank": phase1_rank,        # posição na 1ª fase (Bom de Palpite)
+            "prize_pos": prize_pos,            # posição entre pagantes por total (None se café)
+            "in_the_money": in_money,          # pago e dentro das 4 posições de prêmio (selo 💰)
+            "bom_palpite": is_bp,              # líder pagante da 1ª fase (leva os 20%)
+            "bom_palpite_split": bool(is_bp and bp_n > 1),   # empate no topo pagante → divide
         })
     return out

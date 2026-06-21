@@ -643,8 +643,10 @@ function renderLeaderboard(){
   const total=all.length, paidN=all.filter(p=>p.paid).length, freeN=total-paidN;
   document.getElementById('lbCount').textContent =
     `${total} aposta${total!==1?'s':''} · ${paidN} para valer 💰 · ${freeN} café-com-leite ☕`;
-  // prêmio em dinheiro: só pagantes — top 4 pela ordem geral
-  const prizeSet=new Set(all.filter(p=>p.paid).slice(0,4).map(p=>p.alias));
+  // prêmio em dinheiro: vem do MOTOR (in_the_money), que respeita empate na borda (empatados
+  // dividem). fallback p/ data.json antigo (sem a flag): top-4 pagantes pela ordem.
+  const hasMoney = all.some(p=>p.in_the_money!==undefined);
+  const prizeSet=new Set((hasMoney ? all.filter(p=>p.in_the_money) : all.filter(p=>p.paid).slice(0,4)).map(p=>p.alias));
   const maxRank=all.length?Math.max(...all.map(p=>p.rank)):0;   // com empate, o último rank ≠ nº de apostas
   let list=all;
   if(lbFilter==='paid') list=list.filter(p=>p.paid);
@@ -695,15 +697,20 @@ function renderLeaderboard(){
 function renderBomPalpite(){
   const P = [...DATA.participants]
     .map(p => ({...p, ph1: p.phase1_points ?? p.score}))
-    .sort((a,b) => b.ph1 - a.ph1 || b.score - a.score);
-  // quem leva os 20%: maior pontuação de 1ª fase ENTRE PAGANTES (empate divide)
-  const paidScores = P.filter(p => p.paid).map(p => p.ph1);
-  const winScore = paidScores.length ? Math.max(...paidScores) : null;
-  const winAlias = new Set(P.filter(p => p.paid && p.ph1 === winScore).map(p => p.alias));
-  const split = winAlias.size > 1;
+    // desempate visual canônico (igual à Classificação): exatos → acertos
+    .sort((a,b) => b.ph1 - a.ph1 || (b.exact_scores??0)-(a.exact_scores??0) || (b.correct_outcomes??0)-(a.correct_outcomes??0));
+  // O MOTOR decide rank/vencedor (campos phase1_rank/bom_palpite); o front só exibe.
+  // fallback client-side só p/ data.json antigo — some assim que o robô republica.
+  const fromEngine = P.some(p => p.bom_palpite !== undefined);
+  let fbWin = new Set(), fbSplit = false;
+  if(!fromEngine){
+    const ps = P.filter(p=>p.paid).map(p=>p.ph1); const mx = ps.length ? Math.max(...ps) : null;
+    fbWin = new Set(P.filter(p=>p.paid && p.ph1===mx).map(p=>p.alias)); fbSplit = fbWin.size>1;
+  }
   const rows = P.slice(0, 5).map(p => {
-    const rk = 1 + P.filter(o => o.ph1 > p.ph1).length;   // ranking de competição (empate = mesma posição)
-    const win = winAlias.has(p.alias);
+    const rk = p.phase1_rank ?? (1 + P.filter(o => o.ph1 > p.ph1).length);
+    const win = fromEngine ? p.bom_palpite===true : fbWin.has(p.alias);
+    const split = fromEngine ? p.bom_palpite_split===true : fbSplit;
     const cafe = p.paid ? '' : ' <span class="chip chip-ft" title="café-com-leite: compete, mas não leva prêmio">☕</span>';
     const badge = win ? `<span class="bp-win-badge">🏁 ${split ? 'divide' : 'leva'} os 20%</span>` : '';
     return `<div class="bp-row${rk===1?' bp-lead':''}${win?' bp-win':''}">
