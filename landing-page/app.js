@@ -40,7 +40,7 @@ let PRECOPA = {
     {group:"D", home_team:"EUA", away_team:"Paraguai", venue:"SoFi Stadium", kickoff_sao_paulo:"2026-06-12T22:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:false},
     {group:"C", home_team:"Brasil", away_team:"Marrocos", venue:"MetLife Stadium", kickoff_sao_paulo:"2026-06-13T19:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:true}
   ],
-  movement:{ biggest_jump:null, biggest_drop:null, longest_first:"— (após o 1º jogo)",
+  movement:{ round_points:null, biggest_jump:null, biggest_drop:null, longest_first:"— (após o 1º jogo)",
     pain_of_round:"Ninguém sofreu ainda. A bola nem rolou. Aproveitem a paz — ela é curta." },
   stats:{ best_exact:null, optimistic:null, cursed:null, elimination:"ninguém eliminado", longest_first:null, fav_score:"2 × 1" },
   probability:{ method:METHOD, simulations:30000 }
@@ -70,7 +70,7 @@ const DEMO = {
     {group:"I", home_team:"França", away_team:"Senegal", venue:"Lumen Field", kickoff_sao_paulo:"2026-06-16T16:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:true},
     {group:"J", home_team:"Argentina", away_team:"Argélia", venue:"Hard Rock Stadium", kickoff_sao_paulo:"2026-06-16T22:00:00-03:00", status:"scheduled", home_score:null, away_score:null, verified:false}
   ],
-  movement:{ biggest_jump:{alias:"Crepaldi",delta:2}, biggest_drop:{alias:"Jogador E",delta:-3},
+  movement:{ round_points:{value:6,holders:["Crepaldi"],count:1}, biggest_jump:{value:2,holders:["Crepaldi"],count:1}, biggest_drop:{value:-3,holders:["Jogador E"],count:1},
     longest_first:"PaulinhIA — liderou do sorteio até o 1º jogo",
     pain_of_round:"A zebra do dia: EUA 0×1 Paraguai bagunçou o grupo todo. Quem apostou no favorito sentiu — faz parte." },
   stats:{
@@ -131,8 +131,9 @@ function genDemoParticipants(){
   const jump = g.reduce((a,b) => b.rank_change > a.rank_change ? b : a);
   const drop = g.reduce((a,b) => b.rank_change < a.rank_change ? b : a);
   const last = g[g.length-1];
-  DEMO.movement.biggest_jump = {alias:jump.alias, delta:jump.rank_change};
-  DEMO.movement.biggest_drop = {alias:drop.alias, delta:drop.rank_change};
+  DEMO.movement.biggest_jump = {value:jump.rank_change, holders:[jump.alias], count:1};
+  DEMO.movement.biggest_drop = {value:drop.rank_change, holders:[drop.alias], count:1};
+  DEMO.movement.round_points = {value: Math.max(1,...g.map(p=>p.last_match_points||0)), holders:[g[0].alias], count:1};
   DEMO.movement.longest_first = `${g[0].alias} — na ponta desde o 1º jogo`;
   DEMO.movement.pain_of_round = `${drop.alias} despencou ${Math.abs(drop.rank_change)} posições numa rodada só. Em ${g.length} apostas, dá pra cair MUITO.`;
   DEMO.stats.best_exact   = {alias:g[0].alias, val:"50% (2 de 4)"};
@@ -190,6 +191,22 @@ const flagA = t => { const f = fEmoji(t); return f ? ' '+f : ''; };   // sufixo 
 // Escapa dados de HUMANOS (apelido, da planilha) ou de 3ª parte (minuto, da ESPN) antes de
 // entrar em innerHTML — defesa contra XSS / quebra de layout.
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// nomes com empate: até N inline + "+X" que EXPANDE de verdade (clicável). Reutilizado em
+// Movimentação, Números do bolão e ganhadores das Extras (antes o "+X" era só decoração).
+function holdersWrap(list, N=3){
+  const arr = (list||[]).map(esc);
+  if(arr.length <= N) return arr.join(', ');
+  const head = arr.slice(0,N).join(', '), full = arr.join(', ');
+  return `<span class="who-wrap"><span class="who-head">${head} <button type="button" class="more-btn" aria-label="ver todos os ${arr.length}">+${arr.length-N}</button></span>`
+       + `<span class="who-full" hidden>${full} <button type="button" class="less-btn">ver menos</button></span></span>`;
+}
+document.addEventListener('click', e => {
+  const m = e.target.closest('.more-btn'), l = e.target.closest('.less-btn');
+  const w = (m||l) && (m||l).closest('.who-wrap'); if(!w) return;
+  w.querySelector('.who-head').hidden = !!m;
+  w.querySelector('.who-full').hidden = !m;
+});
 
 const fmtDateTime = iso => {
   const d = new Date(iso);
@@ -530,9 +547,7 @@ function render(){
   renderExtras();
   renderMinhaAposta();
   // movement
-  const mv = DATA.movement;
-  document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
-  document.getElementById('bigDrop').textContent = mv.biggest_drop ? `${mv.biggest_drop.alias} ▼${Math.abs(mv.biggest_drop.delta)}` : '—';
+  renderMovement();
   // stats
   renderNumberStats();
   renderCurrentGameStats();
@@ -730,17 +745,38 @@ function renderBomPalpite(){
     : '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
 }
 
+// 📊 Movimentação da rodada — DESTAQUE: mais pontos na rodada (day_points). + maior salto/tombo
+// (base: rank_change "desde a última mudança" — rótulo deixa isso claro). Empates: todos juntos.
+function renderMovement(){
+  const mv = DATA.movement || {};
+  const hero = document.getElementById('moveHero'), grid = document.getElementById('moveGrid');
+  if(!hero || !grid) return;
+  const rp = mv.round_points;
+  hero.innerHTML = rp
+    ? `<div class="move-hero"><div class="lab">⚡ Mais pontos na rodada</div>
+        <div class="hero-v"><b>+${rp.value}</b> <span class="u">pts${rp.count>1?' cada':''}</span></div>
+        <div class="who">${holdersWrap(rp.holders)}</div>
+        <div class="extra">${rp.count>1?'mandaram bem na rodada 🔥':'a melhor da rodada 🔥'}</div></div>`
+    : `<div class="move-hero"><div class="lab">⚡ Mais pontos na rodada</div>
+        <div class="who" style="margin-top:8px;color:var(--ink-dim);font-weight:600">A rodada ainda não pontuou — a bola decide ⚽</div></div>`;
+  const card = (cls,lab,arrow,o,solo,tie,empty) => o
+    ? `<div class="move-card"><div class="lab">${lab}<span class="lab-sub">desde a última mudança no placar</span></div>
+        <div class="big ${cls}">${arrow}${Math.abs(o.value)}${o.count>1?' <span class="u">cada</span>':''}</div>
+        <div class="who">${holdersWrap(o.holders)}</div>
+        <div class="extra">${o.count>1?tie:solo}</div></div>`
+    : `<div class="move-card"><div class="lab">${lab}</div><div class="who" style="margin-top:8px;color:var(--ink-dim);font-weight:600">${empty}</div></div>`;
+  grid.innerHTML =
+      card('up','📈 Maior salto','▲',mv.biggest_jump,'disparou na rodada 🚀','subiram junto 🚀','Ninguém saltou nessa rodada.')
+    + card('down','📉 Maior tombo','▼',mv.biggest_drop,'escorregou na rodada — dá pra recuperar 🍀','azar coletivo — tão no mesmo barco 🍀','Rodada tranquila — ninguém despencou. 😌');
+}
+
 // 🎯 Números do bolão — superlativos com EMPATE EXPLÍCITO: mostra TODOS que alcançaram o
 // valor (até 3 nomes + "+X"), nunca um sorteado por desempate escondido. holders vêm do motor.
 function renderNumberStats(){
   const el = document.getElementById('statGrid'); if(!el) return;
   const st = DATA.stats || {};
   const N = 3;   // nomes inline antes do "+X"
-  const names = o => {
-    const list = (o.holders && o.holders.length) ? o.holders : (o.alias ? [o.alias] : []);
-    const head = list.slice(0, N).map(esc).join(', ');
-    return head + (list.length > N ? ` <span class="more">+${list.length - N}</span>` : '');
-  };
+  const names = o => holdersWrap((o.holders && o.holders.length) ? o.holders : (o.alias ? [o.alias] : []), N);
   const cada = o => ((o.count || 1) > 1 ? ' cada' : '');
   const cards = [];
   const be = st.best_exact;
@@ -778,7 +814,7 @@ function renderExtras(){
     let body;
     if(done){
       const W = x.winners || [], n = W.length;
-      const names = W.slice(0,6).map(esc).join(', ') + (n>6 ? ` <span class="more">+${n-6}</span>` : '');
+      const names = holdersWrap(W, 6);
       body = `<div class="ex-real">${flag(String(x.real))}${esc(String(x.real))}</div>
         <div class="ex-winners">${n
           ? `🎉 <b>+${x.points} para ${n} aposta${n!==1?'s':''}</b><br>${names}`

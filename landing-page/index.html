@@ -231,6 +231,24 @@
   .move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
   .move-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
   .move-card .big{font-size:24px;font-weight:800;margin-top:6px}
+  .move-card .big .u{font-size:12px;font-weight:600;color:var(--ink-dim)}
+  .move-card .lab{color:var(--ink-faint);font-size:12px;font-weight:700}
+  .move-card .lab-sub{display:block;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-faint);font-size:10px;margin-top:2px}
+  .move-card .who{font-size:13px;font-weight:700;margin-top:6px;line-height:1.35}
+  .move-card .extra{font-size:11.5px;color:var(--ink-dim);margin-top:3px}
+  /* destaque do bloco: mais pontos na rodada */
+  .move-hero{background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
+    border-left:3px solid var(--green);border-radius:var(--r);padding:18px;margin-bottom:14px}
+  .move-hero .lab{font-size:12px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .move-hero .hero-v{margin-top:6px;display:flex;align-items:baseline;gap:7px}
+  .move-hero .hero-v b{font-family:Anton,sans-serif;font-weight:400;font-size:34px;line-height:1;color:var(--green)}
+  .move-hero .hero-v .u{font-size:13px;font-weight:600;color:var(--ink-dim)}
+  .move-hero .who{font-size:14px;font-weight:700;margin-top:7px;line-height:1.4}
+  .move-hero .extra{font-size:12px;color:var(--ink-dim);margin-top:3px}
+  /* "+X" que expande de verdade (clicável) — usado em Movimentação, Números e Extras */
+  .who-wrap .more-btn,.who-wrap .less-btn{background:none;border:0;padding:0 3px;font:inherit;font-weight:700;
+    color:var(--ink-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .who-wrap .more-btn:hover,.who-wrap .less-btn:hover{color:var(--ink)}
 
   /* ---- O Pelotão (histograma) ---- */
   #pelotao .pel-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 20px}
@@ -634,10 +652,8 @@
     </div>
 
     <h3 class="sub-h">📊 Movimentação da rodada</h3>
-    <div class="move-grid">
-      <div class="move-card"><div class="lab" style="color:var(--ink-faint);font-size:12px;font-weight:700">📈 Maior salto</div><div class="big up" id="bigJump">—</div></div>
-      <div class="move-card"><div class="lab" style="color:var(--ink-faint);font-size:12px;font-weight:700">📉 Maior tombo</div><div class="big down" id="bigDrop">—</div></div>
-    </div>
+    <div id="moveHero"></div>
+    <div class="move-grid" id="moveGrid"></div>
 
     <h3 class="sub-h">🎯 Números do bolão</h3>
     <div class="stat-grid" id="statGrid"></div>
@@ -726,6 +742,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260621z4" defer></script>
+<script src="app.js?v=20260621z5" defer></script>
 </body>
 </html>

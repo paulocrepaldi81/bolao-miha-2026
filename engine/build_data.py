@@ -383,14 +383,25 @@ def build_movement(parts):
     if not parts:
         return {"biggest_jump": None, "biggest_drop": None, "longest_first": "—",
                 "pain_of_round": "A bola ainda não rolou."}
-    jump = max(parts, key=lambda p: p["rank_change"])
-    drop = min(parts, key=lambda p: p["rank_change"])
+    # superlativos com EMPATE EXPLÍCITO (holders = todos; nada de max/min escondendo gente).
+    def holders_at(key, pick):
+        vals = [p[key] for p in parts]
+        v = max(vals) if pick == "max" else min(vals)
+        return v, sorted(p["alias"] for p in parts if p[key] == v)
+    # mais pontos NA RODADA (day_points) — o destaque do bloco
+    pv, ph = holders_at("day_points", "max")
+    round_points = {"value": pv, "holders": ph, "count": len(ph)} if pv > 0 else None
+    # maior salto (subiu) e maior tombo (caiu): base = rank_change (desde a última mudança)
+    jv, jh = holders_at("rank_change", "max")
+    biggest_jump = {"value": jv, "holders": jh, "count": len(jh)} if jv > 0 else None
+    dv, dh = holders_at("rank_change", "min")          # tombo: sempre mostra (decisão do dono), todos juntos
+    biggest_drop = {"value": dv, "holders": dh, "count": len(dh)} if dv < 0 else None
     return {
-        "biggest_jump": {"alias": jump["alias"], "delta": jump["rank_change"]} if jump["rank_change"] > 0 else None,
-        "biggest_drop": {"alias": drop["alias"], "delta": drop["rank_change"]} if drop["rank_change"] < 0 else None,
+        "round_points": round_points,
+        "biggest_jump": biggest_jump,
+        "biggest_drop": biggest_drop,
         "longest_first": f"{parts[0]['alias']} — na ponta agora",
-        "pain_of_round": (f"{drop['alias']} caiu {abs(drop['rank_change'])} posições."
-                          if drop["rank_change"] < 0 else "Rodada tranquila — ninguém despencou."),
+        "pain_of_round": "",
     }
 
 
