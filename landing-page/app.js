@@ -977,7 +977,7 @@ function renderMinhaAposta(){
       [['champion','Campeã',15],['vice','Vice',10],['third','3º lugar',5]].map(([k,lab,pt])=>{
         const g=fr[k]||'—'; const real=rf[k];
         const mark = (real!==null&&real!==undefined&&real!=='')
-          ? (maNorm(real)===maNorm(g)?`<span class="ma-ok">✓ +${pt}</span>`:'<span class="ma-pend">não veio</span>')
+          ? (maNorm(real)===maNorm(g)?`<span class="ma-ok">✓ +${pt} · você cravou!</span>`:'<span class="ma-pend">não veio 😅</span>')
           : '<span class="ma-pend">a definir</span>';
         return `<div class="ma-final-row"><span><span class="pos">${lab}:</span> ${g!=='—'?flag(g):''}${esc(g)}</span>${mark}</div>`;
       }).join('')+`</div>`;
@@ -989,8 +989,17 @@ function renderMinhaAposta(){
       const fact=(DATA.extras_summary||[]).find(x=>x.key===d.key);
       const real=fact?fact.real:null;
       let mark='<span class="ma-pend">a definir</span>';
-      if(real!==null&&real!==undefined&&real!=='') mark=(maNorm(String(real))===maNorm(String(g)))?`<span class="ma-ok">✓ +${d.points}</span>`:'<span class="ma-pend">não veio</span>';
-      else if(fact&&fact.partial) mark='<span class="ma-pend">📡 parcial</span>';
+      if(real!==null&&real!==undefined&&real!==''){
+        mark=(maNorm(String(real))===maNorm(String(g)))
+          ? `<span class="ma-ok">✓ +${d.points} · você cravou!</span>`
+          : '<span class="ma-pend">não veio dessa vez 😅</span>';
+      } else if(fact&&fact.partial){
+        // "no páreo" SÓ com match confiante (palpite nomeado aparece no parcial); nunca afirma
+        // "fora" (um líder pode estar truncado). Pula palpite numérico (substring de número engana).
+        const gs=String(g).trim(), num=/^\d+$/.test(gs);
+        const alive = !num && gs.length>=3 && maNorm(fact.partial).includes(maNorm(gs));
+        mark = alive ? '<span class="ma-ok">📡 no páreo</span>' : '<span class="ma-pend">📡 em disputa</span>';
+      }
       return `<div class="ma-final-row"><span><span class="pos">${d.label}</span><br>${esc(String(g))}</span>${mark}</div>`;
     }).filter(Boolean).join('');
     h+=`<div class="ma-sec"><h4>🎯 Minhas categorias extras</h4>${exRows||'<div class="ma-pend">Sem categorias preenchidas.</div>'}</div>`;
