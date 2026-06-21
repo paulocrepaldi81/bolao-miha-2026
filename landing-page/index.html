@@ -182,12 +182,21 @@
   .lb-note b{color:var(--ink-dim)}
   /* Bom de Palpite (mini-ranking 1ª fase) */
   .bp-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
-  .bp-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+  .bp-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--card);border:1px solid var(--line);
     border-radius:var(--r-sm);padding:10px 14px}
-  .bp-rk{font-family:Anton,sans-serif;font-size:20px;color:var(--ink-faint);min-width:22px;text-align:center}
-  .bp-row:first-child .bp-rk{color:var(--gold)}
-  .bp-nm{font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .bp-pts{font-family:Anton,sans-serif;font-size:18px;color:var(--ink)}
+  .bp-rk{font-family:Anton,sans-serif;font-size:20px;color:var(--ink-faint);min-width:30px;text-align:center}
+  .bp-row.bp-lead .bp-rk{color:var(--gold)}
+  .bp-nm{flex:1;min-width:0;display:flex;align-items:center;gap:7px;font-weight:700}
+  .bp-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bp-nm .chip{flex:0 0 auto}
+  .bp-pts{font-family:Anton,sans-serif;font-size:18px;color:var(--ink);flex:0 0 auto}
+  /* vencedor dos 20% = líder PAGANTE (pode não ser o 1º em pontos se um café-com-leite liderar) */
+  .bp-win{border-color:rgba(244,196,48,.5);background:rgba(244,196,48,.07)}
+  .bp-win-badge{flex:0 0 100%;text-align:center;font-size:10px;font-weight:800;letter-spacing:.4px;
+    text-transform:uppercase;color:var(--gold);background:rgba(244,196,48,.13);
+    border:1px solid rgba(244,196,48,.4);border-radius:7px;padding:4px 8px}
+  .bp-foot{grid-column:1/-1;margin-top:4px;font-size:12px;color:var(--ink-faint);line-height:1.5}
+  .bp-foot b{color:var(--ink-dim)}
   /* Corrida pelo título — barra empilhada (atual + em jogo) */
   .bar.race{display:flex}
   .bar.race > i{background:var(--green);height:100%}
@@ -538,7 +547,7 @@
 <!-- ============ BOM DE PALPITE (1ª FASE) ============ -->
 <section id="bompalpite" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head"><h2 class="display">Bom de Palpite</h2><span class="kick">Ranking só da 1ª fase · 20% do prêmio ao líder <b>pagante</b> (café-com-leite compete, mas não leva a grana)</span></div>
+    <div class="sec-head"><h2 class="display">Bom de Palpite</h2><span class="kick">Ranking só da 1ª fase · 20% do prêmio ao líder <b>pagante</b> ao fim da fase (café-com-leite compete, mas não leva a grana)</span></div>
     <div class="bp-list" id="bpList"></div>
   </div>
 </section>
@@ -703,6 +712,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260615u" defer></script>
+<script src="app.js?v=20260615v" defer></script>
 </body>
 </html>

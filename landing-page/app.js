@@ -689,18 +689,34 @@ function renderLeaderboard(){
   else if(lbExpanded && !q && list.length>LB_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
   else more.hidden=true;
 }
-// Bom de Palpite — ranking só da 1ª fase (top 5)
+// Bom de Palpite — ranking só da 1ª fase (top 5). Regra v2.1: os 20% do bolo vão ao LÍDER
+// PAGANTE ao fim da 1ª fase; empate no topo pagante DIVIDE os 20%. Café-com-leite (☕) compete
+// nos pontos, mas não leva prêmio. Exibição PARCIAL até o fim da fase de grupos.
 function renderBomPalpite(){
   const P = [...DATA.participants]
     .map(p => ({...p, ph1: p.phase1_points ?? p.score}))
-    .sort((a,b) => b.ph1 - a.ph1 || b.score - a.score)
-    .slice(0, 5);
-  document.getElementById('bpList').innerHTML = P.map((p,i) => `
-    <div class="bp-row">
-      <span class="bp-rk">${i+1}</span>
-      <span class="bp-nm">${i===0?'🏁 ':''}${esc(p.alias)}${p.paid?'':' <span class="chip chip-ft">☕</span>'}</span>
+    .sort((a,b) => b.ph1 - a.ph1 || b.score - a.score);
+  // quem leva os 20%: maior pontuação de 1ª fase ENTRE PAGANTES (empate divide)
+  const paidScores = P.filter(p => p.paid).map(p => p.ph1);
+  const winScore = paidScores.length ? Math.max(...paidScores) : null;
+  const winAlias = new Set(P.filter(p => p.paid && p.ph1 === winScore).map(p => p.alias));
+  const split = winAlias.size > 1;
+  const rows = P.slice(0, 5).map(p => {
+    const rk = 1 + P.filter(o => o.ph1 > p.ph1).length;   // ranking de competição (empate = mesma posição)
+    const win = winAlias.has(p.alias);
+    const cafe = p.paid ? '' : ' <span class="chip chip-ft" title="café-com-leite: compete, mas não leva prêmio">☕</span>';
+    const badge = win ? `<span class="bp-win-badge">🏁 ${split ? 'divide' : 'leva'} os 20%</span>` : '';
+    return `<div class="bp-row${rk===1?' bp-lead':''}${win?' bp-win':''}">
+      <span class="bp-rk">${rk}º</span>
+      <span class="bp-nm"><span class="bp-name">${esc(p.alias)}</span>${cafe}</span>
       <span class="bp-pts">${p.ph1} pts</span>
-    </div>`).join('') || '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
+      ${badge}
+    </div>`;
+  }).join('');
+  const foot = `<div class="bp-foot">⏳ Parcial — os <b>20%</b> vão ao líder <b>pagante</b> ao fim da 1ª fase; empate no topo divide. ☕ café-com-leite joga, mas não leva a grana.</div>`;
+  document.getElementById('bpList').innerHTML = rows
+    ? rows + foot
+    : '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
 }
 
 // Categorias Extras — o que já aconteceu na real + quem pontuou
