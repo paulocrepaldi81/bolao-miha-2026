@@ -1,13 +1,19 @@
 {
-  "checked_at": "2026-06-21T15:05:20.711193-03:00",
+  "checked_at": "2026-06-21T15:10:24.289401-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
-  "status": "ok",
-  "compared": 36,
+  "status": "divergencia",
+  "compared": 37,
   "agree": 36,
-  "discrepancies": [],
-  "pendente_2a_fonte": [
-    "H3"
-  ]
+  "discrepancies": [
+    {
+      "match_id": "H3",
+      "teams": "Espanha x Arábia Saudita",
+      "primaria": "4x0  (ESPN)",
+      "secundaria": "5x0  (football-data)",
+      "lock": false
+    }
+  ],
+  "pendente_2a_fonte": []
 }
