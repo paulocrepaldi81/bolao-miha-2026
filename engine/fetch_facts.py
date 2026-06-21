@@ -208,7 +208,9 @@ def main():
             extra = f" +{len(leaders) - 5}" if len(leaders) > 5 else ""
             eqs = sorted({eq for _, eq in leaders if eq})
             partials["artilheiro_nome"] = f"Empatados em 1º: {len(leaders)} com {mx} gols — {nomes}{extra}"
-            partials["artilheiro_equipe"] = eqs[0] if len(eqs) == 1 else f"vários ({len(eqs)} seleções)"
+            # NOMEAR as seleções (nunca "vários (N)"): o apostador precisa ver se a dele está na lista
+            partials["artilheiro_equipe"] = (eqs[0] if len(eqs) == 1
+                else "empate: " + ", ".join(eqs[:5]) + (f" +{len(eqs) - 5}" if len(eqs) > 5 else "") + f" ({mx} gols cada)")
             partials["artilheiro_gols"] = f"{mx} (parcial · {len(leaders)} empatados)"
         print(f"✔ artilharia ESPN: {mx} gol(s) · {len(leaders)} líder(es) na ponta")
     elif token:

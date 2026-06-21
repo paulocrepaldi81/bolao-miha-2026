@@ -294,8 +294,24 @@
   .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .stat .ico{font-size:20px}
   .stat .lab{font-size:12px;color:var(--ink-faint);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.4px}
-  .stat .val{font-size:18px;font-weight:800;margin-top:4px}
-  .stat .extra{font-size:12px;color:var(--ink-dim);margin-top:2px}
+  .stat .val{font-size:18px;font-weight:800;margin-top:4px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .stat .val b{font-family:Anton,sans-serif;font-weight:400;font-size:28px;line-height:1;color:var(--ink)}
+  .stat .val .u{font-size:12.5px;font-weight:600;color:var(--ink-dim)}
+  .stat .who{font-size:13.5px;font-weight:700;margin-top:7px;line-height:1.35;color:var(--ink)}
+  .stat .who .more{color:var(--ink-faint);font-weight:600}
+  .stat.stat-cold{border-color:rgba(61,107,255,.28)}
+  /* regra de empate (banner único das Extras) + selos de estado */
+  .ex-rule{font-size:12.5px;line-height:1.5;color:var(--ink-dim);background:rgba(39,177,75,.07);
+    border:1px solid rgba(39,177,75,.3);border-radius:10px;padding:9px 13px;margin-bottom:14px}
+  .ex-rule b{color:var(--ink)}
+  .ex-state{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.4px;
+    text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;flex:0 0 auto}
+  .ex-state.open{background:rgba(180,188,200,.12);color:var(--ink-dim);border:1px solid var(--line-2)}
+  .ex-state.live{background:rgba(61,107,255,.16);color:#9DB6FF;border:1px solid rgba(61,107,255,.38)}
+  .ex-state.done{background:rgba(39,177,75,.18);color:#7BE29A;border:1px solid rgba(39,177,75,.45)}
+  .ex-badge-row{margin-bottom:8px}
+  .ex-hint{font-size:11px;color:var(--ink-faint);margin-top:4px}
+  .ex-winners .more,.stat .who .more{color:var(--ink-faint);font-weight:600}
 
   /* ---- Categorias Extras ---- */
   .ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
@@ -624,10 +640,7 @@
     </div>
 
     <h3 class="sub-h">🎯 Números do bolão</h3>
-    <div class="stat-grid">
-      <div class="stat"><div class="ico">🎯</div><div class="lab">Mais placares exatos</div><div class="val" id="s-exact">—</div><div class="extra">cravou o placar na mosca</div></div>
-      <div class="stat"><div class="ico">🧤</div><div class="lab">Pé-frio do bolão</div><div class="val" id="s-cursed">—</div><div class="extra">menos acertos de vencedor até agora</div></div>
-    </div>
+    <div class="stat-grid" id="statGrid"></div>
   </div>
 </section>
 
@@ -635,6 +648,7 @@
 <section id="extras">
   <div class="wrap">
     <div class="sec-head"><h2 class="display">Categorias Extras</h2><span class="kick">Palpites travados da aposta inicial · o que já aconteceu na real e quem pontuou</span></div>
+    <div class="ex-rule">🤝 <b>Empatou, todo mundo pontua.</b> No fim, se a resposta empatar entre vários, quem cravou <b>qualquer um</b> dos empatados leva os pontos. <b>Parcial</b> é só prévia ao vivo — nada cravado até o apito final.</div>
     <div class="ex-grid" id="exGrid"></div>
   </div>
 </section>
@@ -712,6 +726,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260621z2" defer></script>
+<script src="app.js?v=20260621z3" defer></script>
 </body>
 </html>

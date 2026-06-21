@@ -534,10 +534,7 @@ function render(){
   document.getElementById('bigJump').textContent = mv.biggest_jump ? `${mv.biggest_jump.alias} ▲${mv.biggest_jump.delta}` : '—';
   document.getElementById('bigDrop').textContent = mv.biggest_drop ? `${mv.biggest_drop.alias} ▼${Math.abs(mv.biggest_drop.delta)}` : '—';
   // stats
-  const st = DATA.stats || {};
-  const stat = o => o ? `${o.alias} · ${o.val}` : '—';
-  document.getElementById('s-exact').textContent = stat(st.best_exact);
-  document.getElementById('s-cursed').textContent = stat(st.cursed);
+  renderNumberStats();
   renderCurrentGameStats();
   // corrida pelo título — modelo simples: pontos atuais × máximo ainda possível
   const ranked = [...P].sort((a,b)=> b.score - a.score || (b.max_possible??0)-(a.max_possible??0));
@@ -733,22 +730,68 @@ function renderBomPalpite(){
     : '<div class="lb-empty">Sem pontos na 1ª fase ainda.</div>';
 }
 
-// Categorias Extras — o que já aconteceu na real + quem pontuou
+// 🎯 Números do bolão — superlativos com EMPATE EXPLÍCITO: mostra TODOS que alcançaram o
+// valor (até 3 nomes + "+X"), nunca um sorteado por desempate escondido. holders vêm do motor.
+function renderNumberStats(){
+  const el = document.getElementById('statGrid'); if(!el) return;
+  const st = DATA.stats || {};
+  const N = 3;   // nomes inline antes do "+X"
+  const names = o => {
+    const list = (o.holders && o.holders.length) ? o.holders : (o.alias ? [o.alias] : []);
+    const head = list.slice(0, N).map(esc).join(', ');
+    return head + (list.length > N ? ` <span class="more">+${list.length - N}</span>` : '');
+  };
+  const cada = o => ((o.count || 1) > 1 ? ' cada' : '');
+  const cards = [];
+  const be = st.best_exact;
+  if(be && (be.value ?? 0) > 0){
+    const many = (be.count || 1) > 1;
+    cards.push(`<div class="stat stat-good">
+      <div class="ico">🎯</div><div class="lab">Mais placares exatos</div>
+      <div class="val"><b>${be.value}</b><span class="u">${esc(be.unit || 'placares exatos')}${cada(be)}</span></div>
+      <div class="who">${names(be)}</div>
+      <div class="extra">${many ? 'cravaram na mosca 🎯' : 'cravou na mosca 🎯'}</div>
+    </div>`);
+  }
+  const cu = st.cursed;   // motor manda null no caso degenerado (quase todo mundo no piso)
+  if(cu){
+    const many = (cu.count || 1) > 1;
+    cards.push(`<div class="stat stat-cold">
+      <div class="ico">🧤</div><div class="lab">Pé-frio da rodada</div>
+      <div class="val"><b>${cu.value}</b><span class="u">${esc(cu.unit || 'acertos de vencedor')}${cada(cu)}</span></div>
+      <div class="who">${names(cu)}</div>
+      <div class="extra">${many ? 'clube do pé-frio tá lotado — dá pra virar 🍀' : 'o menos do bolão até agora — dá pra virar 🍀'}</div>
+    </div>`);
+  }
+  el.innerHTML = cards.join('') || '<div class="lb-empty">Sem números ainda — os jogos decidem.</div>';
+}
+
+// Categorias Extras — três estados claros (Definido/Parcial/Em aberto) + quem pontuou
 function renderExtras(){
   const list = DATA.extras_summary || EXTRAS_DEF.map(d => ({...d, real:null, winners:[]}));
   document.getElementById('exGrid').innerHTML = list.map(x=>{
     const done = x.real !== null && x.real !== undefined && x.real !== '';
-    const status = done
-      ? `<div class="ex-real">${flag(String(x.real))}${esc(String(x.real))}</div>
-         <div class="ex-winners">${x.winners && x.winners.length
-            ? `🎉 Pontuaram (+${x.points}): <b>${x.winners.map(esc).join('</b>, <b>')}</b>`
-            : 'Ninguém acertou esta. O futebol venceu.'}</div>`
-      : (x.partial
-          ? `<div class="ex-status">📡 <b style="color:var(--blue)">Parcial ao vivo:</b> ${esc(String(x.partial))}</div>`
-          : `<div class="ex-status">⏳ Em aberto — definido ao longo da Copa</div>`);
+    const live = !done && !!x.partial;
+    const badge = done ? '<span class="ex-state done">Definido ✅</span>'
+                : live ? '<span class="ex-state live">Parcial 📡</span>'
+                       : '<span class="ex-state open">Em aberto ⏳</span>';
+    let body;
+    if(done){
+      const W = x.winners || [], n = W.length;
+      const names = W.slice(0,6).map(esc).join(', ') + (n>6 ? ` <span class="more">+${n-6}</span>` : '');
+      body = `<div class="ex-real">${flag(String(x.real))}${esc(String(x.real))}</div>
+        <div class="ex-winners">${n
+          ? `🎉 <b>+${x.points} para ${n} aposta${n!==1?'s':''}</b><br>${names}`
+          : 'ninguém cravou — o futebol venceu 😅'}</div>`;
+    } else if(live){
+      body = `<div class="ex-status">${esc(String(x.partial))}<div class="ex-hint">prévia ao vivo · pode mudar até o fim</div></div>`;
+    } else {
+      body = '<div class="ex-status">ainda não rolou — definido ao longo da Copa</div>';
+    }
     return `<div class="ex-card ${done?'done':''}">
       <div class="ex-top"><span class="ex-lab">${x.label}</span><span class="ex-pts">+${x.points} pts</span></div>
-      ${status}
+      <div class="ex-badge-row">${badge}</div>
+      ${body}
     </div>`;
   }).join('');
 }
