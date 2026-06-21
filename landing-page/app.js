@@ -592,13 +592,16 @@ function renderCrossCheck(){
       <div style="margin-top:6px;color:var(--ink-faint)">${pair}${when}. O organizador foi avisado automaticamente.</div>`;
   } else if(a.status === 'fonte_indisponivel'){
     el.innerHTML = `Conferência da 2ª fonte temporariamente indisponível — placares seguem pela fonte primária (ESPN).${when}`;
-  } else {
-    const resolvidas = a.resolvidas || [];
-    const extra = resolvidas.length ? `<div style="margin-top:6px;color:var(--ink-faint)">
-      Decidido pelo organizador (vale o placar da ESPN): ${resolvidas.map(d =>
-        `${d.teams} — <b>${d.primaria||d.oficial}</b> (≠ ${d.secundaria||d.espn})`).join('; ')}.</div>` : '';
+  } else if((a.resolvidas || []).length){
+    // Há divergência(s) DECIDIDA(s) pelo organizador (vale a ESPN): banner verde + nota transparente.
+    const list = a.resolvidas.map(d =>
+      `${d.teams} — <b>${d.primaria||d.oficial}</b> (≠ ${d.secundaria||d.espn})`).join('; ');
     el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
-      (${pair}) — nenhuma divergência em aberto.${when}${extra}`;
+      (${pair}) — nenhuma divergência em aberto.${when}
+      <div style="margin-top:6px;color:var(--ink-faint)">Decidido pelo organizador (vale o placar da ESPN): ${list}.</div>`;
+  } else {
+    el.innerHTML = `<b class="ok">✓ ${a.agree}/${a.compared} jogos encerrados conferidos em 2 fontes independentes</b>
+      (${pair}) — nenhuma divergência.${when}`;
   }
 }
 
