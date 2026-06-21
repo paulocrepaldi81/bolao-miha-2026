@@ -751,6 +751,9 @@ function renderMovement(){
   const mv = DATA.movement || {};
   const hero = document.getElementById('moveHero'), grid = document.getElementById('moveGrid');
   if(!hero || !grid) return;
+  // tolera o shape ANTIGO ({alias,delta}) até o robô republicar — transição sem NaN.
+  const norm = o => !o ? null : ('value' in o ? o : {value:o.delta, holders:[o.alias], count:1});
+  mv.biggest_jump = norm(mv.biggest_jump); mv.biggest_drop = norm(mv.biggest_drop);
   const rp = mv.round_points;
   hero.innerHTML = rp
     ? `<div class="move-hero"><div class="lab">⚡ Mais pontos na rodada</div>
