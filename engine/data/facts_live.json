@@ -14,7 +14,21 @@
     537327,
     537328
   ],
-  "first_red": null,
-  "first_own": null,
+  "first_red": {
+    "match_date": "2026-06-11T19:00Z",
+    "kind": "red",
+    "team": "África do Sul",
+    "player": "Sphephelo Sithole",
+    "minute": "49",
+    "order": 2940.0
+  },
+  "first_own": {
+    "match_date": "2026-06-13T01:00Z",
+    "kind": "own",
+    "team": "Paraguai",
+    "player": "Damián Bobadilla",
+    "minute": "7",
+    "order": 408.0
+  },
   "af_scanned": []
 }
