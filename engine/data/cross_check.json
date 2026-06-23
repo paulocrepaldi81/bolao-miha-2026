@@ -1,12 +1,14 @@
 {
-  "checked_at": "2026-06-23T14:25:26.841359-03:00",
+  "checked_at": "2026-06-23T14:30:33.767219-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
   "status": "ok",
-  "compared": 44,
-  "agree": 44,
+  "compared": 43,
+  "agree": 43,
   "discrepancies": [],
   "resolvidas": [],
-  "pendente_2a_fonte": []
+  "pendente_2a_fonte": [
+    "B1"
+  ]
 }
