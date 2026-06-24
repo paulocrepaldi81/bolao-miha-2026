@@ -316,46 +316,41 @@ function renderHeroLive(){
 // ===== Palpites do jogo de agora (estatísticas do jogo atual/ao vivo) =====
 // Olha TODAS as apostas para o jogo que está rolando (ou o próximo) e mostra placar
 // mais escolhido, mais ousado e a aposta solitária — só QUANTIDADES, sem nomes.
-function currentGameMatch(){
-  const ms=DATA.matches||[];
-  const live=ms.filter(m=>m.status==='live')
-    .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
-  if(live.length) return {m:live[0], live:true, more:live.length-1};
+// jogos a destacar agora: TODOS os que estão ao vivo (na Copa, a última rodada de cada grupo
+// tem 2 simultâneos) — ou, se nenhum ao vivo, todos os do PRÓXIMO horário (±15min).
+function gamesNow(){
+  const ms=DATA.matches||[]; const byKick=(a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0);
+  const live=ms.filter(m=>m.status==='live').sort(byKick);
+  if(live.length) return {games:live, live:true};
   const nowMs=Date.now();
-  const next=ms.filter(m=>m.status==='scheduled'&&m.kickoff_sao_paulo&&new Date(m.kickoff_sao_paulo).getTime()>nowMs-2.5*3600e3)
-    .sort((a,b)=>new Date(a.kickoff_sao_paulo)-new Date(b.kickoff_sao_paulo))[0];
-  return next?{m:next, live:false, more:0}:null;
+  const up=ms.filter(m=>m.status==='scheduled'&&m.kickoff_sao_paulo&&new Date(m.kickoff_sao_paulo).getTime()>nowMs-2.5*3600e3).sort(byKick);
+  if(!up.length) return null;
+  const t0=new Date(up[0].kickoff_sao_paulo).getTime();
+  return {games:up.filter(m=>Math.abs(new Date(m.kickoff_sao_paulo).getTime()-t0)<15*60e3), live:false};
 }
-function renderCurrentGameStats(){
-  const box=document.getElementById('cgStats'); if(!box) return;
-  const cur=currentGameMatch();
-  if(!cur){ box.hidden=true; box.innerHTML=''; return; }
-  const m=cur.m;
+// painel COMPLETO de um jogo (placar/status + na-mosca + 1X2 + 3 cards + rodapé). Reutilizado
+// por jogo — assim 2 jogos simultâneos aparecem cada um com seus próprios stats.
+function gameBlockHTML(m, live){
   const sum=k=>{ const [h,a]=k.split('×').map(Number); return h+a; };
   const preds=[];
   (DATA.participants||[]).forEach(p=>{
     const g=p.picks&&p.picks.groups&&p.picks.groups[m.match_id];
     if(g&&g[0]!=null&&g[1]!=null) preds.push(g[0]+'×'+g[1]);
   });
-  box.hidden=false;
-  const moreTag = cur.more>0?` <span class="cg-more">+${cur.more} ao vivo</span>`:'';
-  const status = cur.live
+  const status = live
     ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${esc(m.minute||'em andamento')}</span>`
     : `<span class="chip chip-sched">📅 próximo</span> <span class="cg-min">${fmtDateTime(m.kickoff_sao_paulo)}</span>`;
-  const score = cur.live ? `<b>${m.home_score??0}×${m.away_score??0}</b>` : '×';
-  const head=`<h3 class="sub-h" style="margin-top:4px">🔥 O jogo de agora nas apostas</h3>
-  <div class="cg-head">
-    <div class="cg-match">${flag(m.home_team)}${m.home_team} ${score} ${m.away_team}${flagA(m.away_team)}${moreTag}</div>
+  const score = live ? `<b>${m.home_score??0}×${m.away_score??0}</b>` : '×';
+  const headLine=`<div class="cg-head">
+    <div class="cg-match">${flag(m.home_team)}${m.home_team} ${score} ${m.away_team}${flagA(m.away_team)}</div>
     <div class="cg-status">${status}</div></div>`;
   if(!preds.length){
-    box.innerHTML=head+`<div class="cg-empty">Sem palpites de placar para este jogo (o bolão crava placar só na 1ª fase).</div>`;
-    return;
+    return `<div class="cg-game">${headLine}<div class="cg-empty">Sem palpites de placar para este jogo (o bolão crava placar só na 1ª fase).</div></div>`;
   }
   const counts=new Map();
   preds.forEach(k=>counts.set(k,(counts.get(k)||0)+1));
   const ents=[...counts.entries()];
-  // os 3 cards mostram placares SEMPRE DIFERENTES (cada métrica exclui os já mostrados),
-  // pra não repetir o mesmo placar (ex.: o mais ousado também ser o único).
+  // os 3 cards mostram placares SEMPRE DIFERENTES (cada métrica exclui os já mostrados).
   const most    = ents.reduce((x,y)=> y[1]>x[1]?y:x);
   const restB   = ents.filter(e=> e[0]!==most[0]);
   const boldest = restB.length ? restB.reduce((x,y)=> (sum(y[0])>sum(x[0])||(sum(y[0])===sum(x[0])&&y[1]>x[1]))?y:x) : null;
@@ -373,7 +368,7 @@ function renderCurrentGameStats(){
   let hw=0,dr=0,aw=0;
   preds.forEach(k=>{ const [h,a]=k.split('×').map(Number); if(h>a)hw++; else if(h<a)aw++; else dr++; });
   const tot=preds.length;
-  // Legenda com arredondamento de maior-resto: os 3 %s somam exatamente 100 (a barra usa toFixed e já está certa).
+  // arredondamento de maior-resto: os 3 %s somam exatamente 100.
   const _raw=[hw,dr,aw].map(n=> tot? n/tot*100 : 0);
   const _fl=_raw.map(Math.floor);
   const _pcs=[..._fl];
@@ -392,15 +387,26 @@ function renderCurrentGameStats(){
       <span><i style="background:#e8b94e"></i>Empate <b>${dr}</b> · ${pcD}%</span>
       <span><i style="background:#5b9bff"></i>${m.away_team}${flagA(m.away_team)} <b>${aw}</b> · ${pcA}%</span>
     </div></div>`;
-  // 🎯 NA MOSCA AO VIVO: quantas apostas batem o placar EXATO agora — só quando o jogo está
-  // rolando; recalcula sozinho a cada mudança de placar (overlay ESPN) e some/zera no fim do jogo.
+  // 🎯 NA MOSCA AO VIVO: quantas apostas batem o placar EXATO agora (recalcula a cada mudança).
   const liveKey = `${m.home_score??0}×${m.away_score??0}`;
-  const naMosca = cur.live ? preds.filter(k=>k===liveKey).length : 0;
-  const moscaLine = cur.live
+  const naMosca = live ? preds.filter(k=>k===liveKey).length : 0;
+  const moscaLine = live
     ? `<div class="cg-mosca"><span class="cg-mosca-dot"></span><span>Se acabasse agora (<b>${m.home_score??0} × ${m.away_score??0}</b>): <b>${naMosca}</b> aposta${naMosca!==1?'s':''} ${naMosca?'cravando o placar exato 🎯':'nesse placar ainda 👀'}</span></div>`
     : '';
-  box.innerHTML=head+moscaLine+r1x2+`<div class="cg-grid">${cards}</div>`
-    +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div>`;
+  return `<div class="cg-game">${headLine}${moscaLine}${r1x2}<div class="cg-grid">${cards}</div>`
+    +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div></div>`;
+}
+function renderCurrentGameStats(){
+  const box=document.getElementById('cgStats'); if(!box) return;
+  const cur=gamesNow();
+  if(!cur){ box.hidden=true; box.innerHTML=''; return; }
+  box.hidden=false;
+  const n=cur.games.length;
+  const title = cur.live ? (n>1?'Os jogos de agora nas apostas':'O jogo de agora nas apostas')
+                         : (n>1?'Os próximos jogos nas apostas':'O próximo jogo nas apostas');
+  const liveBadge = (cur.live && n>1) ? ` <span class="cg-more">🔴 ${n} ao vivo ao mesmo tempo</span>` : '';
+  box.innerHTML = `<h3 class="sub-h" style="margin-top:4px">🔥 ${title}${liveBadge}</h3>`
+    + cur.games.map(m=>gameBlockHTML(m, cur.live)).join('');
 }
 
 let pelLens='pontos', pelDraw=null;
