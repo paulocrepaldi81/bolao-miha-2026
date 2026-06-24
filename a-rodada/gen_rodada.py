@@ -328,6 +328,7 @@ def build_html(last_round, next_round, res_day, up_day):
 <style>*{{margin:0;box-sizing:border-box}}body{{background:#06281c}}</style></head>
 <body><div id="poster" style="position:relative;overflow:hidden;width:600px;font-family:'Segoe UI',system-ui,sans-serif;background:#0a3d2c;color:#fff">
   {ball_wm}
+  <div style="position:relative;z-index:1;height:5px;background:linear-gradient(90deg,#E61D25 0%,#F4C430 38%,#27B14B 68%,#3D6BFF 100%)"></div>
   <div style="position:relative;z-index:1;background:#0c4a35;padding:18px 20px;display:flex;align-items:center;gap:16px;border-bottom:4px solid #f4c430">
     {caricatura_html()}
     <div style="flex:1;min-width:0">
@@ -338,11 +339,11 @@ def build_html(last_round, next_round, res_day, up_day):
     {ball_header}
   </div>
   <div style="position:relative;z-index:1;padding:6px 20px 20px">
-    {sec("📋 JOGOS DO DIA ANTERIOR", res_extra)}
+    {sec("📋 RESULTADOS", res_extra)}
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
     <div style="font-size:14px;color:#e9f5ef;line-height:1.6">{curis}</div>
-    {sec("📅 JOGOS DO DIA", jogos_extra)}
+    {sec("📅 JOGOS DE HOJE", jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>
   <div style="position:relative;z-index:1;background:#0c4a35;padding:12px 20px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">⚽ Classificação ao vivo no site do bolão · boa sorte! 🏆</div>
