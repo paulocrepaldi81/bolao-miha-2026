@@ -104,6 +104,14 @@ def main():
     badfin = [m.get("match_id") for m in M
               if m.get("status") == "finished" and (m.get("home_score") is None or m.get("away_score") is None)]
     C(not badfin, f"jogo(s) encerrado(s) sem placar: {badfin}")
+    # sanidade de placar (AVISO, não bloqueia): pega glitch de fonte — gol negativo ou absurdo.
+    SCORE_MAX = 15
+    insane = []
+    for m in M:
+        hs, as_ = m.get("home_score"), m.get("away_score")
+        if any(isinstance(s, int) and not (0 <= s <= SCORE_MAX) for s in (hs, as_)):
+            insane.append(f"{m.get('match_id')}: {m.get('home_team')} {hs}×{as_} {m.get('away_team')}")
+    W(not insane, f"placar implausível — confira a fonte (glitch?): {insane[:5]}")
 
     # ---- CATEGORIAS EXTRAS ----
     C(len(ex) == len(CFG.EXTRA_CELLS), f"nº de categorias extras ({len(ex)}) != {len(CFG.EXTRA_CELLS)}")

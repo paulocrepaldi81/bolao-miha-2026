@@ -154,6 +154,23 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
 
+      # HEARTBEAT (dead-man's switch): pinga um monitor externo (ex.: healthchecks.io) DEPOIS de
+      # publicar com sucesso. Se os pings PARAREM (robô parado, cron-job.org caído, workflow
+      # quebrado), o monitor te alerta — é o alarme que faltava. Fica ANTES do alerta de
+      # divergência (que falha de propósito) p/ não dar falso "parado". Inerte e seguro até o
+      # secret HEALTHCHECK_URL existir; uma falha de ping só avisa, nunca derruba o run.
+      - name: Heartbeat (dead-man's switch)
+        env:
+          HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
+        run: |
+          if [ -n "$HEALTHCHECK_URL" ]; then
+            curl -fsS --retry 3 -m 10 "$HEALTHCHECK_URL" >/dev/null \
+              && echo "heartbeat enviado ao monitor" \
+              || echo "::warning::heartbeat falhou (monitor externo fora do ar nesta rodada)"
+          else
+            echo "HEALTHCHECK_URL não configurado — heartbeat inativo. Defina o secret p/ ativar o alarme."
+          fi
+
       # ALERTA: roda DEPOIS de publicar (o site sempre sai no ar, já com o aviso de
       # divergência) e SÓ quando a conferência MUDOU nesta rodada (env CC_CHANGED).
       # Assim uma divergência real manda 1 e-mail quando aparece — não um a cada run.
