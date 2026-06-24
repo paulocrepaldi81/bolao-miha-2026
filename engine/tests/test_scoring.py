@@ -79,6 +79,17 @@ def test_extras_nada_definido():
     assert S.score_extras({"azarao": "Haiti"}, {}) == 0
 
 
+# ---------- score_bet (gating de jogo encerrado) ----------
+def test_score_bet_so_conta_jogo_encerrado():
+    bet = {"alias": "X", "group_preds": {"A1": (2, 1), "A2": (1, 0)}, "final": {}, "extras": {}}
+    catalog = [{"match_id": "A1", "special": False}, {"match_id": "A2", "special": False}]
+    results = {"A1": {"home_score": 2, "away_score": 1, "status": "finished"},
+               "A2": {"home_score": 1, "away_score": 0, "status": "live"}}   # 'live' NÃO pontua
+    sc = S.score_bet(bet, results, catalog, {}, {})
+    assert sc["group_pts"] == 6 and sc["by_match"] == {"A1": 6}   # só A1 (3 vencedor + 3 gols)
+    assert sc["exact_scores"] == 1 and sc["correct_outcomes"] == 1
+
+
 if __name__ == "__main__":
     import pytest
     raise SystemExit(pytest.main([os.path.abspath(__file__), "-q"]))
