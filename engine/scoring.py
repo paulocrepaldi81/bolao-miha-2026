@@ -40,16 +40,18 @@ def score_final(pred_final, real_final):
     real = {k: norm(v) for k, v in real_final.items()}
     real_top3 = {v for v in real.values() if v}
     slot_pts = {"champion": C.PTS_CHAMP, "vice": C.PTS_VICE, "third": C.PTS_THIRD}
-    pts = 0
+    # Um TIME pontua no máximo UMA vez, pelo MELHOR encaixe — se a planilha repetir o mesmo
+    # time em duas posições (chaveamento bugado), ele não soma duas vezes (nem ganha o +3 de
+    # consolação por si mesmo). best[time] = maior prêmio possível entre as posições chutadas.
+    best = {}
     for slot, full in slot_pts.items():
         guess = norm(pred_final.get(slot))
         if not guess:
             continue
-        if guess == real.get(slot):
-            pts += full                      # posição exata
-        elif guess in real_top3:
-            pts += C.PTS_TOP3_WRONG_POS      # no top-3, posição errada
-    return pts
+        award = full if guess == real.get(slot) else (C.PTS_TOP3_WRONG_POS if guess in real_top3 else 0)
+        if award > best.get(guess, -1):
+            best[guess] = award
+    return sum(best.values())
 
 
 def score_extras(pred, facts):

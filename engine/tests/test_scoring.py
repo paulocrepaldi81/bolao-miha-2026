@@ -53,6 +53,16 @@ def test_final_um_fora_do_top3():
 def test_final_nao_definido():
     assert S.score_final({"champion": "Brasil"}, {"champion": None, "vice": None, "third": None}) == 0
 
+def test_final_time_repetido_nao_conta_em_dobro():
+    # chaveamento bugado: Brasil chutado em 2 posições. Brasil já leva 15 (campeão exato);
+    # NÃO pode ganhar +3 de consolação por ele mesmo no 3º. Esperado: 15 + 10 (França) = 25.
+    assert S.score_final({"champion": "Brasil", "vice": "França", "third": "Brasil"}, REAL) == 25
+
+def test_final_repetido_pega_o_melhor_encaixe():
+    # Argentina chutada em 2 posições: campeão (errado, mas no top-3 → 3) e 3º (exato → 5).
+    # O time deve levar o MELHOR (5), não o primeiro encontrado (3). Esperado: 5 + 10 (França vice) = 15.
+    assert S.score_final({"champion": "Argentina", "vice": "França", "third": "Argentina"}, REAL) == 15
+
 
 # ---------- score_extras ----------
 def test_extras_artilheiro_completo():
