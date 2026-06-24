@@ -76,7 +76,10 @@ def main():
         row = results.get(mid, {})
         our_status = (row.get("status") or "scheduled").strip()
         hs, as_ = row.get("home_score", ""), row.get("away_score", "")
-        our_finished = our_status == "finished" and str(hs).strip() != "" and str(as_).strip() != ""
+        # exige placar NUMÉRICO (não só não-vazio): um valor estranho no results.csv não pode
+        # derrubar a conferência (int() abaixo) — o módulo promete nunca derrubar o pipeline.
+        our_finished = (our_status == "finished"
+                        and str(hs).strip().isdigit() and str(as_).strip().isdigit())
         # só compara quando AS DUAS fontes têm placar real; senão a 2ª ainda está apurando
         if our_finished and fd["finished"] and fd["has_score"]:
             compared += 1

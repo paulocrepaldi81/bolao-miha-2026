@@ -281,7 +281,7 @@ async function liveOverlay(){
     const a=pt(cs[0]), b=pt(cs[1]); if(!a||!b) return;
     const m=idx[key(a,b)]; if(!m || m.status==='finished') return;  // encerrado = robô manda (tem pontos)
     nowLive.add(key(a,b));
-    const by={}; cs.forEach(c=>{ by[pt(c)]=parseInt(c.score); });
+    const by={}; cs.forEach(c=>{ by[pt(c)]=parseInt(c.score,10); });
     const hs=by[m.home_team], as=by[m.away_team];
     if(Number.isFinite(hs) && Number.isFinite(as)){
       if(m.status!=='live'||m.home_score!==hs||m.away_score!==as||m.minute!==(e.status||{}).displayClock){
