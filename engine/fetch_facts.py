@@ -172,17 +172,17 @@ def main():
         else:
             partials["menos_vazada"] = f"{len(least)} seleções com {mnc} sofrido(s): " + _join(least)
 
-        # RESOLUÇÃO OFICIAL ao fechar a 1ª fase (72/72): crava o fato. Empate → LISTA (todos os
-        # empatados contam como corretos; quem apostou em qualquer um deles pontua). Só define
-        # uma vez (não sobrescreve algo já cravado).
+        # GUARDRAIL (C4): ao fechar a 1ª fase NÃO cravamos mais_goleadora/menos_vazada/
+        # mais_gols_jogo — pela regra oficial elas contam o torneio INTEIRO (incluindo prorrogação
+        # no mata-mata), então congelar no valor de grupos seria errado. Ficam abertas para
+        # resolução (manual ou v2 com o catálogo do mata-mata) ao fim da Copa. empates_1f é
+        # "1ª fase" e já foi cravado acima — esse sim fecha em 72/72.
         if len(finished) == len(catalog):
-            for key, value in (("mais_goleadora", tops[0] if len(tops) == 1 else tops),
-                               ("menos_vazada", least[0] if len(least) == 1 else least),
-                               ("mais_gols_jogo", mxg)):
-                if facts.get(key) in (None, ""):
-                    facts[key] = value
-                    changed_facts = True
-                    print(f"✔ DEFINIDO {key} = {value} (72/72 da 1ª fase)")
+            pendentes = [k for k in ("mais_goleadora", "menos_vazada", "mais_gols_jogo",
+                                     "jogos_penaltis", "azarao") if facts.get(k) in (None, "")]
+            if pendentes:
+                print("ℹ 1ª fase encerrada. Curiosidades de torneio inteiro/mata-mata pendentes de "
+                      "resolução MANUAL ao fim da Copa (contam prorrogação): " + ", ".join(pendentes))
 
     # ---------- 2) Artilharia: calculada via ESPN logo após buscar os lances (seção 3). ----------
 
