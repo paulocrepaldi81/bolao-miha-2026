@@ -689,7 +689,7 @@ function renderLeaderboard(){
       const cls = isFirst?'first':(p.rank===2?'second':(p.rank===3?'third':(isLast?'last':'')));
       const medal = isFirst?'👑 ':(p.rank===2?'🥈 ':(p.rank===3?'🥉 ':''));
       const prize = prizeSet.has(p.alias)?'<span class="chip chip-prize">💰 prêmio</span>':'';
-      const free  = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
+      const free  = p.paid?'':'<span class="chip chip-ft" title="café-com-leite: joga pela glória, não concorre à grana">☕ café-com-leite</span>';
       const hit   = q?'<span class="you-tag">é você?</span>':'';
       return `<div class="lb-row ${cls}">
         <div class="rk">${p.rank}</div>
@@ -975,7 +975,7 @@ function renderMinhaAposta(){
   card.hidden=false;
   const initials=(p.alias.match(/[A-Za-zÀ-ÿ0-9]+/g)||['?']).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   const mv = p.rank_change>0?`<span class="pill up">▲ ${p.rank_change}</span>`:(p.rank_change<0?`<span class="pill down">▼ ${Math.abs(p.rank_change)}</span>`:'');
-  const paidBadge = p.paid?'':'<span class="chip chip-ft">☕ café-com-leite</span>';
+  const paidBadge = p.paid?'':'<span class="chip chip-ft" title="café-com-leite: joga pela glória, não concorre à grana">☕ café-com-leite</span>';
   // zona de prêmio = MESMA fonte do leaderboard (in_the_money do motor; respeita empate na
   // borda). Antes recalculava top-4 e divergia: empatado no 4º via 💰 na lista e não aqui.
   const hasMoney=all.some(x=>x.in_the_money!==undefined);
