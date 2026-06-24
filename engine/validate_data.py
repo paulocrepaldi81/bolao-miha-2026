@@ -19,6 +19,9 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import config as CFG   # nº de categorias extras vem da fonte única (EXTRA_CELLS), não hardcoded
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
 OUT = os.path.join(HERE, "..", "landing-page", "data.json")
@@ -103,7 +106,7 @@ def main():
     C(not badfin, f"jogo(s) encerrado(s) sem placar: {badfin}")
 
     # ---- CATEGORIAS EXTRAS ----
-    C(len(ex) == 11, f"nº de categorias extras ({len(ex)}) != 11")
+    C(len(ex) == len(CFG.EXTRA_CELLS), f"nº de categorias extras ({len(ex)}) != {len(CFG.EXTRA_CELLS)}")
     # vencedores só podem existir quando a categoria tem valor real definido
     bad_winners = [x.get("key") for x in ex if x.get("winners") and x.get("real") in (None, "")]
     C(not bad_winners, f"categoria com 'winners' sem valor real definido: {bad_winners}")
