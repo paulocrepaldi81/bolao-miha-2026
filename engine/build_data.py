@@ -34,6 +34,7 @@ HALL_DA_FAMA = [
 ]
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
+HISTORY_MAX = 250   # máx. de snapshots guardados em history.json (baseline usa só os recentes)
 MONTHS = {"jan": 1, "fev": 2, "mar": 3, "abr": 4, "mai": 5, "jun": 6,
           "jul": 7, "ago": 8, "set": 9, "out": 10, "nov": 11, "dez": 12}
 
@@ -293,6 +294,9 @@ def main():
     if not history or _totals(history[-1]) != cur_tot:
         history.append({"ts": now, "ranks": {p["alias"]: {"rank": p["rank"], "total": p["score"]}
                                              for p in participants}})
+        # cap defensivo: o baseline da movimentação só usa o snapshot recente, então manter os
+        # últimos N basta — limita o tamanho do arquivo/commit ao longo de toda a Copa.
+        history = history[-HISTORY_MAX:]
         with open(os.path.join(DATA, "history.json"), "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
 
