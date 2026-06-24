@@ -14,11 +14,12 @@
     /* Base neutra preto/branco — espírito da marca oficial Copa 2026 */
     --bg:#0C0D10; --bg-2:#141519; --card:#191A1F; --card-2:#202127;
     --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.16);
-    --ink:#F4F6F8; --ink-dim:#BFC4CC; --ink-faint:#8B919C;
+    --ink:#F4F6F8; --ink-dim:#BFC4CC; --ink-faint:#9AA1AC;   /* lift p/ passar AA em texto pequeno */
     /* Sistema tri-nação oficial: Canadá vermelho · México verde · EUA azul + troféu dourado */
     --red:#E61D25; --red-deep:#B3151B;       /* Canadá */
     --green:#27B14B; --green-deep:#1C8A39;    /* México */
     --blue:#3D6BFF; --blue-deep:#2A398D;      /* EUA */
+    --blue-ink:#7DA2FF;                       /* azul p/ TEXTO de dados (passa AA no escuro) */
     --coral:#E61D25;                          /* alias semântico: quedas = vermelho oficial */
     --gold:#F4C430;                           /* troféu */
     --r:16px; --r-sm:10px; --maxw:1160px;
@@ -43,7 +44,7 @@
   .up{color:var(--green)} .down{color:var(--coral)} .flat{color:var(--ink-faint)}
   .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
     text-transform:uppercase;letter-spacing:.4px;padding:4px 9px;border-radius:999px}
-  .chip-live{background:rgba(230,29,37,.18);color:#FF6B72;border:1px solid rgba(230,29,37,.45)}
+  .chip-live{background:rgba(230,29,37,.18);color:#FF8A90;border:1px solid rgba(230,29,37,.45)}
   .chip-sched{background:rgba(61,107,255,.16);color:#9DB6FF;border:1px solid rgba(61,107,255,.38)}
   .chip-ft{background:rgba(180,188,200,.12);color:var(--ink-dim);border:1px solid var(--line-2)}
   .fmono{display:inline-grid;place-items:center;min-width:22px;height:15px;padding:0 4px;border-radius:4px;
@@ -156,7 +157,7 @@
   .who .meta{font-size:12px;color:var(--ink-faint)}
   .lb-right{display:flex;align-items:center;gap:18px}
   .lb-right .pwin{text-align:right}
-  .lb-right .pwin .v{font-weight:800;color:var(--blue)}
+  .lb-right .pwin .v{font-weight:800;color:var(--blue-ink)}
   .lb-right .pwin .l{font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
   .lb-score{font-family:Anton;font-size:28px;min-width:60px;text-align:right}
   @media(max-width:620px){
@@ -214,9 +215,9 @@
   .live-strip{margin-bottom:18px;border:1px solid rgba(230,29,37,.45);background:rgba(230,29,37,.06);
     border-radius:var(--r);padding:14px}
   .live-strip-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:800;
-    text-transform:uppercase;letter-spacing:.5px;font-size:12px;color:#FF6B72}
+    text-transform:uppercase;letter-spacing:.5px;font-size:12px;color:#FF8A90}
   .live-strip .mcard{border-color:rgba(230,29,37,.35)}
-  .mlive-min{font-family:Anton;font-size:13px;color:#FF6B72}
+  .mlive-min{font-family:Anton;font-size:13px;color:#FF8A90}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .mcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
   .mcard .grp{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
@@ -246,8 +247,8 @@
   .move-hero .who{font-size:14px;font-weight:700;margin-top:7px;line-height:1.4}
   .move-hero .extra{font-size:12px;color:var(--ink-dim);margin-top:3px}
   /* "+X" que expande de verdade (clicável) — usado em Movimentação, Números e Extras */
-  .who-wrap .more-btn,.who-wrap .less-btn{background:none;border:0;padding:0 3px;font:inherit;font-weight:700;
-    color:var(--ink-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .who-wrap .more-btn,.who-wrap .less-btn{background:none;border:0;padding:4px 7px;margin:-2px 0;font:inherit;
+    font-weight:700;color:var(--ink-faint);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .who-wrap .more-btn:hover,.who-wrap .less-btn:hover{color:var(--ink)}
 
   /* ---- O Pelotão (histograma) ---- */
@@ -282,7 +283,7 @@
   .cg-match b{font-family:Anton;font-size:19px;margin:0 4px}
   .cg-more{font-size:11px;color:var(--ink-faint);font-weight:700}
   .cg-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim)}
-  .cg-min{font-family:Anton;color:#FF6B72}
+  .cg-min{font-family:Anton;color:#FF8A90}
   .cg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
   .cg-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;text-align:center}
   .cg-ic{font-size:20px}
@@ -446,7 +447,7 @@
   .prob-item .nm{font-weight:700;width:110px;flex:0 0 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bar{flex:1;height:10px;background:var(--bg-2);border-radius:999px;overflow:hidden}
   .bar > i{display:block;height:100%;background:var(--brand-grad);border-radius:999px}
-  .prob-item .pct{width:54px;text-align:right;font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums}
+  .prob-item .pct{width:54px;text-align:right;font-weight:800;color:var(--blue-ink);font-variant-numeric:tabular-nums}
   .method{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:var(--r);padding:18px;color:var(--ink-dim);font-size:13.5px}
   .method b{color:var(--ink)}
 
@@ -743,6 +744,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260624b" defer></script>
+<script src="app.js?v=20260624c" defer></script>
 </body>
 </html>
