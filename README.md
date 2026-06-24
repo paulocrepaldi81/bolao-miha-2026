@@ -2,14 +2,15 @@
 
 Sistema completo do bolão da Copa do Mundo FIFA 2026 — tradição da família e amigos desde 2006.
 
-🔗 **Site (leaderboard ao vivo):** https://bolaomiha26.netlify.app
+🔗 **Site (leaderboard ao vivo):** https://paulocrepaldi81.github.io/bolao-miha-2026/
+(host oficial: **GitHub Pages** · link privado/não-listado)
 
 ## Como funciona
 
 ```
-planilhas dos apostadores → motor de pontuação → data.json → Netlify → site no ar
+planilhas dos apostadores → motor de pontuação → data.json → GitHub Pages → site no ar
                                     ↑
-                  robô (GitHub Actions) busca placares oficiais a cada 20 min
+       robô (GitHub Actions, disparado por pinger externo) busca placares a cada ~5 min
 ```
 
 | Pasta | O quê |
@@ -20,9 +21,9 @@ planilhas dos apostadores → motor de pontuação → data.json → Netlify →
 
 ## Estado atual
 
-- ✅ Site no ar (modo protótipo, dados de exemplo)
-- ⏸️ Robô em modo de espera (liga quando as apostas reais forem carregadas)
-- ⏳ Aguardando as planilhas das 84 apostas
+- ✅ Site no ar com os dados reais (Copa em andamento)
+- ✅ Robô ativo: busca placares e republica a cada ~5 min
+- ✅ 88 apostas carregadas (83 pagas)
 
 ## Regras do bolão (resumo)
 

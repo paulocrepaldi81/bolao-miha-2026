@@ -11,7 +11,7 @@ cd engine
 pip3 install -r requirements.txt
 ```
 
-## Setup único (quando as 84 planilhas chegarem)
+## Setup único (quando as 88 planilhas chegarem)
 1. Coloque as planilhas em **`engine/bets/`** (1 arquivo por aposta; nome do arquivo / célula B2 = apelido).
 2. Preencha **`engine/data/roster.csv`**: `alias, paid (sim/não), order (ordem de envio)`.
 3. Gere os caches que o robô usa (planilhas NÃO sobem ao GitHub):
@@ -23,14 +23,15 @@ pip3 install -r requirements.txt
 5. Commit + push. Pronto — o robô assume.
 
 ## Modo automático (durante a Copa) — GitHub Actions
-O workflow **`.github/workflows/atualiza-placar.yml`** roda a cada 20 min:
-busca placares na API (football-data.org) → atualiza `results.csv` → repontua
-(`build_data.py --from-json`) → commita `data.json` → Netlify republica (~30s).
-- **Setup**: chave grátis em https://www.football-data.org/client/register, salva no
+O workflow **`.github/workflows/atualiza-placar.yml`** é disparado por um **pinger externo
+(cron-job.org)** a cada **~5 min** (o cron nativo do GitHub é instável para este repo):
+busca placares na **ESPN** (com conferência cruzada na football-data.org) → atualiza
+`results.csv` → repontua (`build_data.py --from-json`) → commita `data.json` → **GitHub Pages** republica.
+- **Setup**: chave grátis da 2ª fonte em https://www.football-data.org/client/register, salva no
   GitHub em *Settings → Secrets and variables → Actions* como `FOOTBALL_DATA_TOKEN`.
-- **Correção manual vence**: linha com `lock=sim` no `results.csv` nunca é sobrescrita pelo robô.
-- ⚠ A API ainda **não foi testada ao vivo** (precisa da chave) — valide com
-  `python3 fetch_results.py --dry-run` no 1º dia antes de confiar.
+- **Correção manual vence**: linha com `lock=sim` no `results.csv` nunca é sobrescrita pelo robô
+  (placar sempre na **orientação da planilha**, não a da ESPN).
+- ✅ Em produção, validado ao vivo durante a Copa (ESPN primária; football-data só confere).
 
 ## Modo manual (fallback que sempre funciona)
 1. Edite **`engine/data/results.csv`** com os placares (ids em `data/matches_reference.csv`).
