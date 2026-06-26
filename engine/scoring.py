@@ -100,6 +100,29 @@ def _match_fact(pred, real):
     return _eq(pred, real)
 
 
+def score_knockout(eff_picks, ko_results):
+    """Pontua os palpites do MATA-MATA (reaproveita score_match: vencedor 3/5 + bônus exato).
+
+    eff_picks  : {slot: (h, a)} — placar EFETIVO por slot (override do Form ou aposta original),
+                 na orientação do CHAVEAMENTO (pos1 × pos2).
+    ko_results : {slot: {"home_score","away_score","status","special"}} — MESMA orientação;
+                 placar do tempo normal + PRORROGAÇÃO (pênaltis NÃO entram — isso é garantido
+                 na captura do resultado, não aqui).
+    Retorna (total, {slot: pts}). Só pontua slot ENCERRADO com placar real e que a pessoa palpitou.
+    """
+    by_slot, total = {}, 0
+    for slot, r in ko_results.items():
+        if not r or r.get("status") != "finished" or r.get("home_score") is None:
+            continue
+        pred = eff_picks.get(slot)
+        if pred is None:
+            continue
+        p = score_match(pred[0], pred[1], r["home_score"], r["away_score"], r.get("special", False))
+        by_slot[slot] = p
+        total += p
+    return total, by_slot
+
+
 def score_bet(bet, results, catalog, real_final, facts):
     """Pontuação total de uma aposta + detalhamento.
 

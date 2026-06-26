@@ -63,6 +63,22 @@ def test_effective_picks_override_vence_fallback():
     assert eff["R32-03"] == (2, 1)   # fallback da aposta original
 
 
+def test_score_knockout():
+    import scoring as S
+    eff = {"R32-01": (2, 1), "R32-02": (0, 0), "R16-01": (1, 1)}
+    res = {
+        "R32-01": {"home_score": 2, "away_score": 1, "status": "finished"},                  # exato -> 3 + 3 gols = 6
+        "R32-02": {"home_score": 1, "away_score": 0, "status": "finished", "special": True},  # previu empate, deu vitória -> 0
+        "R16-01": {"home_score": 1, "away_score": 1, "status": "finished"},                   # empate exato -> 3 + 2 = 5
+        "QF-01":  {"home_score": 3, "away_score": 0, "status": "finished"},                   # sem palpite -> ignora
+        "SF-01":  {"home_score": None, "away_score": None, "status": "scheduled"},            # não disputado -> ignora
+    }
+    total, by = S.score_knockout(eff, res)
+    assert by["R32-01"] == 6 and by["R32-02"] == 0 and by["R16-01"] == 5
+    assert "QF-01" not in by and "SF-01" not in by
+    assert total == 11
+
+
 if __name__ == "__main__":
     import pytest
     raise SystemExit(pytest.main([os.path.abspath(__file__), "-q"]))
