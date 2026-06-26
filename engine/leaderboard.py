@@ -86,6 +86,7 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
             "alias": s["alias"],
             "score": s["total"],
             "phase1_points": s["group_pts"],
+            "knockout_pts": s.get("knockout_pts", 0),   # pontos do mata-mata (0 na fase de grupos)
             "rank": rank,
             "previous_rank": prev_rank,
             "rank_change": prev_rank - rank,

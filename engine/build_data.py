@@ -18,7 +18,8 @@ from datetime import datetime, timezone, timedelta
 import config as C
 from catalog import build_group_catalog
 from read_bets import read_bet
-from scoring import score_bet
+from scoring import score_bet, score_knockout
+import knockout as KO
 import leaderboard as LB
 
 SP = timezone(timedelta(hours=-3))   # America/Sao_Paulo (GMT-3)
@@ -111,6 +112,75 @@ def load_history(path):
     return []
 
 
+def load_knockout_results(path):
+    """knockout_results.csv: slot,home_score,away_score,status,special (orientação do CHAVEAMENTO,
+    placar do tempo normal+prorrogação — pênaltis não entram). Ausente → {} (sem mata-mata ainda)."""
+    res = {}
+    if not os.path.exists(path):
+        return res
+    with open(path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            slot = (row.get("slot") or "").strip()
+            if not slot:
+                continue
+            hs, as_ = row.get("home_score", ""), row.get("away_score", "")
+            res[slot] = {
+                "home_score": int(hs) if str(hs).strip() != "" else None,
+                "away_score": int(as_) if str(as_).strip() != "" else None,
+                "status": (row.get("status") or "scheduled").strip() or "scheduled",
+                "special": str(row.get("special", "")).strip().lower() in ("1", "true", "sim", "yes"),
+            }
+    return res
+
+
+def _read_form_source(src):
+    """Lê o CSV do Form: URL (Drive/Sheets publicado) ou arquivo local. FALHA-FECHADA: qualquer
+    erro retorna None → aquela rodada é ignorada e vale o fallback (nunca derruba o pipeline)."""
+    try:
+        if str(src).startswith("http"):
+            import urllib.request
+            with urllib.request.urlopen(src, timeout=20) as r:
+                return r.read().decode("utf-8", "replace")
+        if os.path.exists(src):
+            with open(src, encoding="utf-8") as f:
+                return f.read()
+    except Exception as e:
+        print(f"  ⚠ fonte do form indisponível ({src}): {e}")
+    return None
+
+
+def load_knockout_form(path, roster_aliases):
+    """knockout_forms.json: {"rounds":[{"round":"R32","deadline":"YYYY-MM-DD HH:MM","csv":"<url|arquivo>"}]}.
+    Mescla os palpites de todas as rodadas por apelido (trava por prazo + vale o último, no módulo
+    knockout). Falha-fechada por rodada. Retorna {alias: {slot: (h,a)}}."""
+    merged = {}
+    if not os.path.exists(path):
+        return merged
+    try:
+        cfg = json.load(open(path, encoding="utf-8"))
+    except Exception:
+        return merged
+    for rd in cfg.get("rounds", []):
+        rid, src, dl = rd.get("round"), rd.get("csv"), rd.get("deadline")
+        if not (rid and src and dl):
+            continue
+        try:
+            deadline = datetime.strptime(dl, "%Y-%m-%d %H:%M")
+        except ValueError:
+            continue
+        text = _read_form_source(src)
+        if text is None:
+            continue
+        try:
+            picks = KO.parse_form_csv(text, rid, deadline, roster_aliases)
+        except Exception as e:
+            print(f"  ⚠ CSV do form {rid} ilegível: {e}")
+            continue
+        for alias, sl in picks.items():
+            merged.setdefault(alias, {}).update(sl)
+    return merged
+
+
 def load_cross_check(path):
     """Resumo da conferência independente (ESPN) p/ o bloco 'Auditoria' do site."""
     if not os.path.exists(path):
@@ -177,6 +247,21 @@ def main():
         scored.append(score_bet(bet, results, catalog, real_final, facts))
         if bet["issues"]:
             all_issues.append((bet["alias"], bet["file"], bet["issues"]))
+
+    # ---- MATA-MATA (v2): soma os pontos do chaveamento ao total ----
+    # Placar EFETIVO por slot = override do Google Form (dentro do prazo) ou a aposta ORIGINAL.
+    # Inerte enquanto não há resultados de mata-mata (ko_results vazio → 0 pra todos → 0-diff).
+    # Falha-fechada: CSV do form indisponível/quebrado → ninguém recebe override → vale o original.
+    ko_results = load_knockout_results(os.path.join(DATA, "knockout_results.csv"))
+    ko_form = load_knockout_form(os.path.join(DATA, "knockout_forms.json"), [s["alias"] for s in scored])
+    bet_by_alias = {b["alias"]: b for b in bets}
+    for s in scored:
+        b = bet_by_alias.get(s["alias"], {})
+        eff = KO.effective_picks(b.get("knockout_orig", {}), ko_form.get(s["alias"], {}))
+        ko_pts, ko_by = score_knockout(eff, ko_results)
+        s["knockout_pts"] = ko_pts
+        s["knockout_by"] = ko_by
+        s["total"] += ko_pts
 
     # Baseline da MOVIMENTAÇÃO = a classificação mais recente que era DIFERENTE da atual.
     # Assim o "▲/▼ da rodada" reflete a última mudança real de pontos e continua aparecendo
