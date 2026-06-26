@@ -59,12 +59,22 @@ def read_bet(path, catalog):
         if extras[k] is None:
             issues.append(f"categoria extra '{k}' vazia ({cell})")
 
+    # --- Mata-mata: placar PREVISTO por slot do chaveamento (fallback do Google Form) ---
+    # Lê só onde o apostador cravou os dois números; slot em branco fica de fora (sem fallback).
+    knockout_orig = {}
+    for slot, sh, sa in C.KNOCKOUT_CELLS:
+        h = _int_or_none(mm[sh].value)
+        a = _int_or_none(mm[sa].value)
+        if h is not None and a is not None:
+            knockout_orig[slot] = (h, a)
+
     return {
         "alias": alias,
         "file": os.path.basename(path),
         "group_preds": group_preds,
         "final": final,
         "extras": extras,
+        "knockout_orig": knockout_orig,
         "issues": issues,
     }
 

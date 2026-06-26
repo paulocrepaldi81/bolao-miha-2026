@@ -29,6 +29,24 @@ NAME_SHEET, NAME_CELL = "1a Fase", "B2"   # apelido da aposta
 FINAL_SHEET = "Mata-Mata"
 FINAL_CELLS = {"champion": "AC9", "vice": "AC13", "third": "AC17"}
 
+# ---- Mata-mata (v2): placar previsto por SLOT do chaveamento ----
+# É o FALLBACK quando o apostador não atualiza o placar pelo Google Form. Mapa de células
+# VERIFICADO: o vencedor do placar da final/3º bate com o campeão/3º deduzido (AC9/AC17) em
+# TODAS as 88 apostas (0 falhas). Slots: R32-01..16, R16-01..08, QF-01..04, SF-01..02, FIN, TER.
+def _ko_cells():
+    out = []
+    for rid, ch, ca, rows in (("R32", "C", "D", [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63]),
+                              ("R16", "I", "J", [5, 13, 21, 29, 37, 45, 53, 61]),
+                              ("QF",  "O", "P", [9, 25, 41, 57]),
+                              ("SF",  "U", "V", [17, 49])):
+        for i, r in enumerate(rows, 1):
+            out.append((f"{rid}-{i:02d}", f"{ch}{r}", f"{ca}{r}"))
+    out.append(("FIN", "AA24", "AB24"))
+    out.append(("TER", "AA34", "AB34"))
+    return out
+
+KNOCKOUT_CELLS = _ko_cells()   # [(slot, célula_placar_mandante, célula_placar_visitante)] — 32 slots
+
 # ---- Categorias Extras (4ª aba, input uma linha abaixo de cada rótulo) ----
 EXTRA_SHEET = "Categorias Extras"
 EXTRA_CELLS = {
