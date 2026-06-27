@@ -78,30 +78,36 @@ jobs:
         working-directory: engine
         run: python validate_data.py
 
-      # Decide se a divergência é NOVA (compara a "assinatura" das discrepâncias, sem o
-      # timestamp). Só marca NEW_DIVERGENCE=true quando muda → 1 e-mail por divergência.
+      # Só alerta quando a MESMA divergência PERSISTE por PERSIST checagens seguidas (~6-9 min).
+      # Assim o lag da 2ª fonte logo após um jogo (que se acerta sozinho em minutos) NÃO gera
+      # e-mail à toa; divergência REAL (que não some) ainda avisa — uma única vez.
       - name: Avaliar divergência entre fontes
         working-directory: engine
         run: |
           python - <<'PY'
           import json, os
+          PERSIST = 3   # checagens consecutivas com a MESMA divergência antes de alertar
           def load(p, d):
               try: return json.load(open(p, encoding="utf-8"))
               except Exception: return d
           c = load("data/cross_check.json", {})
-          st = load("data/alert_state.json", {"last_sig": ""})
+          st = load("data/alert_state.json", {"last_sig": "", "streak": 0})
           if c.get("status") == "divergencia":
               sig = json.dumps(sorted((d.get("match_id"), d.get("primaria"), d.get("secundaria"))
                                       for d in c.get("discrepancias", c.get("discrepancies", []))), ensure_ascii=False)
           else:
               sig = ""
-          new = (c.get("status") == "divergencia" and sig != st.get("last_sig", ""))
-          if sig != st.get("last_sig", ""):
-              json.dump({"last_sig": sig}, open("data/alert_state.json", "w", encoding="utf-8"), ensure_ascii=False)
+          prev = st.get("last_sig", "")
+          # conta quantas checagens seguidas a MESMA divergência apareceu; muda/some → reinicia.
+          streak = (st.get("streak", 0) + 1) if (sig and sig == prev) else (1 if sig else 0)
+          # alerta UMA vez: exatamente quando ela completa PERSIST checagens consecutivas.
+          new = (sig != "" and streak == PERSIST)
+          json.dump({"last_sig": sig, "streak": streak},
+                    open("data/alert_state.json", "w", encoding="utf-8"), ensure_ascii=False)
           env = os.environ.get("GITHUB_ENV")
           if env:
               open(env, "a").write("NEW_DIVERGENCE=%s\n" % ("true" if new else "false"))
-          print("status:", c.get("status"), "| divergência nova?", new)
+          print(f"status: {c.get('status')} | divergência: {streak}/{PERSIST} checagens | alerta? {new}")
           PY
 
       - name: Versionar dados (commit + push best-effort — nunca derruba o run)
