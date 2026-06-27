@@ -1,12 +1,23 @@
 {
-  "checked_at": "2026-06-27T17:00:27.877271-03:00",
+  "checked_at": "2026-06-27T17:05:18.918437-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
-  "status": "ok",
-  "compared": 66,
-  "agree": 66,
-  "discrepancies": [],
+  "status": "divergencia",
+  "compared": 64,
+  "agree": 63,
+  "discrepancies": [
+    {
+      "match_id": "G6",
+      "teams": "Egito x Irã",
+      "primaria": "1x1  (ESPN)",
+      "secundaria": "1x2  (football-data)",
+      "lock": false
+    }
+  ],
   "resolvidas": [],
-  "pendente_2a_fonte": []
+  "pendente_2a_fonte": [
+    "I5",
+    "I6"
+  ]
 }
