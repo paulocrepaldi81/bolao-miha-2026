@@ -181,8 +181,25 @@ def load_knockout_form(path, roster_aliases):
     return merged
 
 
+def _divergence_persisted(c, persist=3):
+    """True se a MESMA divergência já apareceu em >= `persist` checagens seguidas. Lê o `streak`
+    que o passo 'Avaliar divergência' grava em alert_state.json (o mesmo que o e-mail usa) — assim
+    banner e e-mail disparam JUNTOS. build_data roda ANTES desse passo, então o streak lido é o do
+    run ANTERIOR; por isso o +1 (este run). NÃO escreve nada aqui (sem corrida com o passo)."""
+    sig = json.dumps(sorted((d.get("match_id"), d.get("primaria"), d.get("secundaria"))
+                            for d in c.get("discrepancias", c.get("discrepancies", []))), ensure_ascii=False)
+    try:
+        st = json.load(open(os.path.join(DATA, "alert_state.json"), encoding="utf-8"))
+    except Exception:
+        st = {}
+    return sig != "" and sig == st.get("last_sig", "") and st.get("streak", 0) + 1 >= persist
+
+
 def load_cross_check(path):
-    """Resumo da conferência independente (ESPN) p/ o bloco 'Auditoria' do site."""
+    """Resumo da conferência independente (ESPN) p/ o bloco 'Auditoria' do site.
+    DEBOUNCE DO BANNER: uma divergência só "acende" o banner vermelho depois de PERSISTIR algumas
+    checagens (igual ao e-mail) — glitch transitório da 2ª fonte, que se acerta sozinho em minutos,
+    nem aparece (fica "ok"/verde). Divergência REAL persiste e aí sim aparece."""
     if not os.path.exists(path):
         return None
     try:
@@ -190,12 +207,16 @@ def load_cross_check(path):
             c = json.load(f)
     except Exception:
         return None
+    status = c.get("status", "ok")
+    discrepancies = c.get("discrepancies", [])
+    if status == "divergencia" and not _divergence_persisted(c):
+        status, discrepancies = "ok", []   # ainda não persistiu → não acende o banner
     return {
-        "status": c.get("status", "ok"),
+        "status": status,
         "source_a": c.get("source_a"), "source_b": c.get("source_b"),
         "source_b_ok": c.get("source_b_ok", True),
         "compared": c.get("compared", 0), "agree": c.get("agree", 0),
-        "discrepancies": c.get("discrepancies", []),
+        "discrepancies": discrepancies,
         "resolvidas": c.get("resolvidas", []),   # divergências decididas a favor da ESPN
         "checked_at": c.get("checked_at"),
     }
