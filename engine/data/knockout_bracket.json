@@ -1,0 +1,21 @@
+{
+  "_doc": "Fonte ÚNICA da verdade do chaveamento. Orientação: home = posição da coluna B da planilha (mandante), away = coluna E (visitante). O placar do Form ('h × a') e o resultado real DEVEM seguir esta mesma orientação. Jogo N do Form -> slot R32-NN. NÃO reordene.",
+  "R32": [
+    {"slot": "R32-01", "jogo": 1,  "home_pos": "1º Grupo E", "away_pos": "3º Grupo (A,B,C,D,F)", "cell_home": "C3",  "cell_away": "D3"},
+    {"slot": "R32-02", "jogo": 2,  "home_pos": "1º Grupo I", "away_pos": "3º Grupo (C,D,F,G,H)", "cell_home": "C7",  "cell_away": "D7"},
+    {"slot": "R32-03", "jogo": 3,  "home_pos": "2º Grupo A", "away_pos": "2º Grupo B",           "cell_home": "C11", "cell_away": "D11"},
+    {"slot": "R32-04", "jogo": 4,  "home_pos": "1º Grupo F", "away_pos": "2º Grupo C",           "cell_home": "C15", "cell_away": "D15"},
+    {"slot": "R32-05", "jogo": 5,  "home_pos": "2º Grupo K", "away_pos": "2º Grupo L",           "cell_home": "C19", "cell_away": "D19"},
+    {"slot": "R32-06", "jogo": 6,  "home_pos": "1º Grupo H", "away_pos": "2º Grupo J",           "cell_home": "C23", "cell_away": "D23"},
+    {"slot": "R32-07", "jogo": 7,  "home_pos": "1º Grupo D", "away_pos": "3º Grupo (B,E,F,I,J)", "cell_home": "C27", "cell_away": "D27"},
+    {"slot": "R32-08", "jogo": 8,  "home_pos": "1º Grupo G", "away_pos": "3º Grupo (A,E,H,I,J)", "cell_home": "C31", "cell_away": "D31"},
+    {"slot": "R32-09", "jogo": 9,  "home_pos": "1º Grupo C", "away_pos": "2º Grupo F",           "cell_home": "C35", "cell_away": "D35"},
+    {"slot": "R32-10", "jogo": 10, "home_pos": "2º Grupo E", "away_pos": "2º Grupo I",           "cell_home": "C39", "cell_away": "D39"},
+    {"slot": "R32-11", "jogo": 11, "home_pos": "1º Grupo A", "away_pos": "3º Grupo (C,E,F,H,I)", "cell_home": "C43", "cell_away": "D43"},
+    {"slot": "R32-12", "jogo": 12, "home_pos": "1º Grupo L", "away_pos": "3º Grupo (E,H,I,J,K)", "cell_home": "C47", "cell_away": "D47"},
+    {"slot": "R32-13", "jogo": 13, "home_pos": "1º Grupo J", "away_pos": "2º Grupo H",           "cell_home": "C51", "cell_away": "D51"},
+    {"slot": "R32-14", "jogo": 14, "home_pos": "2º Grupo D", "away_pos": "2º Grupo G",           "cell_home": "C55", "cell_away": "D55"},
+    {"slot": "R32-15", "jogo": 15, "home_pos": "1º Grupo B", "away_pos": "3º Grupo (E,F,G,I,J)", "cell_home": "C59", "cell_away": "D59"},
+    {"slot": "R32-16", "jogo": 16, "home_pos": "1º Grupo K", "away_pos": "3º Grupo (D,E,I,J,L)", "cell_home": "C63", "cell_away": "D63"}
+  ]
+}

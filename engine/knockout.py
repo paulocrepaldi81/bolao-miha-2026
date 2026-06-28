@@ -40,20 +40,24 @@ def _parse_ts(raw):
     return None
 
 
-def parse_form_csv(text, round_id, deadline_dt, roster_aliases):
+def parse_form_csv(text, round_id, deadline, roster_aliases, slot_deadlines=None):
     """
     text          : conteúdo do CSV de respostas do Form.
-    round_id      : 'R32' | 'R16' | 'QF' | 'SF' | 'F3' (prefixo do slot; cada 'Jogo N' vira ROUND-0N).
-    deadline_dt   : datetime (naive, fuso São Paulo) — envios DEPOIS disso são descartados.
+    round_id      : 'R32' | 'R16' | 'QF' | 'SF' | 'FIN' (prefixo do slot; cada 'Jogo N' vira ROUND-0N).
+    deadline      : datetime (naive, fuso SP) — prazo PADRÃO da rodada (envios depois disso, descartados).
     roster_aliases: lista dos apelidos válidos (roster) — casa o apelido respondido.
-    Retorna: {apelido_real: {slot: (h,a)}}  — só os jogos que a pessoa atualizou, do último envio válido.
+    slot_deadlines: {slot: datetime} OPCIONAL — prazo POR JOGO; sobrepõe o da rodada só p/ aquele slot
+                    (ex.: travar o jogo de hoje mais cedo). Slot sem entrada usa `deadline`.
+    Retorna: {apelido_real: {slot: (h,a)}}. Por SLOT, vale o ÚLTIMO envio cujo carimbo respeita o
+    prazo DAQUELE jogo; em branco no envio vencedor = sem override (vale a aposta ORIGINAL).
     """
+    slot_deadlines = slot_deadlines or {}
     rows = list(csv.reader(io.StringIO(text)))
     if len(rows) < 2:
         return {}
     header = rows[0]
     ts_i = next((i for i, h in enumerate(header) if "carimbo" in _norm(h) or "timestamp" in _norm(h)), 0)
-    alias_i = next((i for i, h in enumerate(header) if _norm(h) == "seu apelido"), None)
+    alias_i = next((i for i, h in enumerate(header) if "apelido" in _norm(h)), None)
     game_cols = {}
     for i, h in enumerate(header):
         m = re.match(r"\s*jogo\s*(\d+)", _norm(h))
@@ -63,7 +67,8 @@ def parse_form_csv(text, round_id, deadline_dt, roster_aliases):
         return {}
 
     alias_by_norm = {_norm(a): a for a in roster_aliases}
-    best = {}   # apelido_real -> (ts, {slot:(h,a)})
+    # junta TODOS os envios válidos por apelido: lista de (ts, {slot: (h,a)|None})
+    subs = {}
     for row in rows[1:]:
         if alias_i >= len(row):
             continue
@@ -71,18 +76,28 @@ def parse_form_csv(text, round_id, deadline_dt, roster_aliases):
         if not alias:
             continue
         ts = _parse_ts(row[ts_i] if ts_i < len(row) else "")
-        if ts is None or ts > deadline_dt:          # trava por prazo (e descarta sem carimbo)
+        if ts is None:                               # sem carimbo legível = descartado (fail-closed)
             continue
+        vals = {slot: (_parse_score(row[ci]) if ci < len(row) else None)
+                for ci, slot in game_cols.items()}
+        subs.setdefault(alias, []).append((ts, vals))
+
+    out = {}
+    for alias, lst in subs.items():
         picks = {}
-        for ci, slot in game_cols.items():
-            if ci < len(row):
-                sc = _parse_score(row[ci])
-                if sc is not None:
-                    picks[slot] = sc
-        prev = best.get(alias)
-        if prev is None or ts >= prev[0]:            # vale o ÚLTIMO envio dentro do prazo
-            best[alias] = (ts, picks)
-    return {alias: p for alias, (t, p) in best.items()}
+        for slot in game_cols.values():
+            dl = slot_deadlines.get(slot, deadline)
+            best = None                              # (ts, valor) do ÚLTIMO envio dentro do prazo do slot
+            for ts, vals in lst:
+                if dl is not None and ts > dl:       # envio depois do prazo DESTE jogo → ignora p/ este slot
+                    continue
+                if best is None or ts >= best[0]:
+                    best = (ts, vals.get(slot))
+            if best is not None and best[1] is not None:   # em branco no envio vencedor = sem override
+                picks[slot] = best[1]
+        if picks:
+            out[alias] = picks
+    return out
 
 
 def effective_picks(knockout_orig, form_picks):

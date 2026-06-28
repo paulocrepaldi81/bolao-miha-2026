@@ -1,0 +1,13 @@
+{
+  "_comment": "Config de coleta do mata-mata. O robô lê isto a cada rodada. 'deadline' = prazo PADRÃO da fase; 'slot_deadlines' = prazo POR JOGO (sobrepõe). 'csv' = URL .csv publicada da planilha de respostas do Form (enquanto vazia, a rodada fica INERTE = todos no palpite original). Prazos em horário de Brasília (GMT-3).",
+  "rounds": [
+    {
+      "round": "R32",
+      "deadline": "2026-06-28 23:00",
+      "slot_deadlines": {
+        "R32-03": "2026-06-28 12:00"
+      },
+      "csv": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRvfhmMhnB4zqaqvwTclGhkQJtoEsTQbVe-dQ6TMCBYFfbu8Pwq6-18yPxvv79G3aMNq50WDjNSgsJ3/pub?gid=1719766861&single=true&output=csv"
+    }
+  ]
+}

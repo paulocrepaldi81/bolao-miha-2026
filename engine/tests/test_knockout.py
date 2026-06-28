@@ -79,6 +79,34 @@ def test_score_knockout():
     assert total == 11
 
 
+def test_cabecalho_real_do_form_e_manter_original():
+    # cabeçalho como o Apps Script gera (apelido com sufixo, 'Jogo N — A × B'),
+    # e a opção "Manter meu palpite original" deve ser tratada como SEM override.
+    csv = (
+        "Carimbo de data/hora,Seu nome e sobrenome,Seu apelido,"
+        "Jogo 1 — Brasil × Senegal,Jogo 2 — França × Marrocos\n"
+        "28/06/2026 09:00:00,Ric,Ricardo Mihalik,Manter meu palpite original,2 × 1\n"
+    )
+    r = K.parse_form_csv(csv, "R32", DEADLINE, ROSTER)
+    assert "R32-01" not in r["Ricardo Mihalik"]          # "Manter original" = fallback
+    assert r["Ricardo Mihalik"]["R32-02"] == (2, 1)      # placar normal entra
+
+
+def test_prazo_por_jogo_trava_so_o_slot_de_hoje():
+    # África (R32-03) trava ao meio-dia; o resto às 23h. Envio às 14h: tarde p/ o Jogo 3,
+    # mas a tempo p/ o Jogo 1 -> só o Jogo 1 entra; o Jogo 3 cai no palpite original.
+    csv = (
+        "Carimbo de data/hora,Seu nome e sobrenome,Seu apelido,"
+        "Jogo 1 — Alemanha × Paraguai,Jogo 3 — África do Sul × Canadá\n"
+        "28/06/2026 14:00:00,Ric,Ricardo Mihalik,3 × 0,2 × 1\n"
+    )
+    round_dl = datetime(2026, 6, 28, 23, 0)
+    slot_dls = {"R32-03": datetime(2026, 6, 28, 12, 0)}
+    r = K.parse_form_csv(csv, "R32", round_dl, ROSTER, slot_dls)
+    assert r["Ricardo Mihalik"]["R32-01"] == (3, 0)    # Jogo 1 (prazo 23h) entra
+    assert "R32-03" not in r["Ricardo Mihalik"]         # Jogo 3 (prazo meio-dia) descartado
+
+
 if __name__ == "__main__":
     import pytest
     raise SystemExit(pytest.main([os.path.abspath(__file__), "-q"]))

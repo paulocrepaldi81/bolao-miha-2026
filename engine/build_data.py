@@ -168,11 +168,18 @@ def load_knockout_form(path, roster_aliases):
             deadline = datetime.strptime(dl, "%Y-%m-%d %H:%M")
         except ValueError:
             continue
+        # prazo POR JOGO (opcional): {slot: "YYYY-MM-DD HH:MM"} — ex.: travar o jogo de hoje mais cedo.
+        slot_deadlines = {}
+        for slot, sdl in (rd.get("slot_deadlines") or {}).items():
+            try:
+                slot_deadlines[slot] = datetime.strptime(sdl, "%Y-%m-%d %H:%M")
+            except (ValueError, TypeError):
+                continue
         text = _read_form_source(src)
         if text is None:
             continue
         try:
-            picks = KO.parse_form_csv(text, rid, deadline, roster_aliases)
+            picks = KO.parse_form_csv(text, rid, deadline, roster_aliases, slot_deadlines)
         except Exception as e:
             print(f"  ⚠ CSV do form {rid} ilegível: {e}")
             continue
