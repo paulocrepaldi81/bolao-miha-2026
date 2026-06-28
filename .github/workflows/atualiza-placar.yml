@@ -58,6 +58,10 @@ jobs:
         working-directory: engine
         run: python fetch_knockout.py
 
+      - name: Resolver chaveamento (gera oitavas/quartas/... a partir dos vencedores)
+        working-directory: engine
+        run: python resolve_bracket.py
+
       - name: Conferir numa 2ª fonte independente (football-data.org)
         working-directory: engine
         env:
