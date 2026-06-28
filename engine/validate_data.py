@@ -98,8 +98,12 @@ def main():
     C(not nopicks, f"{len(nopicks)} aposta(s) sem palpites (picks.groups): {nopicks[:5]}")
 
     # ---- JOGOS ----
+    # Os jogos de GRUPO têm que casar com o catálogo (72). Os jogos de MATA-MATA entram com
+    # 'phase' (R32/R16/...) e são contados à parte — não fazem parte do catálogo de grupos.
+    grp_M = [m for m in M if not m.get("phase")]
+    ko_M = [m for m in M if m.get("phase")]
     if ncat is not None:
-        C(len(M) == ncat, f"nº de jogos ({len(M)}) != catálogo ({ncat})")
+        C(len(grp_M) == ncat, f"nº de jogos de grupo ({len(grp_M)}) != catálogo ({ncat}) · mata-mata: {len(ko_M)}")
     C(all(m.get("match_id") for m in M), "há jogo sem match_id")
     badfin = [m.get("match_id") for m in M
               if m.get("status") == "finished" and (m.get("home_score") is None or m.get("away_score") is None)]

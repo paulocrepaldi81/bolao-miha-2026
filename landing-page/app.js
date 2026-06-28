@@ -334,7 +334,8 @@ function gameBlockHTML(m, live){
   const sum=k=>{ const [h,a]=k.split('×').map(Number); return h+a; };
   const preds=[];
   (DATA.participants||[]).forEach(p=>{
-    const g=p.picks&&p.picks.groups&&p.picks.groups[m.match_id];
+    const gk=p.picks&&p.picks.knockout&&p.picks.knockout[m.match_id];
+    const g=(p.picks&&p.picks.groups&&p.picks.groups[m.match_id]) || (gk&&gk.used);
     if(g&&g[0]!=null&&g[1]!=null) preds.push(g[0]+'×'+g[1]);
   });
   const status = live
@@ -862,7 +863,7 @@ function matchCardHTML(m){
   else if(m.status==='finished') foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">${m.verified?'<span class="ok">✓ conferido</span>':'<span class="warn">• conferindo</span>'}</span>`;
   else foot = `<span>📅 ${fmtDateTime(m.kickoff_sao_paulo)}</span><span class="verif">a bola não rolou</span>`;
   return `<div class="mcard">
-    <div class="top"><span class="grp">Grupo ${m.group}</span><span style="display:flex;gap:6px;align-items:center">${special}${chip}</span></div>
+    <div class="top"><span class="grp">${m.phase ? m.group : 'Grupo '+m.group}</span><span style="display:flex;gap:6px;align-items:center">${special}${chip}</span></div>
     <div class="team"><span>${flag(m.home_team)}${m.home_team}</span>${sc}</div>
     <div class="team"><span>${flag(m.away_team)}${m.away_team}</span>${sc2}</div>
     <div class="foot">${foot}</div>

@@ -54,6 +54,10 @@ jobs:
         working-directory: engine
         run: python fetch_results.py
 
+      - name: Buscar jogos do MATA-MATA (ESPN) — placar até prorrogação, sem pênaltis
+        working-directory: engine
+        run: python fetch_knockout.py
+
       - name: Conferir numa 2ª fonte independente (football-data.org)
         working-directory: engine
         env:
@@ -114,7 +118,7 @@ jobs:
         run: |
           git config user.name "bolao-bot"
           git config user.email "actions@github.com"
-          FILES="engine/data/results.csv engine/data/fixtures_real.json engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json landing-page/data.json"
+          FILES="engine/data/results.csv engine/data/fixtures_real.json engine/data/history.json engine/data/facts.json engine/data/facts_live.json engine/data/cross_check.json engine/data/alert_state.json engine/data/knockout_results.csv engine/data/knockout_fixtures.json engine/data/knockout_bracket.json landing-page/data.json"
           git add $FILES
           if git diff --cached --quiet; then
             echo "Sem mudanças nos dados."

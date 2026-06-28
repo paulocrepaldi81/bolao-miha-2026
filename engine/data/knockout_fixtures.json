@@ -1,0 +1,162 @@
+{
+ "R32-03": {
+  "home": "África do Sul",
+  "away": "Canadá",
+  "kickoff": "2026-06-28T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-09": {
+  "home": "Brasil",
+  "away": "Japão",
+  "kickoff": "2026-06-29T17:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-01": {
+  "home": "Alemanha",
+  "away": "Paraguai",
+  "kickoff": "2026-06-29T20:30Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-04": {
+  "home": "Holanda",
+  "away": "Marrocos",
+  "kickoff": "2026-06-30T01:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-10": {
+  "home": "Costa do Marfim",
+  "away": "Noruega",
+  "kickoff": "2026-06-30T17:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-02": {
+  "home": "França",
+  "away": "Suécia",
+  "kickoff": "2026-06-30T21:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-11": {
+  "home": "México",
+  "away": "Equador",
+  "kickoff": "2026-07-01T01:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-12": {
+  "home": "Inglaterra",
+  "away": "RD Congo",
+  "kickoff": "2026-07-01T16:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-08": {
+  "home": "Bélgica",
+  "away": "Senegal",
+  "kickoff": "2026-07-01T20:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-07": {
+  "home": "EUA",
+  "away": "Bósnia",
+  "kickoff": "2026-07-02T00:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-06": {
+  "home": "Espanha",
+  "away": "Áustria",
+  "kickoff": "2026-07-02T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-05": {
+  "home": "Portugal",
+  "away": "Croácia",
+  "kickoff": "2026-07-02T23:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-15": {
+  "home": "Suíça",
+  "away": "Argélia",
+  "kickoff": "2026-07-03T03:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-14": {
+  "home": "Austrália",
+  "away": "Egito",
+  "kickoff": "2026-07-03T18:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-13": {
+  "home": "Argentina",
+  "away": "Cabo Verde",
+  "kickoff": "2026-07-03T22:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "R32-16": {
+  "home": "Colômbia",
+  "away": "Gana",
+  "kickoff": "2026-07-04T01:30Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ }
+}

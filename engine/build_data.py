@@ -347,6 +347,35 @@ def main():
             "verified": r.get("verified", False), "is_special": m["special"],
         })
 
+    # ---- jogos do MATA-MATA na Central de Jogos (ADITIVO: reusa todo o front da fase 1) ----
+    # Só entram slots com os DOIS times reais já definidos (R32 agora; R16+ quando classificarem).
+    # Campos extra (phase/slot/winner/decided_by/pen_*) são ignorados pelo front atual — não quebram.
+    PHASE_LABEL = {"R32": "16 avos", "R16": "Oitavas", "QF": "Quartas",
+                   "SF": "Semifinal", "FIN": "Final", "TER": "3º lugar"}
+    ko_fix = {}
+    try:
+        with open(os.path.join(DATA, "knockout_fixtures.json"), encoding="utf-8") as f:
+            ko_fix = json.load(f)
+    except Exception:
+        ko_fix = {}
+    for slot, fx in ko_fix.items():
+        home, away = fx.get("home"), fx.get("away")
+        if not (home and away):
+            continue
+        rr = ko_results.get(slot, {})
+        phase = slot.split("-")[0]
+        matches.append({
+            "match_id": slot,
+            "group": PHASE_LABEL.get(phase, phase),
+            "home_team": home, "away_team": away, "venue": "",
+            "kickoff_sao_paulo": espn_kickoff_sp(fx.get("kickoff")) or fx.get("kickoff"),
+            "status": rr.get("status") or fx.get("status") or "scheduled",
+            "home_score": rr.get("home_score"), "away_score": rr.get("away_score"),
+            "verified": rr.get("status") == "finished", "is_special": bool(rr.get("special")),
+            "phase": phase, "slot": slot, "winner": fx.get("winner"),
+            "decided_by": fx.get("decided_by"), "pen_home": fx.get("pen_home"), "pen_away": fx.get("pen_away"),
+        })
+
     # ---- palpites individuais por aposta (alimenta a aba "Minha Aposta") ----
     bet_by_alias = {b["alias"]: b for b in bets}
     scored_by_alias = {s["alias"]: s for s in scored}
@@ -365,7 +394,17 @@ def main():
                 groups[mid] = [pa, ph, pts]
             else:
                 groups[mid] = [ph, pa, pts]
-        p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"]}
+        # palpites do MATA-MATA por slot: o que VALEU (override do Form ou original) + pontos
+        ko_orig = b.get("knockout_orig", {})
+        form_a = ko_form.get(p["alias"], {})
+        eff = KO.effective_picks(ko_orig, form_a)
+        ko_by = (s.get("knockout_by", {}) if s else {})
+        knockout = {}
+        for slot, (h, a) in eff.items():
+            o = ko_orig.get(slot)
+            knockout[slot] = {"orig": list(o) if o else [h, a], "used": [h, a],
+                              "changed": slot in form_a, "pts": ko_by.get(slot)}
+        p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"], "knockout": knockout}
 
     # ---- estatísticas reais ----
     stats = build_stats(bets, scored, history)
