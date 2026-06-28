@@ -428,7 +428,7 @@ def main():
             "last_data_update": now, "last_source_check": now,
             "rule_version": "v2.1", "freshness": "ok",
         },
-        "latest_result": build_latest(catalog, results, real_fix),
+        "latest_result": build_latest(matches),
         "audit": audit,
         "final_result": real_final,
         "extras_summary": build_extras_summary(bets, facts),
@@ -521,26 +521,18 @@ def build_extras_summary(bets, facts):
     return out
 
 
-def build_latest(catalog, results, real_fix=None):
-    real_fix = real_fix or {}
-    played = [(m, results[m["match_id"]]) for m in catalog
-              if results.get(m["match_id"], {}).get("status") == "finished"
-              and results.get(m["match_id"], {}).get("home_score") is not None]
+def build_latest(matches):
+    # "último resultado" = o jogo ENCERRADO mais recente (por horário real), de GRUPO OU MATA-MATA.
+    # Usa a lista `matches` (que já inclui os jogos do KO, com placar na orientação certa). ANTES
+    # só olhava o catálogo de GRUPOS e ficava travado no último jogo de grupo durante o mata-mata.
+    played = [m for m in matches
+              if m.get("status") == "finished" and m.get("home_score") is not None]
     if not played:
         return None
-    def kick(m):
-        rf = real_fix.get(m["match_id"]) or {}
-        return espn_kickoff_sp(rf.get("kickoff")) or parse_kickoff(m["date"]) or ""
-    # o "último resultado" é o jogo encerrado mais RECENTE (por horário REAL), não o do catálogo
-    played.sort(key=lambda x: kick(x[0]))
-    m, r = played[-1]
-    rf = real_fix.get(m["match_id"]) or {}
-    home, away = (rf.get("home") or m["home"]), (rf.get("away") or m["away"])
-    hs, as_ = r["home_score"], r["away_score"]
-    if rf.get("home") and rf["home"] != m["home"]:   # mando invertido → placar acompanha
-        hs, as_ = as_, hs
-    return {"home_team": home, "away_team": away,
-            "home_score": hs, "away_score": as_,
+    played.sort(key=lambda m: m.get("kickoff_sao_paulo") or "")
+    m = played[-1]
+    return {"home_team": m["home_team"], "away_team": m["away_team"],
+            "home_score": m["home_score"], "away_score": m["away_score"],
             "note": "Resultado oficial computado."}
 
 
