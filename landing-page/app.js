@@ -346,7 +346,7 @@ function gameBlockHTML(m, live){
     <div class="cg-match">${flag(m.home_team)}${m.home_team} ${score} ${m.away_team}${flagA(m.away_team)}</div>
     <div class="cg-status">${status}</div></div>`;
   if(!preds.length){
-    return `<div class="cg-game">${headLine}<div class="cg-empty">Sem palpites de placar para este jogo (o bolão crava placar só na 1ª fase).</div></div>`;
+    return `<div class="cg-game">${headLine}<div class="cg-empty">Sem palpites de placar para este jogo ainda.</div></div>`;
   }
   const counts=new Map();
   preds.forEach(k=>counts.set(k,(counts.get(k)||0)+1));
@@ -1025,8 +1025,11 @@ function renderMinhaAposta(){
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
     if(koEntries.length){
       const koPts=koEntries.reduce((s,e)=> s+(e.pts||0),0);
+      const koBtn = DATA.knockout_form_url
+        ? `<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ Atualizar meus palpites do mata-mata</a>`
+        : '';
       h+=`<div class="ma-sec"><h4>🏆 Meus palpites — mata-mata <span style="float:right;color:var(--gold);font-weight:700;font-size:13px">+${koPts} pts</span></h4>
-        ${koEntries.map(maPickRow).join('')}</div>`;
+        ${koEntries.map(maPickRow).join('')}${koBtn}</div>`;
     }
     const entries=Object.entries(picks.groups||{}).map(([mid,a])=>({mid,m:mm[mid],ph:a[0],pa:a[1],pts:a[2]}))
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));

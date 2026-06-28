@@ -34,9 +34,11 @@ O robô já faz o trabalho de **dados** sozinho; o que sobra é **criar o Form**
    ```json
    { "round": "R16", "deadline": "2026-07-04 23:00",
      "slot_deadlines": { "R16-01": "2026-07-04 11:00" },
-     "csv": "https://docs.google.com/spreadsheets/d/ID/export?format=csv&gid=GID" }
+     "csv": "https://docs.google.com/spreadsheets/d/ID/export?format=csv&gid=GID",
+     "form_url": "<link PÚBLICO do Form da fase>" }
    ```
    - `round`: `R16` | `QF` | `SF` | `FIN` (a final e o 3º vêm no mesmo Form/rodada `FIN`; o slot do Jogo 1 = `FIN`, o Jogo 2 = `TER`).
+   - `form_url`: o link público do Form (o que vai no zap). Faz aparecer o botão **"Atualizar meus palpites do mata-mata"** na landing.
    - `deadline`: prazo PADRÃO da fase. `slot_deadlines`: só para o(s) jogo(s) que começam mais cedo (trava por jogo).
    - **Limpe os `slot_deadlines` da fase anterior** (não copie os do R32).
 

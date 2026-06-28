@@ -412,6 +412,14 @@ def main():
 
     paid_n = sum(1 for p in participants if p["paid"])
     now = datetime.now(SP).isoformat()
+    # link do Form da FASE ATUAL do mata-mata (p/ o botão "Atualizar meus palpites" na landing).
+    # Vem do campo opcional 'form_url' da ÚLTIMA rodada do knockout_forms.json (a fase corrente).
+    ko_form_url = None
+    try:
+        _rounds = (json.load(open(os.path.join(DATA, "knockout_forms.json"), encoding="utf-8")).get("rounds") or [])
+        ko_form_url = _rounds[-1].get("form_url") if _rounds else None
+    except Exception:
+        ko_form_url = None
     data = {
         "meta": {
             "pool_name": "Bolão Miha 2026", "timezone": "America/Sao_Paulo",
@@ -426,6 +434,7 @@ def main():
         "extras_summary": build_extras_summary(bets, facts),
         "participants": participants,
         "matches": matches,
+        "knockout_form_url": ko_form_url,
         "movement": movement,
         "stats": stats,
         "probability": {"method": "Modelo simples: pontos máximos possíveis e 'matematicamente vivo'. "
