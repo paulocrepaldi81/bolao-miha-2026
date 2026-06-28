@@ -958,10 +958,23 @@ function maPickRow(e){
     else {cls='win'; txt='✓ +'+e.pts;}
   }
   const sp = m.is_special?' · <small style="color:#5FE08A">⭐ especial</small>':'';
+  // rótulo: grupo ("Grupo A") ou fase do mata-mata ("16 avos") — KO tem m.phase
+  const fase = m.phase ? m.group : 'Grupo '+m.group;
+  // mata-mata: selo de mudança (e.changed só existe nas linhas de KO) + original riscado
+  const chg = e.changed===undefined ? ''
+    : (e.changed ? ' · <small style="color:#5FE08A">✏️ você atualizou</small>'
+                 : ' · <small style="color:var(--ink-faint)">🔒 original</small>');
+  const orig = (e.changed && e.orig) ? ` <small style="color:var(--ink-faint)">(antes: ${e.orig[0]}×${e.orig[1]})</small>` : '';
+  let res;
+  if(played){
+    let nota='';
+    if(m.decided_by==='pen' && m.pen_home!=null) nota=` <small style="color:var(--ink-faint)">(pênaltis ${m.pen_home}×${m.pen_away}) · vale o placar até a prorrogação</small>`;
+    res = `saiu <b>${m.home_score}×${m.away_score}</b>${nota}`;
+  } else res = (m.status==='live' ? '🔴 em andamento' : 'aguardando o jogo');
   return `<div class="ma-pick">
     <div>
-      <div class="teams"><small>Grupo ${m.group}${sp}</small><br>${flag(m.home_team)}${m.home_team} <b>${e.ph}×${e.pa}</b> ${m.away_team}${flagA(m.away_team)}</div>
-      <div class="guess">${played?('saiu <b>'+m.home_score+'×'+m.away_score+'</b>'):'aguardando o jogo'}</div>
+      <div class="teams"><small>${fase}${chg}${sp}</small><br>${flag(m.home_team)}${m.home_team} <b>${e.ph}×${e.pa}</b> ${m.away_team}${flagA(m.away_team)}${orig}</div>
+      <div class="guess">${res}</div>
     </div>
     <span class="ma-pts ${cls}">${txt}</span>
   </div>`;
@@ -1005,6 +1018,16 @@ function renderMinhaAposta(){
     h+=`<div class="ma-nodata">📋 O detalhe dos palpites aparece com os dados reais — esta é a simulação de exemplo.</div>`;
   } else {
     const mm={}; (DATA.matches||[]).forEach(x=>mm[x.match_id]=x);
+    // ---- 🏆 Meus palpites — MATA-MATA (no topo: é o que importa agora) ----
+    // confronto REAL (só slots com times definidos) + o placar que VAI VALER (used = Form OU original).
+    const koEntries=Object.entries(picks.knockout||{}).map(([slot,k])=>(
+        {mid:slot, m:mm[slot], ph:k.used[0], pa:k.used[1], pts:k.pts, changed:k.changed, orig:k.orig}))
+      .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
+    if(koEntries.length){
+      const koPts=koEntries.reduce((s,e)=> s+(e.pts||0),0);
+      h+=`<div class="ma-sec"><h4>🏆 Meus palpites — mata-mata <span style="float:right;color:var(--gold);font-weight:700;font-size:13px">+${koPts} pts</span></h4>
+        ${koEntries.map(maPickRow).join('')}</div>`;
+    }
     const entries=Object.entries(picks.groups||{}).map(([mid,a])=>({mid,m:mm[mid],ph:a[0],pa:a[1],pts:a[2]}))
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
     const played=entries.filter(e=>e.m.status==='finished');
