@@ -9,7 +9,7 @@
   "mais_goleadora": null,
   "menos_vazada": null,
   "mais_gols_jogo": null,
-  "empates_1f": null,
+  "empates_1f": 20,
   "jogos_penaltis": null,
   "equipe_1o_expulso": "África do Sul",
   "equipe_1o_gol_contra": "Paraguai",
