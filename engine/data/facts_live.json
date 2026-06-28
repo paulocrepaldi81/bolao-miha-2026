@@ -8,7 +8,84 @@
     "artilheiro_equipe": "Argentina",
     "artilheiro_gols": "6 (parcial)",
     "equipe_1o_expulso": "África do Sul (Sphephelo Sithole, 49')",
-    "equipe_1o_gol_contra": "Paraguai (Damián Bobadilla, 7')"
+    "equipe_1o_gol_contra": "Paraguai (Damián Bobadilla, 7')",
+    "scorers_top": [
+      {
+        "nome": "Lionel Messi",
+        "gols": 6,
+        "equipe": "Argentina"
+      },
+      {
+        "nome": "Erling Haaland",
+        "gols": 4,
+        "equipe": "Noruega"
+      },
+      {
+        "nome": "Kylian Mbappé",
+        "gols": 4,
+        "equipe": "França"
+      },
+      {
+        "nome": "Ousmane Dembélé",
+        "gols": 4,
+        "equipe": "França"
+      },
+      {
+        "nome": "Vinícius Júnior",
+        "gols": 4,
+        "equipe": "Brasil"
+      },
+      {
+        "nome": "Brian Brobbey",
+        "gols": 3,
+        "equipe": "Holanda"
+      },
+      {
+        "nome": "Deniz Undav",
+        "gols": 3,
+        "equipe": "Alemanha"
+      },
+      {
+        "nome": "Elijah Just",
+        "gols": 3,
+        "equipe": "Nova Zelândia"
+      },
+      {
+        "nome": "Harry Kane",
+        "gols": 3,
+        "equipe": "Inglaterra"
+      },
+      {
+        "nome": "Ismael Saibari",
+        "gols": 3,
+        "equipe": "Marrocos"
+      },
+      {
+        "nome": "Ismaïla Sarr",
+        "gols": 3,
+        "equipe": "Senegal"
+      },
+      {
+        "nome": "Johan Manzambi",
+        "gols": 3,
+        "equipe": "Suíça"
+      },
+      {
+        "nome": "Jonathan David",
+        "gols": 3,
+        "equipe": "Canadá"
+      },
+      {
+        "nome": "Matheus Cunha",
+        "gols": 3,
+        "equipe": "Brasil"
+      },
+      {
+        "nome": "Yoane Wissa",
+        "gols": 3,
+        "equipe": "RD Congo"
+      }
+    ]
   },
   "scanned": [
     537327,
