@@ -13,6 +13,7 @@ Saída: data/cross_check.json
 NUNCA derruba o pipeline: sempre sai com código 0 e grava o relatório. Quem dispara
 o e-mail de alerta é um passo final do workflow que lê este JSON.
 """
+import csv
 import json
 import os
 import sys
@@ -41,6 +42,29 @@ def main():
     by_pair = {frozenset((m["home"], m["away"])): m for m in catalog}
     results, _ = load_results()   # match_id → linha (ESPN é quem preenche)
 
+    # 2ª fonte TAMBÉM confere o MATA-MATA (antes ficava cega no KO): junta os pares do
+    # chaveamento + os resultados do KO. A football-data põe a PRORROGAÇÃO no fullTime e os
+    # pênaltis à parte — mesma base do nosso placar (ESPN). Comparação é por time (orientação
+    # não importa). Fail-closed: arquivo ausente/ilegível só não adiciona nada.
+    try:
+        kb = json.load(open(os.path.join(HERE, "data", "knockout_bracket.json"), encoding="utf-8"))
+        for ents in (kb.values() if isinstance(kb, dict) else []):
+            if isinstance(ents, list):
+                for e in ents:
+                    if e.get("home") and e.get("away"):
+                        by_pair[frozenset((e["home"], e["away"]))] = {
+                            "match_id": e["slot"], "home": e["home"], "away": e["away"]}
+    except Exception:
+        pass
+    try:
+        for r in csv.DictReader(open(os.path.join(HERE, "data", "knockout_results.csv"),
+                                     newline="", encoding="utf-8")):
+            if r.get("slot"):
+                results[r["slot"]] = {"status": r.get("status"), "home_score": r.get("home_score"),
+                                      "away_score": r.get("away_score"), "lock": r.get("lock", "")}
+    except Exception:
+        pass
+
     token = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
     fd_by_mid = {}
     source_ok = bool(token)
@@ -48,8 +72,7 @@ def main():
         try:
             data = fetch_football_data(token)
             for fx in data.get("matches", []):
-                if fx.get("stage") and "GROUP" not in fx["stage"].upper():
-                    continue
+                # confere grupos E mata-mata: casa por par de times (group ou KO) com o by_pair
                 h = EN_PT.get((fx.get("homeTeam", {}).get("name") or "").lower())
                 a = EN_PT.get((fx.get("awayTeam", {}).get("name") or "").lower())
                 if not h or not a:
