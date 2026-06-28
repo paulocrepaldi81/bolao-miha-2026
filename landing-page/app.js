@@ -501,6 +501,7 @@ function renderFavoritos(){
 function render(){
   const P = [...(DATA.participants||[])].sort((a,b)=>a.rank-b.rank);
   if(!P.length) return;   // data.json vazio/malformado → degrada (não derruba a página inteira)
+  renderClosing(P);       // tela de encerramento (aparece só quando a Copa termina)
   // hero
   const leader = P[0];
   document.getElementById('leaderName').textContent = leader.alias;
@@ -659,6 +660,56 @@ function renderPrize(){
     </div>`).join('');
   document.getElementById('prizeFoot').innerHTML =
     `Como divide: a <b>Lanterna de Ouro</b> (último ao fim da 1ª fase) recebe a aposta de volta (${brl(refund||bet)}); os percentuais incidem sobre o <b>restante</b> (${brl(base)}). <b>Empate:</b> quem empatar numa posição divide, em partes iguais, os prêmios das posições que o grupo ocupa (ex.: 3 em 1º dividem o 1º+2º+3º; 5 em 4º dividem o 4º). Os pontos da 1ª fase não zeram — o vencedor da fase segue elegível aos prêmios finais. Bolão de palpites entre amigos: sem odds, sem casa de apostas.`;
+}
+
+// ---- Tela de ENCERRAMENTO: aparece só quando a Copa acaba (final decidida + tudo encerrado).
+// Mostra TODOS os premiados (1º–4º, Bom de Palpite, Lanterna), com empate dividindo os prêmios
+// das posições ocupadas — mesma matemática do bloco "Prêmio acumulado" (motor entrega prize_pos/
+// bom_palpite/phase1_points; o front só distribui o dinheiro). ----
+function renderClosing(P){
+  const sec = document.getElementById('closing');
+  const matches = DATA.matches || [];
+  const fin = matches.find(m=>m.slot==='FIN');
+  const finished = !!(fin && fin.status==='finished') && matches.length>0 && matches.every(m=>m.status==='finished');
+  if(!finished){ sec.hidden = true; return; }
+
+  const bet = (DATA.meta && DATA.meta.bet_value) || 60;
+  const paid = P.filter(p=>p.paid);
+  const paidN = paid.length;
+  const pot = paidN*bet, refund = paidN>0?bet:0, base = Math.max(0, pot-refund);
+  const PCT = {1:.40, 2:.25, 3:.10, 4:.05};
+  const LAB = {1:['🏆','Campeão do Bolão'], 2:['🥈','Vice-campeão'], 3:['🥉','3º lugar'], 4:['🏅','4º lugar']};
+  // agrupa pagantes por posição de prêmio (empate = mesma posição → dividem as posições ocupadas)
+  const byPos = {};
+  paid.forEach(p=>{ if(p.prize_pos){ (byPos[p.prize_pos] = byPos[p.prize_pos]||[]).push(p.alias); } });
+  const prizes = [];
+  [1,2,3,4].forEach(pos=>{
+    const win = byPos[pos]; if(!win || !win.length) return;
+    let pct=0; for(let o=pos; o<pos+win.length; o++) pct += (PCT[o]||0);   // soma das posições ocupadas
+    prizes.push({ic:LAB[pos][0], lab:LAB[pos][1], win, each: base?Math.round(base*pct/win.length):0, champ:pos===1});
+  });
+  const bp = paid.filter(p=>p.bom_palpite).map(p=>p.alias);
+  if(bp.length) prizes.push({ic:'⚡', lab:'Bom de Palpite', win:bp, each: base?Math.round(base*.20/bp.length):0});
+  if(paid.length){   // Lanterna de Ouro = último PAGANTE por pontos da 1ª fase (recebe a aposta de volta)
+    const worst = Math.min(...paid.map(p=>p.phase1_points ?? p.score));
+    const lant = paid.filter(p=>(p.phase1_points ?? p.score)===worst).map(p=>p.alias);
+    prizes.push({ic:'🔦', lab:'Lanterna de Ouro', win:lant, each: lant.length?Math.round(refund/lant.length):0, note:'devolução'});
+  }
+  const champs = byPos[1] || [];
+  const worldCh = (fin && fin.winner) ? `${flag(fin.winner)} ${fin.winner}` : null;
+  const fmtWin = a => a.map(esc).join(' + ');
+  document.getElementById('closingCard').innerHTML =
+    `<div class="closing-kicker">🏁 Bolão Miha 2026 · Encerrado</div>
+     <div class="closing-champ">👑 ${champs.length?fmtWin(champs):'—'}
+       <small>${champs.length>1?'Campeões do Bolão — empate, dividem':'Campeão do Bolão'}${worldCh?` · 🌍 Campeão Mundial: ${worldCh}`:''}</small></div>
+     <div class="closing-grid">${prizes.map(pz=>`
+        <div class="closing-prize${pz.champ?' is-champ':''}">
+          <div class="cp-top">${pz.ic} ${esc(pz.lab)}</div>
+          <div class="cp-win">${fmtWin(pz.win)}${pz.win.length>1?' <span style="font-weight:600;color:var(--ink-faint)">(dividem)</span>':''}</div>
+          <div class="cp-amt">${pz.each?brl(pz.each)+(pz.win.length>1?' cada':''):'—'}${pz.note?` <span style="font-weight:600;color:var(--ink-faint)">· ${pz.note}</span>`:''}</div>
+        </div>`).join('')}</div>
+     <div class="closing-foot">Prêmios sobre ${brl(pot)} (${paidN} aposta${paidN!==1?'s':''} paga${paidN!==1?'s':''}). A Lanterna recebe a aposta de volta; os percentuais incidem sobre o restante. Empate numa posição divide, em partes iguais, os prêmios das posições ocupadas. 🎉</div>`;
+  sec.hidden = false;
 }
 
 // ---- Classificação escalável (busca + filtro pagas/café + colapso) ----
