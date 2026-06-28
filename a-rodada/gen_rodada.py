@@ -14,6 +14,7 @@ Render: HTML → PNG via Playwright (chromium headless). Roda no workflow a-roda
 """
 import base64
 import datetime as dt
+import hashlib
 import io
 import json
 import os
@@ -205,6 +206,142 @@ def curiosidades(jogos):
     return cur[:3]
 
 
+# ───────────────── CURIOSIDADES turbinadas do MATA-MATA (3 blocos) ─────────────────
+# Lê arquivos do engine (../engine/data) e a curadoria local. TUDO fail-closed: se faltar
+# qualquer dado, o bloco some; se TODOS falharem, cai nas curiosidades de grupo (acima).
+ENG_DATA = os.path.join(HERE, "..", "engine", "data")
+_PHASE_NEXT = {"R32": "oitavas", "R16": "quartas", "QF": "semifinais", "SF": "final"}
+
+
+def _load_json(path, default=None):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return default
+
+
+def _bracket_pairs():
+    """{frozenset(home,away): slot_entry} dos slots com os dois times reais já definidos."""
+    bj = _load_json(os.path.join(ENG_DATA, "knockout_bracket.json"), {})
+    out = {}
+    for entries in (bj.values() if isinstance(bj, dict) else []):
+        if isinstance(entries, list):
+            for e in entries:
+                if e.get("home") and e.get("away"):
+                    out[frozenset((e["home"], e["away"]))] = e
+    return out
+
+
+def is_knockout(next_round, pairs):
+    return any(frozenset((j["home"], j["away"])) in pairs for j in next_round)
+
+
+def _short_name(nome):
+    parts = (nome or "").split()
+    return f"{parts[0][0]}. {parts[-1]}" if len(parts) >= 2 else (nome or "?")
+
+
+def _artil_row(medal, nome, team, gols, gmax):
+    pct = int(gols / gmax * 100) if gmax else 0
+    bar = (f'<span style="flex:0 0 64px;height:8px;border-radius:5px;background:rgba(244,196,48,.18);'
+           f'overflow:hidden;display:inline-block"><span style="display:block;height:100%;width:{pct}%;'
+           f'background:#f4c430;border-radius:5px"></span></span>')
+    return (f'<div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);'
+            f'border-radius:10px;padding:6px 12px">'
+            f'<span style="font-size:15px;flex:0 0 auto">{medal}</span>'
+            f'<span style="flex:0 0 22px;text-align:center">{flag(team) if team else ""}</span>'
+            f'<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
+            f'font-size:14px;font-weight:600">{_short_name(nome)}</span>{bar}'
+            f'<span style="font-family:Anton,sans-serif;font-size:18px;min-width:20px;text-align:right;'
+            f'color:#f4c430">{gols}</span></div>')
+
+
+def _subsec(txt):
+    return (f'<div style="font-family:Anton,sans-serif;font-size:13px;color:#f4c430;letter-spacing:.4px;'
+            f'margin:12px 0 6px;display:flex;align-items:center;gap:7px">{txt}'
+            f'<span style="flex:1;height:1px;background:rgba(244,196,48,.20)"></span></div>')
+
+
+def _card_curiosidade(txt):
+    return (f'<div style="background:rgba(244,196,48,.10);border-left:3px solid #f4c430;border-radius:8px;'
+            f'padding:9px 13px;margin-top:12px"><div style="font-family:Anton,sans-serif;font-size:12px;'
+            f'color:#f4c430;letter-spacing:.5px;margin-bottom:3px">💡 VOCÊ SABIA?</div>'
+            f'<div style="font-size:13px;color:#e9f5ef;line-height:1.45">{txt}</div></div>')
+
+
+def _artilharia_top3():
+    fl = _load_json(os.path.join(ENG_DATA, "facts_live.json"), {})
+    return ((fl.get("partials") or {}).get("scorers_top") or [])[:3]
+
+
+def _proxima_fase(next_round, pairs):
+    """'Quem vencer A×B pega o vencedor de C×D nas oitavas' — do slot-irmão no chaveamento."""
+    bracket = _load_json(os.path.join(ENG_DATA, "knockout_bracket.json"), {})
+    for j in next_round:
+        e = pairs.get(frozenset((j["home"], j["away"])))
+        if not e or "-" not in str(e.get("slot", "")):
+            continue
+        rnd, num = e["slot"].split("-")[0], int(e["slot"].split("-")[1])
+        k = (num + 1) // 2                       # par que alimenta o slot da próxima fase
+        sib = f"{rnd}-{(2 * k if num == 2 * k - 1 else 2 * k - 1):02d}"
+        s = next((x for x in bracket.get(rnd, []) if x.get("slot") == sib and x.get("home")), None)
+        if not s:
+            continue
+        nxt = _PHASE_NEXT.get(rnd, "próxima fase")
+        return (f"Quem vencer {flag(j['home'])} {j['home']} × {j['away']} {flag(j['away'])} pega o "
+                f"vencedor de {flag(s['home'])} {s['home']} × {s['away']} {flag(s['away'])} nas <b>{nxt}</b>.")
+    return None
+
+
+def _curiosidade_dia(next_round, up_day):
+    cur = _load_json(os.path.join(HERE, "curiosidades_selecoes.json"), {})
+    times = [t for j in next_round for t in (j["home"], j["away"]) if t in cur and not t.startswith("_")]
+    if not times:
+        return None
+    seed = int(hashlib.md5(str(up_day).encode()).hexdigest(), 16)   # escolha estável por dia
+    team = sorted(set(times))[seed % len(set(times))]
+    fatos = cur[team]
+    fato = fatos[seed % len(fatos)]
+    return f"{flag(team)} <b>{team}:</b> {fato}"
+
+
+def curiosidades_html(last_round, next_round, up_day):
+    """HTML da seção CURIOSIDADES. No mata-mata: 3 blocos (artilharia/próxima fase/você sabia).
+    Em grupos OU se tudo falhar: os bullets clássicos (gols/goleada/empate)."""
+    pairs = _bracket_pairs()
+    if next_round and is_knockout(next_round, pairs):
+        blocks = []
+        try:
+            top = _artilharia_top3()
+            if top:
+                gmax = top[0].get("gols") or 1
+                medals = ["🥇", "🥈", "🥉"]
+                rows = "".join(_artil_row(medals[i], t.get("nome"), t.get("equipe"), t.get("gols", 0), gmax)
+                               for i, t in enumerate(top[:3]))
+                blocks.append(_subsec("ARTILHARIA") + f'<div style="display:grid;gap:5px">{rows}</div>')
+        except Exception:
+            pass
+        try:
+            pf = _proxima_fase(next_round, pairs)
+            if pf:
+                blocks.append(_subsec("🔜 PRÓXIMA FASE") +
+                              f'<div style="font-size:13px;color:#e9f5ef;line-height:1.5">{pf}</div>')
+        except Exception:
+            pass
+        try:
+            cd = _curiosidade_dia(next_round, up_day)
+            if cd:
+                blocks.append(_card_curiosidade(cd))
+        except Exception:
+            pass
+        if blocks:
+            return "".join(blocks)
+    # fallback (fase de grupos ou tudo indisponível)
+    return ('<div style="font-size:14px;color:#e9f5ef;line-height:1.6">'
+            + "<br>".join("● " + c for c in curiosidades(last_round)) + '</div>')
+
+
 def img_b64(name):
     p = os.path.join(HERE, name)
     if os.path.exists(p):
@@ -312,7 +449,7 @@ def build_html(last_round, next_round, res_day, up_day):
                 f'<span style="color:#7fae98">×</span> {j["away"]} {flg(j["away"])}</span></div>')
 
     resultados = "".join(res_row(j) for j in last_round) or '<div style="color:#bfe3d2">Sem jogos na rodada anterior.</div>'
-    curis = "<br>".join("● " + c for c in curiosidades(last_round))
+    curis_html = curiosidades_html(last_round, next_round, up_day)
     jogos = "".join(jogo_row(j) for j in next_round) or '<div style="color:#bfe3d2">Sem jogos nesta rodada.</div>'
 
     def sec(txt, extra=""):
@@ -342,7 +479,7 @@ def build_html(last_round, next_round, res_day, up_day):
     {sec("📋 RESULTADOS", res_extra)}
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
-    <div style="font-size:14px;color:#e9f5ef;line-height:1.6">{curis}</div>
+    {curis_html}
     {sec("📅 JOGOS DE HOJE", jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>

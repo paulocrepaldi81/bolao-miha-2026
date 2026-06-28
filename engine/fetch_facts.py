@@ -212,6 +212,10 @@ def main():
             partials["artilheiro_equipe"] = (eqs[0] if len(eqs) == 1
                 else "empate: " + ", ".join(eqs[:5]) + (f" +{len(eqs) - 5}" if len(eqs) > 5 else "") + f" ({mx} gols cada)")
             partials["artilheiro_gols"] = f"{mx} (parcial · {len(leaders)} empatados)"
+        # ranking completo (TOP 15) p/ o pôster "A Rodada" (artilharia TOP 3) — o dict já existe.
+        partials["scorers_top"] = sorted(
+            ({"nome": n, "gols": v["goals"], "equipe": v["team"]} for n, v in scorers_espn.items()),
+            key=lambda x: (-x["gols"], x["nome"]))[:15]
         print(f"✔ artilharia ESPN: {mx} gol(s) · {len(leaders)} líder(es) na ponta")
     elif token:
         # fallback raro (ESPN sem gols): football-data, agora também agrupando empates
