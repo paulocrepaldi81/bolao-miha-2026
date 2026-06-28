@@ -306,6 +306,40 @@ def _curiosidade_dia(next_round, up_day):
     return f"{flag(team)} <b>{team}:</b> {fato}"
 
 
+_STAGE_RANK = {"final": 5, "semi-finals": 4, "third-place match": 4, "quarter-finals": 3,
+               "round of 16": 2}
+_STAGE_PT = {"final": "final", "semi-finals": "semi", "third-place match": "3º lugar",
+             "quarter-finals": "quartas", "round of 16": "oitavas"}
+
+
+def _card_h2h(titulo, body):
+    return (f'<div style="background:rgba(244,196,48,.10);border-left:3px solid #f4c430;border-radius:8px;'
+            f'padding:9px 13px;margin-top:12px"><div style="font-family:Anton,sans-serif;font-size:12px;'
+            f'color:#f4c430;letter-spacing:.5px;margin-bottom:3px">{titulo}</div>'
+            f'<div style="font-size:13px;color:#e9f5ef;line-height:1.45">{body}</div></div>')
+
+
+def _h2h_dia(next_round):
+    """Card do confronto-direto em Copa MAIS MARCANTE entre os jogos de hoje (final>semi>recente).
+    Só os jogos cujo par tem histórico entram; se nenhum tiver, retorna None (cai no 'Você sabia?')."""
+    h2h = _load_json(os.path.join(HERE, "h2h_copa.json"), {})
+    best = None
+    for j in next_round:
+        for e in h2h.get("|".join(sorted([j["home"], j["away"]])), []) or []:
+            cand = (_STAGE_RANK.get(e.get("stage"), 1), e.get("ano", 0), e, j)
+            if best is None or cand[:2] > best[:2]:
+                best = cand
+    if not best:
+        return None
+    rank, ano, e, j = best
+    hs, as_ = (e["hs"], e["as"]) if e["home"] == j["home"] else (e["as"], e["hs"])
+    stage = _STAGE_PT.get(e.get("stage"), "")
+    quando = f"{stage} de {ano}" if (rank >= 4 and stage) else str(ano)
+    titulo = "⚔️ CLÁSSICO DE COPA" if rank >= 4 else "⚔️ JÁ SE ENFRENTARAM EM COPA"
+    linha = f"{flag(j['home'])} {j['home']} <b>{hs}×{as_}</b> {j['away']} {flag(j['away'])} · {quando}"
+    return _card_h2h(titulo, linha)
+
+
 def curiosidades_html(last_round, next_round, up_day):
     """HTML da seção CURIOSIDADES. No mata-mata: 3 blocos (artilharia/próxima fase/você sabia).
     Em grupos OU se tudo falhar: os bullets clássicos (gols/goleada/empate)."""
@@ -330,9 +364,13 @@ def curiosidades_html(last_round, next_round, up_day):
         except Exception:
             pass
         try:
-            cd = _curiosidade_dia(next_round, up_day)
-            if cd:
-                blocks.append(_card_curiosidade(cd))
+            # variação: o head-to-head de Copa ganha o slot quando existe; senão, "Você sabia?"
+            card = _h2h_dia(next_round)
+            if not card:
+                cd = _curiosidade_dia(next_round, up_day)
+                card = _card_curiosidade(cd) if cd else None
+            if card:
+                blocks.append(card)
         except Exception:
             pass
         if blocks:

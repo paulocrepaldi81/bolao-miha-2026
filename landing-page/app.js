@@ -158,14 +158,14 @@ const HISTORY = [
 ];
 
 const TAGLINES = [
-  "Enquanto a bola não rola: o Palmeiras continua sem Mundial.",
-  "Sonho de Copa: Ronaldo Fenômeno entrando em campo. Realidade: seu chute no 2×1.",
-  "Romário olharia seu palpite e diria: 'Coê baixinho'.",
-  "Quem aposta 0×0 é gente que foge de emoção.",
   "Hora de derrubar a Casa Mihalik.",
-  "The winter is coming e meus pontos não.",
-  "O bolão pune by Muricy.",
-  "Faça ou não faça. Tentativa não há."
+  "Mata-mata é igual o 6-7: ninguém entende, mas todo mundo grita.",
+  "Seu palpite tá igual o Endrick: aquecendo no banco esperando entrar.",
+  "Nem o Mounjaro do Ronaldo enxuga o peso da sua tabela.",
+  "No bolão da família não tem tigrinho: tem tabela, vergonha e zoeira.",
+  "Assistiu pela CazéTV, gritou com o Casimiro, mas na hora do palpite gelou.",
+  "Sua confiança é igual narrador na abertura: jurou que era mascote, era Labubu.",
+  "O cara entrou no ônibus agora, nem tá em pé e já quer sentar na janela."
 ];
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026

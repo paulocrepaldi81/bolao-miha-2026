@@ -1,0 +1,4211 @@
+{
+ "_doc": "Confrontos diretos em Copa do Mundo MASCULINA (1930-2022, base Fjelstul CC-BY-SA). Chave='TimeA|TimeB' PT ordenado. O poster mostra o mais marcante quando o confronto do dia tem historico; senao cai no 'Voce sabia?'.",
+ "França|México": [
+  {
+   "home": "França",
+   "away": "México",
+   "hs": 4,
+   "as": 1,
+   "ano": 1930,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "México",
+   "hs": 3,
+   "as": 2,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "México",
+   "hs": 1,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "México",
+   "hs": 0,
+   "as": 2,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|EUA": [
+  {
+   "home": "EUA",
+   "away": "Bélgica",
+   "hs": 3,
+   "as": 0,
+   "ano": 1930,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "EUA",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "round of 16"
+  }
+ ],
+ "Argentina|França": [
+  {
+   "home": "Argentina",
+   "away": "França",
+   "hs": 1,
+   "as": 0,
+   "ano": 1930,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "França",
+   "hs": 2,
+   "as": 1,
+   "ano": 1978,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "Argentina",
+   "hs": 4,
+   "as": 3,
+   "ano": 2018,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Argentina",
+   "away": "França",
+   "hs": 3,
+   "as": 3,
+   "ano": 2022,
+   "stage": "final"
+  }
+ ],
+ "EUA|Paraguai": [
+  {
+   "home": "EUA",
+   "away": "Paraguai",
+   "hs": 3,
+   "as": 0,
+   "ano": 1930,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|México": [
+  {
+   "home": "Argentina",
+   "away": "México",
+   "hs": 6,
+   "as": 3,
+   "ano": 1930,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "México",
+   "hs": 2,
+   "as": 1,
+   "ano": 2006,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Argentina",
+   "away": "México",
+   "hs": 3,
+   "as": 1,
+   "ano": 2010,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Argentina",
+   "away": "México",
+   "hs": 2,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Paraguai": [
+  {
+   "home": "Paraguai",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 0,
+   "ano": 1930,
+   "stage": "group stage"
+  },
+  {
+   "home": "Paraguai",
+   "away": "Bélgica",
+   "hs": 2,
+   "as": 2,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|EUA": [
+  {
+   "home": "Argentina",
+   "away": "EUA",
+   "hs": 6,
+   "as": 1,
+   "ano": 1930,
+   "stage": "semi-finals"
+  }
+ ],
+ "Argentina|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Argentina",
+   "hs": 4,
+   "as": 2,
+   "ano": 1930,
+   "stage": "final"
+  },
+  {
+   "home": "Argentina",
+   "away": "Uruguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 1986,
+   "stage": "round of 16"
+  }
+ ],
+ "França|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "França",
+   "hs": 3,
+   "as": 2,
+   "ano": 1934,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Áustria",
+   "away": "França",
+   "hs": 0,
+   "as": 1,
+   "ano": 1982,
+   "stage": "second group stage"
+  }
+ ],
+ "Alemanha|Bélgica": [
+  {
+   "home": "Alemanha",
+   "away": "Bélgica",
+   "hs": 5,
+   "as": 2,
+   "ano": 1934,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Bélgica",
+   "hs": 3,
+   "as": 2,
+   "ano": 1994,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Espanha": [
+  {
+   "home": "Espanha",
+   "away": "Brasil",
+   "hs": 3,
+   "as": 1,
+   "ano": 1934,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Brasil",
+   "away": "Espanha",
+   "hs": 6,
+   "as": 1,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Brasil",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 1962,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Argentina",
+   "hs": 3,
+   "as": 2,
+   "ano": 1934,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Suécia",
+   "away": "Argentina",
+   "hs": 1,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "Holanda",
+   "hs": 3,
+   "as": 2,
+   "ano": 1934,
+   "stage": "round of 16"
+  }
+ ],
+ "Alemanha|Suécia": [
+  {
+   "home": "Alemanha",
+   "away": "Suécia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1934,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Suécia",
+   "away": "Alemanha",
+   "hs": 3,
+   "as": 1,
+   "ano": 1958,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Suécia",
+   "hs": 4,
+   "as": 2,
+   "ano": 1974,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Suécia",
+   "hs": 2,
+   "as": 0,
+   "ano": 2006,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Suécia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Áustria": [
+  {
+   "home": "Alemanha",
+   "away": "Áustria",
+   "hs": 3,
+   "as": 2,
+   "ano": 1934,
+   "stage": "third-place match"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Áustria",
+   "hs": 6,
+   "as": 1,
+   "ano": 1954,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Áustria",
+   "away": "Alemanha",
+   "hs": 3,
+   "as": 2,
+   "ano": 1978,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Áustria",
+   "hs": 1,
+   "as": 0,
+   "ano": 1982,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 1,
+   "ano": 1938,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Suíça",
+   "away": "Alemanha",
+   "hs": 4,
+   "as": 2,
+   "ano": 1938,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Suíça",
+   "hs": 2,
+   "as": 1,
+   "ano": 1962,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Suíça",
+   "hs": 5,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|França": [
+  {
+   "home": "França",
+   "away": "Bélgica",
+   "hs": 3,
+   "as": 1,
+   "ano": 1938,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Bélgica",
+   "away": "França",
+   "hs": 2,
+   "as": 4,
+   "ano": 1986,
+   "stage": "third-place match"
+  },
+  {
+   "home": "França",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 0,
+   "ano": 2018,
+   "stage": "semi-finals"
+  }
+ ],
+ "Brasil|Suécia": [
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 4,
+   "as": 2,
+   "ano": 1938,
+   "stage": "third-place match"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 7,
+   "as": 1,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 5,
+   "as": 2,
+   "ano": 1958,
+   "stage": "final"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 1,
+   "ano": 1978,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suécia",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 1,
+   "ano": 1994,
+   "stage": "semi-finals"
+  }
+ ],
+ "Brasil|México": [
+  {
+   "home": "Brasil",
+   "away": "México",
+   "hs": 4,
+   "as": 0,
+   "ano": 1950,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "México",
+   "hs": 5,
+   "as": 0,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "México",
+   "hs": 2,
+   "as": 0,
+   "ano": 1962,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "México",
+   "hs": 0,
+   "as": 0,
+   "ano": 2014,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "México",
+   "hs": 2,
+   "as": 0,
+   "ano": 2018,
+   "stage": "round of 16"
+  }
+ ],
+ "EUA|Espanha": [
+  {
+   "home": "Espanha",
+   "away": "EUA",
+   "hs": 3,
+   "as": 1,
+   "ano": 1950,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Suíça": [
+  {
+   "home": "Brasil",
+   "away": "Suíça",
+   "hs": 2,
+   "as": 2,
+   "ano": 1950,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suíça",
+   "hs": 1,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Suíça",
+   "hs": 1,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Inglaterra": [
+  {
+   "home": "EUA",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 0,
+   "ano": 1950,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "EUA",
+   "hs": 1,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "EUA",
+   "hs": 0,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Paraguai|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Paraguai",
+   "hs": 2,
+   "as": 2,
+   "ano": 1950,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suécia",
+   "away": "Paraguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Inglaterra": [
+  {
+   "home": "Espanha",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 0,
+   "ano": 1950,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 0,
+   "ano": 1982,
+   "stage": "second group stage"
+  }
+ ],
+ "México|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "México",
+   "hs": 2,
+   "as": 1,
+   "ano": 1950,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 2,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 0,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Suécia|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Suécia",
+   "hs": 3,
+   "as": 2,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Suécia",
+   "away": "Uruguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 1970,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suécia",
+   "away": "Uruguai",
+   "hs": 3,
+   "as": 0,
+   "ano": 1974,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Espanha",
+   "hs": 3,
+   "as": 1,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Espanha",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Brasil",
+   "hs": 2,
+   "as": 1,
+   "ano": 1950,
+   "stage": "final round"
+  },
+  {
+   "home": "Brasil",
+   "away": "Uruguai",
+   "hs": 3,
+   "as": 1,
+   "ano": 1970,
+   "stage": "semi-finals"
+  }
+ ],
+ "Escócia|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Escócia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1954,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Turquia": [
+  {
+   "home": "Alemanha",
+   "away": "Turquia",
+   "hs": 4,
+   "as": 1,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Turquia",
+   "hs": 7,
+   "as": 2,
+   "ano": 1954,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Bélgica",
+   "hs": 4,
+   "as": 4,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 0,
+   "ano": 1990,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Bélgica",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 0,
+   "ano": 2018,
+   "stage": "third-place match"
+  }
+ ],
+ "Escócia|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Escócia",
+   "hs": 7,
+   "as": 0,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "Escócia",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 0,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Turquia": [
+  {
+   "home": "Turquia",
+   "away": "Coreia do Sul",
+   "hs": 7,
+   "as": 0,
+   "ano": 1954,
+   "stage": "group stage"
+  },
+  {
+   "home": "Coreia do Sul",
+   "away": "Turquia",
+   "hs": 2,
+   "as": 3,
+   "ano": 2002,
+   "stage": "third-place match"
+  }
+ ],
+ "Inglaterra|Suíça": [
+  {
+   "home": "Inglaterra",
+   "away": "Suíça",
+   "hs": 2,
+   "as": 0,
+   "ano": 1954,
+   "stage": "group stage"
+  }
+ ],
+ "Suíça|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Suíça",
+   "hs": 7,
+   "as": 5,
+   "ano": 1954,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Inglaterra|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Inglaterra",
+   "hs": 4,
+   "as": 2,
+   "ano": 1954,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Uruguai|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Uruguai",
+   "hs": 3,
+   "as": 1,
+   "ano": 1954,
+   "stage": "third-place match"
+  }
+ ],
+ "México|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "México",
+   "hs": 3,
+   "as": 0,
+   "ano": 1958,
+   "stage": "group stage"
+  },
+  {
+   "home": "México",
+   "away": "Suécia",
+   "hs": 0,
+   "as": 3,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Argentina": [
+  {
+   "home": "Argentina",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 3,
+   "ano": 1958,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Alemanha",
+   "hs": 3,
+   "as": 2,
+   "ano": 1986,
+   "stage": "final"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Argentina",
+   "hs": 1,
+   "as": 0,
+   "ano": 1990,
+   "stage": "final"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Argentina",
+   "hs": 1,
+   "as": 1,
+   "ano": 2006,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Argentina",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 4,
+   "ano": 2010,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Argentina",
+   "hs": 1,
+   "as": 0,
+   "ano": 2014,
+   "stage": "final"
+  }
+ ],
+ "França|Paraguai": [
+  {
+   "home": "França",
+   "away": "Paraguai",
+   "hs": 7,
+   "as": 3,
+   "ano": 1958,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "Paraguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 1998,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Áustria": [
+  {
+   "home": "Brasil",
+   "away": "Áustria",
+   "hs": 3,
+   "as": 0,
+   "ano": 1958,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Áustria",
+   "hs": 1,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Paraguai": [
+  {
+   "home": "Paraguai",
+   "away": "Escócia",
+   "hs": 3,
+   "as": 2,
+   "ano": 1958,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Inglaterra": [
+  {
+   "home": "Brasil",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 0,
+   "ano": 1958,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Inglaterra",
+   "hs": 3,
+   "as": 1,
+   "ano": 1962,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Brasil",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 0,
+   "ano": 1970,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Brasil",
+   "hs": 1,
+   "as": 2,
+   "ano": 2002,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Escócia|França": [
+  {
+   "home": "França",
+   "away": "Escócia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1958,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Áustria": [
+  {
+   "home": "Inglaterra",
+   "away": "Áustria",
+   "hs": 2,
+   "as": 2,
+   "ano": 1958,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|França": [
+  {
+   "home": "Brasil",
+   "away": "França",
+   "hs": 5,
+   "as": 2,
+   "ano": 1958,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Brasil",
+   "away": "França",
+   "hs": 1,
+   "as": 1,
+   "ano": 1986,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Brasil",
+   "away": "França",
+   "hs": 0,
+   "as": 3,
+   "ano": 1998,
+   "stage": "final"
+  },
+  {
+   "home": "Brasil",
+   "away": "França",
+   "hs": 0,
+   "as": 1,
+   "ano": 2006,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Alemanha|França": [
+  {
+   "home": "França",
+   "away": "Alemanha",
+   "hs": 6,
+   "as": 3,
+   "ano": 1958,
+   "stage": "third-place match"
+  },
+  {
+   "home": "Alemanha",
+   "away": "França",
+   "hs": 3,
+   "as": 3,
+   "ano": 1982,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "França",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 2,
+   "ano": 1986,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "França",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2014,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Colômbia|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Colômbia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1962,
+   "stage": "group stage"
+  },
+  {
+   "home": "Colômbia",
+   "away": "Uruguai",
+   "hs": 2,
+   "as": 0,
+   "ano": 2014,
+   "stage": "round of 16"
+  }
+ ],
+ "Argentina|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Argentina",
+   "hs": 3,
+   "as": 1,
+   "ano": 1962,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Argentina",
+   "hs": 1,
+   "as": 0,
+   "ano": 1966,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Argentina",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 1,
+   "ano": 1986,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Argentina",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 2,
+   "ano": 1998,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Argentina",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|México": [
+  {
+   "home": "Espanha",
+   "away": "México",
+   "hs": 1,
+   "as": 0,
+   "ano": 1962,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Espanha": [
+  {
+   "home": "Argentina",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  }
+ ],
+ "França|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "França",
+   "hs": 2,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 0,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "França",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "França",
+   "hs": 0,
+   "as": 2,
+   "ano": 2018,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Espanha|Suíça": [
+  {
+   "home": "Espanha",
+   "away": "Suíça",
+   "hs": 2,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Suíça",
+   "hs": 3,
+   "as": 0,
+   "ano": 1994,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Espanha",
+   "away": "Suíça",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|México": [
+  {
+   "home": "Inglaterra",
+   "away": "México",
+   "hs": 2,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  }
+ ],
+ "México|Uruguai": [
+  {
+   "home": "México",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "México",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Suíça": [
+  {
+   "home": "Argentina",
+   "away": "Suíça",
+   "hs": 2,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Suíça",
+   "hs": 1,
+   "as": 0,
+   "ano": 2014,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Brasil",
+   "hs": 3,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Portugal",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "França|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "França",
+   "hs": 2,
+   "as": 0,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "França",
+   "hs": 3,
+   "as": 1,
+   "ano": 1982,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "França",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Alemanha|Espanha": [
+  {
+   "home": "Alemanha",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 1966,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 1982,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Espanha",
+   "hs": 1,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Espanha",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Uruguai": [
+  {
+   "home": "Alemanha",
+   "away": "Uruguai",
+   "hs": 4,
+   "as": 0,
+   "ano": 1966,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Uruguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 1970,
+   "stage": "third-place match"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Alemanha",
+   "hs": 2,
+   "as": 3,
+   "ano": 2010,
+   "stage": "third-place match"
+  }
+ ],
+ "Inglaterra|Portugal": [
+  {
+   "home": "Inglaterra",
+   "away": "Portugal",
+   "hs": 2,
+   "as": 1,
+   "ano": 1966,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Portugal",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 0,
+   "ano": 1986,
+   "stage": "group stage"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Portugal",
+   "hs": 0,
+   "as": 0,
+   "ano": 2006,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Alemanha|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Alemanha",
+   "hs": 4,
+   "as": 2,
+   "ano": 1966,
+   "stage": "final"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Inglaterra",
+   "hs": 3,
+   "as": 2,
+   "ano": 1970,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 0,
+   "ano": 1982,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 1,
+   "ano": 1990,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Inglaterra",
+   "hs": 4,
+   "as": 1,
+   "ano": 2010,
+   "stage": "round of 16"
+  }
+ ],
+ "Alemanha|Marrocos": [
+  {
+   "home": "Alemanha",
+   "away": "Marrocos",
+   "hs": 2,
+   "as": 1,
+   "ano": 1970,
+   "stage": "group stage"
+  },
+  {
+   "home": "Marrocos",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 1986,
+   "stage": "round of 16"
+  }
+ ],
+ "Bélgica|México": [
+  {
+   "home": "México",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 0,
+   "ano": 1970,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "México",
+   "hs": 1,
+   "as": 2,
+   "ano": 1986,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "México",
+   "hs": 2,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|RD Congo": [
+  {
+   "home": "RD Congo",
+   "away": "Escócia",
+   "hs": 0,
+   "as": 2,
+   "ano": 1974,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Holanda",
+   "hs": 0,
+   "as": 2,
+   "ano": 1974,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Holanda",
+   "hs": 2,
+   "as": 3,
+   "ano": 2010,
+   "stage": "semi-finals"
+  }
+ ],
+ "Alemanha|Austrália": [
+  {
+   "home": "Austrália",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 3,
+   "ano": 1974,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Austrália",
+   "hs": 4,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Escócia": [
+  {
+   "home": "Escócia",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 0,
+   "ano": 1974,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Escócia",
+   "hs": 4,
+   "as": 1,
+   "ano": 1982,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Escócia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1990,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Escócia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Suécia": [
+  {
+   "home": "Holanda",
+   "away": "Suécia",
+   "hs": 0,
+   "as": 0,
+   "ano": 1974,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|RD Congo": [
+  {
+   "home": "RD Congo",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 3,
+   "ano": 1974,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Haiti": [
+  {
+   "home": "Argentina",
+   "away": "Haiti",
+   "hs": 4,
+   "as": 1,
+   "ano": 1974,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Argentina",
+   "hs": 4,
+   "as": 0,
+   "ano": 1974,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Holanda",
+   "hs": 3,
+   "as": 1,
+   "ano": 1978,
+   "stage": "final"
+  },
+  {
+   "home": "Holanda",
+   "away": "Argentina",
+   "hs": 2,
+   "as": 1,
+   "ano": 1998,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Holanda",
+   "away": "Argentina",
+   "hs": 0,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Holanda",
+   "away": "Argentina",
+   "hs": 0,
+   "as": 0,
+   "ano": 2014,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Holanda",
+   "away": "Argentina",
+   "hs": 2,
+   "as": 2,
+   "ano": 2022,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Argentina|Brasil": [
+  {
+   "home": "Argentina",
+   "away": "Brasil",
+   "hs": 1,
+   "as": 2,
+   "ano": 1974,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 0,
+   "ano": 1978,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Brasil",
+   "hs": 1,
+   "as": 3,
+   "ano": 1982,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Argentina",
+   "hs": 0,
+   "as": 1,
+   "ano": 1990,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Brasil",
+   "hs": 2,
+   "as": 0,
+   "ano": 1974,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Holanda",
+   "away": "Brasil",
+   "hs": 2,
+   "as": 3,
+   "ano": 1994,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Brasil",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 1,
+   "ano": 1998,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Holanda",
+   "away": "Brasil",
+   "hs": 2,
+   "as": 1,
+   "ano": 2010,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Brasil",
+   "away": "Holanda",
+   "hs": 0,
+   "as": 3,
+   "ano": 2014,
+   "stage": "third-place match"
+  }
+ ],
+ "Alemanha|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 2,
+   "ano": 1974,
+   "stage": "final"
+  },
+  {
+   "home": "Holanda",
+   "away": "Alemanha",
+   "hs": 2,
+   "as": 2,
+   "ano": 1978,
+   "stage": "second group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Holanda",
+   "hs": 2,
+   "as": 1,
+   "ano": 1990,
+   "stage": "round of 16"
+  }
+ ],
+ "México|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "México",
+   "hs": 3,
+   "as": 1,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Irã": [
+  {
+   "home": "Holanda",
+   "away": "Irã",
+   "hs": 3,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|México": [
+  {
+   "home": "Alemanha",
+   "away": "México",
+   "hs": 6,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "México",
+   "hs": 0,
+   "as": 0,
+   "ano": 1986,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Alemanha",
+   "away": "México",
+   "hs": 2,
+   "as": 1,
+   "ano": 1998,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Alemanha",
+   "away": "México",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Suécia|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Irã": [
+  {
+   "home": "Escócia",
+   "away": "Irã",
+   "hs": 1,
+   "as": 1,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Tunísia": [
+  {
+   "home": "Alemanha",
+   "away": "Tunísia",
+   "hs": 0,
+   "as": 0,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Holanda": [
+  {
+   "home": "Escócia",
+   "away": "Holanda",
+   "hs": 3,
+   "as": 2,
+   "ano": 1978,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 5,
+   "ano": 1978,
+   "stage": "second group stage"
+  }
+ ],
+ "Argentina|Bélgica": [
+  {
+   "home": "Argentina",
+   "away": "Bélgica",
+   "hs": 0,
+   "as": 1,
+   "ano": 1982,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Bélgica",
+   "hs": 2,
+   "as": 0,
+   "ano": 1986,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Argentina",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 0,
+   "ano": 2014,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Escócia|Nova Zelândia": [
+  {
+   "home": "Escócia",
+   "away": "Nova Zelândia",
+   "hs": 5,
+   "as": 2,
+   "ano": 1982,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Argélia": [
+  {
+   "home": "Alemanha",
+   "away": "Argélia",
+   "hs": 1,
+   "as": 2,
+   "ano": 1982,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Argélia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "round of 16"
+  }
+ ],
+ "Argélia|Áustria": [
+  {
+   "home": "Argélia",
+   "away": "Áustria",
+   "hs": 0,
+   "as": 2,
+   "ano": 1982,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Nova Zelândia": [
+  {
+   "home": "Brasil",
+   "away": "Nova Zelândia",
+   "hs": 4,
+   "as": 0,
+   "ano": 1982,
+   "stage": "group stage"
+  }
+ ],
+ "Canadá|França": [
+  {
+   "home": "Canadá",
+   "away": "França",
+   "hs": 0,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Coreia do Sul": [
+  {
+   "home": "Argentina",
+   "away": "Coreia do Sul",
+   "hs": 3,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Coreia do Sul",
+   "hs": 4,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Iraque|Paraguai": [
+  {
+   "home": "Paraguai",
+   "away": "Iraque",
+   "hs": 1,
+   "as": 0,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Argélia|Brasil": [
+  {
+   "home": "Brasil",
+   "away": "Argélia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Marrocos": [
+  {
+   "home": "Inglaterra",
+   "away": "Marrocos",
+   "hs": 0,
+   "as": 0,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "México|Paraguai": [
+  {
+   "home": "México",
+   "away": "Paraguai",
+   "hs": 1,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Iraque": [
+  {
+   "home": "Iraque",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 2,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Escócia": [
+  {
+   "home": "Alemanha",
+   "away": "Escócia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Iraque|México": [
+  {
+   "home": "Iraque",
+   "away": "México",
+   "hs": 0,
+   "as": 1,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Marrocos|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Marrocos",
+   "hs": 1,
+   "as": 3,
+   "ano": 1986,
+   "stage": "group stage"
+  },
+  {
+   "home": "Portugal",
+   "away": "Marrocos",
+   "hs": 1,
+   "as": 0,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "Marrocos",
+   "away": "Portugal",
+   "hs": 1,
+   "as": 0,
+   "ano": 2022,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Argélia|Espanha": [
+  {
+   "home": "Argélia",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 3,
+   "ano": 1986,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Paraguai": [
+  {
+   "home": "Inglaterra",
+   "away": "Paraguai",
+   "hs": 3,
+   "as": 0,
+   "ano": 1986,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Inglaterra",
+   "away": "Paraguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Espanha": [
+  {
+   "home": "Espanha",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 1,
+   "ano": 1986,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Espanha",
+   "hs": 1,
+   "as": 2,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Coreia do Sul": [
+  {
+   "home": "Bélgica",
+   "away": "Coreia do Sul",
+   "hs": 2,
+   "as": 0,
+   "ano": 1990,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Coreia do Sul",
+   "hs": 1,
+   "as": 1,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Coreia do Sul",
+   "away": "Bélgica",
+   "hs": 0,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Egito|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Egito",
+   "hs": 1,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Escócia",
+   "hs": 1,
+   "as": 2,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Holanda",
+   "hs": 0,
+   "as": 0,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Uruguai": [
+  {
+   "home": "Bélgica",
+   "away": "Uruguai",
+   "hs": 3,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Espanha": [
+  {
+   "home": "Coreia do Sul",
+   "away": "Espanha",
+   "hs": 1,
+   "as": 3,
+   "ano": 1990,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Coreia do Sul",
+   "hs": 2,
+   "as": 2,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Coreia do Sul",
+   "hs": 0,
+   "as": 0,
+   "ano": 2002,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Alemanha|Colômbia": [
+  {
+   "home": "Alemanha",
+   "away": "Colômbia",
+   "hs": 1,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Áustria": [
+  {
+   "home": "Áustria",
+   "away": "EUA",
+   "hs": 2,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Uruguai": [
+  {
+   "home": "Coreia do Sul",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 1,
+   "ano": 1990,
+   "stage": "group stage"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Coreia do Sul",
+   "hs": 2,
+   "as": 1,
+   "ano": 2010,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Uruguai",
+   "away": "Coreia do Sul",
+   "hs": 0,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Egito|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Egito",
+   "hs": 1,
+   "as": 0,
+   "ano": 1990,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Suíça": [
+  {
+   "home": "EUA",
+   "away": "Suíça",
+   "hs": 1,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Marrocos": [
+  {
+   "home": "Bélgica",
+   "away": "Marrocos",
+   "hs": 1,
+   "as": 0,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Marrocos",
+   "hs": 0,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "México|Noruega": [
+  {
+   "home": "Noruega",
+   "away": "México",
+   "hs": 1,
+   "as": 0,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Arábia Saudita",
+   "hs": 2,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Colômbia|EUA": [
+  {
+   "home": "EUA",
+   "away": "Colômbia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Holanda": [
+  {
+   "home": "Bélgica",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 0,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Holanda",
+   "away": "Bélgica",
+   "hs": 0,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Marrocos": [
+  {
+   "home": "Arábia Saudita",
+   "away": "Marrocos",
+   "hs": 2,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Colômbia|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "Colômbia",
+   "hs": 0,
+   "as": 2,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Coreia do Sul": [
+  {
+   "home": "Alemanha",
+   "away": "Coreia do Sul",
+   "hs": 3,
+   "as": 2,
+   "ano": 1994,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Coreia do Sul",
+   "hs": 1,
+   "as": 0,
+   "ano": 2002,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "Coreia do Sul",
+   "away": "Alemanha",
+   "hs": 2,
+   "as": 0,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Bélgica": [
+  {
+   "home": "Bélgica",
+   "away": "Arábia Saudita",
+   "hs": 0,
+   "as": 1,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Marrocos": [
+  {
+   "home": "Marrocos",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 2,
+   "ano": 1994,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Suécia": [
+  {
+   "home": "Arábia Saudita",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 3,
+   "ano": 1994,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|EUA": [
+  {
+   "home": "Brasil",
+   "away": "EUA",
+   "hs": 1,
+   "as": 0,
+   "ano": 1994,
+   "stage": "round of 16"
+  }
+ ],
+ "Marrocos|Noruega": [
+  {
+   "home": "Marrocos",
+   "away": "Noruega",
+   "hs": 2,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "França|África do Sul": [
+  {
+   "home": "França",
+   "away": "África do Sul",
+   "hs": 3,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "África do Sul",
+   "hs": 1,
+   "as": 2,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|México": [
+  {
+   "home": "Coreia do Sul",
+   "away": "México",
+   "hs": 1,
+   "as": 3,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Coreia do Sul",
+   "away": "México",
+   "hs": 1,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Japão": [
+  {
+   "home": "Argentina",
+   "away": "Japão",
+   "hs": 1,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Tunísia": [
+  {
+   "home": "Inglaterra",
+   "away": "Tunísia",
+   "hs": 2,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Tunísia",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|EUA": [
+  {
+   "home": "Alemanha",
+   "away": "EUA",
+   "hs": 2,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "EUA",
+   "hs": 1,
+   "as": 0,
+   "ano": 2002,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "EUA",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Noruega": [
+  {
+   "home": "Escócia",
+   "away": "Noruega",
+   "hs": 1,
+   "as": 1,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Marrocos": [
+  {
+   "home": "Brasil",
+   "away": "Marrocos",
+   "hs": 3,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|França": [
+  {
+   "home": "França",
+   "away": "Arábia Saudita",
+   "hs": 4,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Paraguai": [
+  {
+   "home": "Espanha",
+   "away": "Paraguai",
+   "hs": 0,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Espanha",
+   "away": "Paraguai",
+   "hs": 3,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Paraguai",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Croácia|Japão": [
+  {
+   "home": "Japão",
+   "away": "Croácia",
+   "hs": 0,
+   "as": 1,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Japão",
+   "away": "Croácia",
+   "hs": 0,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Japão",
+   "away": "Croácia",
+   "hs": 1,
+   "as": 1,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Coreia do Sul|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Coreia do Sul",
+   "hs": 5,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Irã": [
+  {
+   "home": "EUA",
+   "away": "Irã",
+   "hs": 1,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Irã",
+   "away": "EUA",
+   "hs": 0,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Colômbia|Tunísia": [
+  {
+   "home": "Colômbia",
+   "away": "Tunísia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Noruega": [
+  {
+   "home": "Brasil",
+   "away": "Noruega",
+   "hs": 1,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Escócia|Marrocos": [
+  {
+   "home": "Escócia",
+   "away": "Marrocos",
+   "hs": 0,
+   "as": 3,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|África do Sul": [
+  {
+   "home": "África do Sul",
+   "away": "Arábia Saudita",
+   "hs": 2,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|México": [
+  {
+   "home": "Holanda",
+   "away": "México",
+   "hs": 2,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Holanda",
+   "away": "México",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "round of 16"
+  }
+ ],
+ "Alemanha|Irã": [
+  {
+   "home": "Alemanha",
+   "away": "Irã",
+   "hs": 2,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Croácia": [
+  {
+   "home": "Argentina",
+   "away": "Croácia",
+   "hs": 1,
+   "as": 0,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Croácia",
+   "hs": 0,
+   "as": 3,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "Argentina",
+   "away": "Croácia",
+   "hs": 3,
+   "as": 0,
+   "ano": 2022,
+   "stage": "semi-finals"
+  }
+ ],
+ "Colômbia|Inglaterra": [
+  {
+   "home": "Colômbia",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 2,
+   "ano": 1998,
+   "stage": "group stage"
+  },
+  {
+   "home": "Colômbia",
+   "away": "Inglaterra",
+   "hs": 1,
+   "as": 1,
+   "ano": 2018,
+   "stage": "round of 16"
+  }
+ ],
+ "Alemanha|Croácia": [
+  {
+   "home": "Alemanha",
+   "away": "Croácia",
+   "hs": 0,
+   "as": 3,
+   "ano": 1998,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Croácia|França": [
+  {
+   "home": "França",
+   "away": "Croácia",
+   "hs": 2,
+   "as": 1,
+   "ano": 1998,
+   "stage": "semi-finals"
+  },
+  {
+   "home": "França",
+   "away": "Croácia",
+   "hs": 4,
+   "as": 2,
+   "ano": 2018,
+   "stage": "final"
+  }
+ ],
+ "Croácia|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Croácia",
+   "hs": 1,
+   "as": 2,
+   "ano": 1998,
+   "stage": "third-place match"
+  }
+ ],
+ "França|Senegal": [
+  {
+   "home": "França",
+   "away": "Senegal",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Arábia Saudita": [
+  {
+   "home": "Alemanha",
+   "away": "Arábia Saudita",
+   "hs": 8,
+   "as": 0,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Paraguai|África do Sul": [
+  {
+   "home": "Paraguai",
+   "away": "África do Sul",
+   "hs": 2,
+   "as": 2,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Suécia": [
+  {
+   "home": "Inglaterra",
+   "away": "Suécia",
+   "hs": 1,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suécia",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 2,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suécia",
+   "away": "Inglaterra",
+   "hs": 0,
+   "as": 2,
+   "ano": 2018,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Croácia|México": [
+  {
+   "home": "Croácia",
+   "away": "México",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Croácia",
+   "away": "México",
+   "hs": 1,
+   "as": 3,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Turquia": [
+  {
+   "home": "Brasil",
+   "away": "Turquia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Turquia",
+   "hs": 1,
+   "as": 0,
+   "ano": 2002,
+   "stage": "semi-finals"
+  }
+ ],
+ "Bélgica|Japão": [
+  {
+   "home": "Japão",
+   "away": "Bélgica",
+   "hs": 2,
+   "as": 2,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Japão",
+   "hs": 3,
+   "as": 2,
+   "ano": 2018,
+   "stage": "round of 16"
+  }
+ ],
+ "EUA|Portugal": [
+  {
+   "home": "EUA",
+   "away": "Portugal",
+   "hs": 3,
+   "as": 2,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "EUA",
+   "away": "Portugal",
+   "hs": 2,
+   "as": 2,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|México": [
+  {
+   "home": "México",
+   "away": "Equador",
+   "hs": 2,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|EUA": [
+  {
+   "home": "Coreia do Sul",
+   "away": "EUA",
+   "hs": 1,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Bélgica",
+   "away": "Tunísia",
+   "hs": 5,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Senegal|Uruguai": [
+  {
+   "home": "Senegal",
+   "away": "Uruguai",
+   "hs": 3,
+   "as": 3,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|África do Sul": [
+  {
+   "home": "África do Sul",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 3,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Croácia|Equador": [
+  {
+   "home": "Equador",
+   "away": "Croácia",
+   "hs": 1,
+   "as": 0,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Japão|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "Japão",
+   "hs": 0,
+   "as": 2,
+   "ano": 2002,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Coreia do Sul",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "group stage"
+  },
+  {
+   "home": "Coreia do Sul",
+   "away": "Portugal",
+   "hs": 2,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Paraguai": [
+  {
+   "home": "Alemanha",
+   "away": "Paraguai",
+   "hs": 1,
+   "as": 0,
+   "ano": 2002,
+   "stage": "round of 16"
+  }
+ ],
+ "Senegal|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Senegal",
+   "hs": 1,
+   "as": 2,
+   "ano": 2002,
+   "stage": "round of 16"
+  }
+ ],
+ "EUA|México": [
+  {
+   "home": "México",
+   "away": "EUA",
+   "hs": 0,
+   "as": 2,
+   "ano": 2002,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Bélgica": [
+  {
+   "home": "Brasil",
+   "away": "Bélgica",
+   "hs": 2,
+   "as": 0,
+   "ano": 2002,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Brasil",
+   "away": "Bélgica",
+   "hs": 1,
+   "as": 2,
+   "ano": 2018,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Japão|Turquia": [
+  {
+   "home": "Japão",
+   "away": "Turquia",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "round of 16"
+  }
+ ],
+ "Senegal|Turquia": [
+  {
+   "home": "Senegal",
+   "away": "Turquia",
+   "hs": 0,
+   "as": 1,
+   "ano": 2002,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Alemanha|Brasil": [
+  {
+   "home": "Alemanha",
+   "away": "Brasil",
+   "hs": 0,
+   "as": 2,
+   "ano": 2002,
+   "stage": "final"
+  },
+  {
+   "home": "Brasil",
+   "away": "Alemanha",
+   "hs": 1,
+   "as": 7,
+   "ano": 2014,
+   "stage": "semi-finals"
+  }
+ ],
+ "Argentina|Costa do Marfim": [
+  {
+   "home": "Argentina",
+   "away": "Costa do Marfim",
+   "hs": 2,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Irã|México": [
+  {
+   "home": "México",
+   "away": "Irã",
+   "hs": 3,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Japão": [
+  {
+   "home": "Austrália",
+   "away": "Japão",
+   "hs": 3,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Rep Tcheca": [
+  {
+   "home": "EUA",
+   "away": "Rep Tcheca",
+   "hs": 0,
+   "as": 3,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "França|Suíça": [
+  {
+   "home": "França",
+   "away": "Suíça",
+   "hs": 0,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Suíça",
+   "away": "França",
+   "hs": 2,
+   "as": 5,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Croácia": [
+  {
+   "home": "Brasil",
+   "away": "Croácia",
+   "hs": 1,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Brasil",
+   "away": "Croácia",
+   "hs": 3,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  },
+  {
+   "home": "Croácia",
+   "away": "Brasil",
+   "hs": 1,
+   "as": 1,
+   "ano": 2022,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Arábia Saudita|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "Arábia Saudita",
+   "hs": 2,
+   "as": 2,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Costa do Marfim|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Costa do Marfim",
+   "hs": 2,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Irã|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Irã",
+   "hs": 2,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "Irã",
+   "away": "Portugal",
+   "hs": 1,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Gana|Rep Tcheca": [
+  {
+   "home": "Rep Tcheca",
+   "away": "Gana",
+   "hs": 0,
+   "as": 2,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Brasil": [
+  {
+   "home": "Brasil",
+   "away": "Austrália",
+   "hs": 2,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|França": [
+  {
+   "home": "França",
+   "away": "Coreia do Sul",
+   "hs": 1,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Tunísia": [
+  {
+   "home": "Espanha",
+   "away": "Tunísia",
+   "hs": 3,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Equador": [
+  {
+   "home": "Equador",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 3,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "México|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "México",
+   "hs": 2,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Gana": [
+  {
+   "home": "Gana",
+   "away": "EUA",
+   "hs": 2,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  },
+  {
+   "home": "EUA",
+   "away": "Gana",
+   "hs": 1,
+   "as": 2,
+   "ano": 2010,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Gana",
+   "away": "EUA",
+   "hs": 1,
+   "as": 2,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Croácia": [
+  {
+   "home": "Croácia",
+   "away": "Austrália",
+   "hs": 2,
+   "as": 2,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Japão": [
+  {
+   "home": "Japão",
+   "away": "Brasil",
+   "hs": 1,
+   "as": 4,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Espanha": [
+  {
+   "home": "Arábia Saudita",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "Coreia do Sul",
+   "hs": 2,
+   "as": 0,
+   "ano": 2006,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Equador",
+   "hs": 1,
+   "as": 0,
+   "ano": 2006,
+   "stage": "round of 16"
+  }
+ ],
+ "Holanda|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 0,
+   "ano": 2006,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Gana": [
+  {
+   "home": "Brasil",
+   "away": "Gana",
+   "hs": 3,
+   "as": 0,
+   "ano": 2006,
+   "stage": "round of 16"
+  }
+ ],
+ "Espanha|França": [
+  {
+   "home": "Espanha",
+   "away": "França",
+   "hs": 1,
+   "as": 3,
+   "ano": 2006,
+   "stage": "round of 16"
+  }
+ ],
+ "França|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "França",
+   "hs": 0,
+   "as": 1,
+   "ano": 2006,
+   "stage": "semi-finals"
+  }
+ ],
+ "Alemanha|Portugal": [
+  {
+   "home": "Alemanha",
+   "away": "Portugal",
+   "hs": 3,
+   "as": 1,
+   "ano": 2006,
+   "stage": "third-place match"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Portugal",
+   "hs": 4,
+   "as": 0,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "México|África do Sul": [
+  {
+   "home": "África do Sul",
+   "away": "México",
+   "hs": 1,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Costa do Marfim|Portugal": [
+  {
+   "home": "Costa do Marfim",
+   "away": "Portugal",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Uruguai|África do Sul": [
+  {
+   "home": "África do Sul",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 3,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Argélia|Inglaterra": [
+  {
+   "home": "Inglaterra",
+   "away": "Argélia",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Japão": [
+  {
+   "home": "Holanda",
+   "away": "Japão",
+   "hs": 1,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Gana": [
+  {
+   "home": "Gana",
+   "away": "Austrália",
+   "hs": 1,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Costa do Marfim": [
+  {
+   "home": "Brasil",
+   "away": "Costa do Marfim",
+   "hs": 3,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Argélia|EUA": [
+  {
+   "home": "EUA",
+   "away": "Argélia",
+   "hs": 1,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Alemanha|Gana": [
+  {
+   "home": "Gana",
+   "away": "Alemanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "group stage"
+  },
+  {
+   "home": "Alemanha",
+   "away": "Gana",
+   "hs": 2,
+   "as": 2,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Nova Zelândia|Paraguai": [
+  {
+   "home": "Paraguai",
+   "away": "Nova Zelândia",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "group stage"
+  }
+ ],
+ "Japão|Paraguai": [
+  {
+   "home": "Paraguai",
+   "away": "Japão",
+   "hs": 0,
+   "as": 0,
+   "ano": 2010,
+   "stage": "round of 16"
+  }
+ ],
+ "Espanha|Portugal": [
+  {
+   "home": "Espanha",
+   "away": "Portugal",
+   "hs": 1,
+   "as": 0,
+   "ano": 2010,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Portugal",
+   "away": "Espanha",
+   "hs": 3,
+   "as": 3,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Gana|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Gana",
+   "hs": 1,
+   "as": 1,
+   "ano": 2010,
+   "stage": "quarter-finals"
+  },
+  {
+   "home": "Gana",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2010,
+   "stage": "final"
+  },
+  {
+   "home": "Espanha",
+   "away": "Holanda",
+   "hs": 1,
+   "as": 5,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Costa do Marfim|Japão": [
+  {
+   "home": "Costa do Marfim",
+   "away": "Japão",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|Suíça": [
+  {
+   "home": "Suíça",
+   "away": "Equador",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Bósnia": [
+  {
+   "home": "Argentina",
+   "away": "Bósnia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Argélia|Bélgica": [
+  {
+   "home": "Bélgica",
+   "away": "Argélia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Holanda": [
+  {
+   "home": "Austrália",
+   "away": "Holanda",
+   "hs": 2,
+   "as": 3,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Colômbia|Costa do Marfim": [
+  {
+   "home": "Colômbia",
+   "away": "Costa do Marfim",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Irã": [
+  {
+   "home": "Argentina",
+   "away": "Irã",
+   "hs": 1,
+   "as": 0,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Argélia|Coreia do Sul": [
+  {
+   "home": "Coreia do Sul",
+   "away": "Argélia",
+   "hs": 2,
+   "as": 4,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Espanha": [
+  {
+   "home": "Austrália",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 3,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Colômbia|Japão": [
+  {
+   "home": "Japão",
+   "away": "Colômbia",
+   "hs": 1,
+   "as": 4,
+   "ano": 2014,
+   "stage": "group stage"
+  },
+  {
+   "home": "Colômbia",
+   "away": "Japão",
+   "hs": 1,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Bósnia|Irã": [
+  {
+   "home": "Bósnia",
+   "away": "Irã",
+   "hs": 3,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|França": [
+  {
+   "home": "Equador",
+   "away": "França",
+   "hs": 0,
+   "as": 0,
+   "ano": 2014,
+   "stage": "group stage"
+  }
+ ],
+ "Gana|Portugal": [
+  {
+   "home": "Portugal",
+   "away": "Gana",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "group stage"
+  },
+  {
+   "home": "Portugal",
+   "away": "Gana",
+   "hs": 3,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Brasil|Colômbia": [
+  {
+   "home": "Brasil",
+   "away": "Colômbia",
+   "hs": 2,
+   "as": 1,
+   "ano": 2014,
+   "stage": "quarter-finals"
+  }
+ ],
+ "Egito|Uruguai": [
+  {
+   "home": "Egito",
+   "away": "Uruguai",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Irã|Marrocos": [
+  {
+   "home": "Marrocos",
+   "away": "Irã",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|França": [
+  {
+   "home": "França",
+   "away": "Austrália",
+   "hs": 2,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "França",
+   "away": "Austrália",
+   "hs": 4,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Suécia": [
+  {
+   "home": "Suécia",
+   "away": "Coreia do Sul",
+   "hs": 1,
+   "as": 0,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Panamá": [
+  {
+   "home": "Bélgica",
+   "away": "Panamá",
+   "hs": 3,
+   "as": 0,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Arábia Saudita",
+   "hs": 1,
+   "as": 0,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Irã": [
+  {
+   "home": "Irã",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Panamá": [
+  {
+   "home": "Inglaterra",
+   "away": "Panamá",
+   "hs": 6,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Japão|Senegal": [
+  {
+   "home": "Japão",
+   "away": "Senegal",
+   "hs": 2,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|Egito": [
+  {
+   "home": "Arábia Saudita",
+   "away": "Egito",
+   "hs": 2,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Marrocos": [
+  {
+   "home": "Espanha",
+   "away": "Marrocos",
+   "hs": 2,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  },
+  {
+   "home": "Marrocos",
+   "away": "Espanha",
+   "hs": 0,
+   "as": 0,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Colômbia|Senegal": [
+  {
+   "home": "Senegal",
+   "away": "Colômbia",
+   "hs": 0,
+   "as": 1,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Panamá|Tunísia": [
+  {
+   "home": "Panamá",
+   "away": "Tunísia",
+   "hs": 1,
+   "as": 2,
+   "ano": 2018,
+   "stage": "group stage"
+  }
+ ],
+ "Portugal|Uruguai": [
+  {
+   "home": "Uruguai",
+   "away": "Portugal",
+   "hs": 2,
+   "as": 1,
+   "ano": 2018,
+   "stage": "round of 16"
+  },
+  {
+   "home": "Portugal",
+   "away": "Uruguai",
+   "hs": 2,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Suécia|Suíça": [
+  {
+   "home": "Suécia",
+   "away": "Suíça",
+   "hs": 1,
+   "as": 0,
+   "ano": 2018,
+   "stage": "round of 16"
+  }
+ ],
+ "Croácia|Inglaterra": [
+  {
+   "home": "Croácia",
+   "away": "Inglaterra",
+   "hs": 2,
+   "as": 1,
+   "ano": 2018,
+   "stage": "semi-finals"
+  }
+ ],
+ "Catar|Equador": [
+  {
+   "home": "Catar",
+   "away": "Equador",
+   "hs": 0,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Inglaterra|Irã": [
+  {
+   "home": "Inglaterra",
+   "away": "Irã",
+   "hs": 6,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Holanda|Senegal": [
+  {
+   "home": "Senegal",
+   "away": "Holanda",
+   "hs": 0,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Argentina|Arábia Saudita": [
+  {
+   "home": "Argentina",
+   "away": "Arábia Saudita",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Croácia|Marrocos": [
+  {
+   "home": "Marrocos",
+   "away": "Croácia",
+   "hs": 0,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  },
+  {
+   "home": "Croácia",
+   "away": "Marrocos",
+   "hs": 2,
+   "as": 1,
+   "ano": 2022,
+   "stage": "third-place match"
+  }
+ ],
+ "Alemanha|Japão": [
+  {
+   "home": "Alemanha",
+   "away": "Japão",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Canadá": [
+  {
+   "home": "Bélgica",
+   "away": "Canadá",
+   "hs": 1,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Catar|Senegal": [
+  {
+   "home": "Catar",
+   "away": "Senegal",
+   "hs": 1,
+   "as": 3,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Equador",
+   "hs": 1,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Austrália|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "Austrália",
+   "hs": 0,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Canadá|Croácia": [
+  {
+   "home": "Croácia",
+   "away": "Canadá",
+   "hs": 4,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Coreia do Sul|Gana": [
+  {
+   "home": "Coreia do Sul",
+   "away": "Gana",
+   "hs": 2,
+   "as": 3,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Equador|Senegal": [
+  {
+   "home": "Equador",
+   "away": "Senegal",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Catar|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "Catar",
+   "hs": 2,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "França|Tunísia": [
+  {
+   "home": "Tunísia",
+   "away": "França",
+   "hs": 1,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Arábia Saudita|México": [
+  {
+   "home": "Arábia Saudita",
+   "away": "México",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Canadá|Marrocos": [
+  {
+   "home": "Canadá",
+   "away": "Marrocos",
+   "hs": 1,
+   "as": 2,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Bélgica|Croácia": [
+  {
+   "home": "Croácia",
+   "away": "Bélgica",
+   "hs": 0,
+   "as": 0,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "Espanha|Japão": [
+  {
+   "home": "Japão",
+   "away": "Espanha",
+   "hs": 2,
+   "as": 1,
+   "ano": 2022,
+   "stage": "group stage"
+  }
+ ],
+ "EUA|Holanda": [
+  {
+   "home": "Holanda",
+   "away": "EUA",
+   "hs": 3,
+   "as": 1,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Argentina|Austrália": [
+  {
+   "home": "Argentina",
+   "away": "Austrália",
+   "hs": 2,
+   "as": 1,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Inglaterra|Senegal": [
+  {
+   "home": "Inglaterra",
+   "away": "Senegal",
+   "hs": 3,
+   "as": 0,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Brasil|Coreia do Sul": [
+  {
+   "home": "Brasil",
+   "away": "Coreia do Sul",
+   "hs": 4,
+   "as": 1,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "Portugal|Suíça": [
+  {
+   "home": "Portugal",
+   "away": "Suíça",
+   "hs": 6,
+   "as": 1,
+   "ano": 2022,
+   "stage": "round of 16"
+  }
+ ],
+ "França|Marrocos": [
+  {
+   "home": "França",
+   "away": "Marrocos",
+   "hs": 2,
+   "as": 0,
+   "ano": 2022,
+   "stage": "semi-finals"
+  }
+ ]
+}
