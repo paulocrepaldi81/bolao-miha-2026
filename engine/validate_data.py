@@ -104,6 +104,17 @@ def main():
     ko_M = [m for m in M if m.get("phase")]
     if ncat is not None:
         C(len(grp_M) == ncat, f"nº de jogos de grupo ({len(grp_M)}) != catálogo ({ncat}) · mata-mata: {len(ko_M)}")
+    # AVISO: fase de mata-mata com jogos no ar mas SEM Form configurado (a coleta da fase não
+    # foi ligada -> palpites valem o ORIGINAL). Não bloqueia, mas alerta o organizador (runbook).
+    if ko_M:
+        try:
+            kf = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                              "data", "knockout_forms.json"), encoding="utf-8"))
+            kf_rounds = {r.get("round") for r in (kf.get("rounds") or []) if r.get("csv")}
+        except Exception:
+            kf_rounds = set()
+        for ph in sorted({m.get("phase") for m in ko_M if m.get("phase")} - kf_rounds):
+            W(False, f"mata-mata: fase {ph} tem jogos mas SEM Form configurado — palpites valem o original (ver forms/RUNBOOK-fases.md)")
     C(all(m.get("match_id") for m in M), "há jogo sem match_id")
     badfin = [m.get("match_id") for m in M
               if m.get("status") == "finished" and (m.get("home_score") is None or m.get("away_score") is None)]

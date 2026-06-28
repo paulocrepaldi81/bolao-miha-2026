@@ -94,6 +94,14 @@ def main():
         return 0
     for nxt, slot, home, away in new:
         print(f"  ➜ {slot}: {home} × {away}")
+    # bloco pronto pra colar no MATCHES do Form da nova fase (o organizador só ajusta o 'quando')
+    by_phase = {}
+    for nxt, slot, home, away in new:
+        by_phase.setdefault(nxt, []).append((int(slot.split("-")[1]) if "-" in slot else 1, home, away))
+    for phase, lst in by_phase.items():
+        print(f"\n=== COLE no MATCHES do Form da fase {phase} (ajuste 'quando' com a data/hora) ===")
+        for n, home, away in sorted(lst):
+            print(f"  {{ n: {n}, home: '{home}', away: '{away}', quando: '??/?? · ??h' }},")
     if not args.dry_run:
         with open(BRACKET, "w", encoding="utf-8") as f:
             json.dump(bracket, f, ensure_ascii=False, indent=2)
