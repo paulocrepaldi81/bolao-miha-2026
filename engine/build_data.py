@@ -297,6 +297,7 @@ def main():
         s["knockout_by"] = ko_by
         s["total"] += ko_pts
         s["exact_scores"] += ko_exact     # placares exatos do mata-mata entram no contador
+        s["correct_outcomes"] += sum(1 for v in ko_by.values() if v > 0)   # acertos de resultado do KO
         s["by_match"].update(ko_by)       # e os pontos do KO entram em "pontos na rodada" (day_points)
 
     # Baseline da MOVIMENTAÇÃO = a classificação mais recente que era DIFERENTE da atual.
