@@ -13,9 +13,9 @@
   "home": "Brasil",
   "away": "Japão",
   "kickoff": "2026-06-29T17:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Brasil",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
