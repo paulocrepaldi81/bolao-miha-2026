@@ -26,8 +26,8 @@
   "status": "live",
   "winner": null,
   "decided_by": null,
-  "pen_home": null,
-  "pen_away": null
+  "pen_home": 0,
+  "pen_away": 1
  },
  "R32-04": {
   "home": "Holanda",
