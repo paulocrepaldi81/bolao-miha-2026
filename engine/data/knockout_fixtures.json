@@ -23,11 +23,11 @@
   "home": "Alemanha",
   "away": "Paraguai",
   "kickoff": "2026-06-29T20:30Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
-  "pen_home": 2,
-  "pen_away": 3
+  "status": "finished",
+  "winner": "Paraguai",
+  "decided_by": "pen",
+  "pen_home": 3,
+  "pen_away": 4
  },
  "R32-04": {
   "home": "Holanda",
