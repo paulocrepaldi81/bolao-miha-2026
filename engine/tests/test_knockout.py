@@ -73,10 +73,11 @@ def test_score_knockout():
         "QF-01":  {"home_score": 3, "away_score": 0, "status": "finished"},                   # sem palpite -> ignora
         "SF-01":  {"home_score": None, "away_score": None, "status": "scheduled"},            # não disputado -> ignora
     }
-    total, by = S.score_knockout(eff, res)
+    total, by, exact = S.score_knockout(eff, res)
     assert by["R32-01"] == 6 and by["R32-02"] == 0 and by["R16-01"] == 5
     assert "QF-01" not in by and "SF-01" not in by
     assert total == 11
+    assert exact == 2          # cravou R32-01 (2×1) e R16-01 (1×1); R32-02 previu empate, não
 
 
 def test_cabecalho_real_do_form_e_manter_original():

@@ -282,14 +282,22 @@ def main():
     # Falha-fechada: CSV do form indisponível/quebrado → ninguém recebe override → vale o original.
     ko_results = load_knockout_results(os.path.join(DATA, "knockout_results.csv"))
     ko_form = load_knockout_form(os.path.join(DATA, "knockout_forms.json"), [s["alias"] for s in scored])
+    ko_fix = {}
+    try:
+        with open(os.path.join(DATA, "knockout_fixtures.json"), encoding="utf-8") as f:
+            ko_fix = json.load(f)
+    except Exception:
+        ko_fix = {}
     bet_by_alias = {b["alias"]: b for b in bets}
     for s in scored:
         b = bet_by_alias.get(s["alias"], {})
         eff = KO.effective_picks(b.get("knockout_orig", {}), ko_form.get(s["alias"], {}))
-        ko_pts, ko_by = score_knockout(eff, ko_results)
+        ko_pts, ko_by, ko_exact = score_knockout(eff, ko_results)
         s["knockout_pts"] = ko_pts
         s["knockout_by"] = ko_by
         s["total"] += ko_pts
+        s["exact_scores"] += ko_exact     # placares exatos do mata-mata entram no contador
+        s["by_match"].update(ko_by)       # e os pontos do KO entram em "pontos na rodada" (day_points)
 
     # Baseline da MOVIMENTAÇÃO = a classificação mais recente que era DIFERENTE da atual.
     # Assim o "▲/▼ da rodada" reflete a última mudança real de pontos e continua aparecendo
@@ -319,6 +327,12 @@ def main():
     finished_round = {mid: _rodada_date(k) for mid, k in kickoff_by_mid.items()
                       if results.get(mid, {}).get("status") == "finished"
                       and results.get(mid, {}).get("home_score") is not None}
+    # o MATA-MATA também conta na rodada: cada slot ENCERRADO entra pela data do seu kickoff (SP)
+    for slot, fx in ko_fix.items():
+        k = espn_kickoff_sp(fx.get("kickoff"))
+        rr = ko_results.get(slot, {})
+        if k and rr.get("status") == "finished" and rr.get("home_score") is not None:
+            finished_round[slot] = _rodada_date(k)
     cur_round = max(finished_round.values()) if finished_round else None
     round_mids = frozenset(mid for mid, d in finished_round.items() if d == cur_round)
 
@@ -352,12 +366,6 @@ def main():
     # Campos extra (phase/slot/winner/decided_by/pen_*) são ignorados pelo front atual — não quebram.
     PHASE_LABEL = {"R32": "16 avos", "R16": "Oitavas", "QF": "Quartas",
                    "SF": "Semifinal", "FIN": "Final", "TER": "3º lugar"}
-    ko_fix = {}
-    try:
-        with open(os.path.join(DATA, "knockout_fixtures.json"), encoding="utf-8") as f:
-            ko_fix = json.load(f)
-    except Exception:
-        ko_fix = {}
     for slot, fx in ko_fix.items():
         home, away = fx.get("home"), fx.get("away")
         if not (home and away):

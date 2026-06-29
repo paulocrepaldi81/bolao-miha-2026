@@ -108,9 +108,10 @@ def score_knockout(eff_picks, ko_results):
     ko_results : {slot: {"home_score","away_score","status","special"}} — MESMA orientação;
                  placar do tempo normal + PRORROGAÇÃO (pênaltis NÃO entram — isso é garantido
                  na captura do resultado, não aqui).
-    Retorna (total, {slot: pts}). Só pontua slot ENCERRADO com placar real e que a pessoa palpitou.
+    Retorna (total, {slot: pts}, nº de placares EXATOS). Só pontua slot ENCERRADO com placar real
+    e que a pessoa palpitou. "Exato" segue a MESMA regra dos grupos: cravou os dois placares.
     """
-    by_slot, total = {}, 0
+    by_slot, total, exact = {}, 0, 0
     for slot, r in ko_results.items():
         if not r or r.get("status") != "finished" or r.get("home_score") is None:
             continue
@@ -120,7 +121,9 @@ def score_knockout(eff_picks, ko_results):
         p = score_match(pred[0], pred[1], r["home_score"], r["away_score"], r.get("special", False))
         by_slot[slot] = p
         total += p
-    return total, by_slot
+        if pred[0] == r["home_score"] and pred[1] == r["away_score"]:
+            exact += 1
+    return total, by_slot, exact
 
 
 def score_bet(bet, results, catalog, real_final, facts):
