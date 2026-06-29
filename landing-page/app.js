@@ -933,18 +933,67 @@ function renderLiveStrip(){
     <div class="matches">${live.map(matchCardHTML).join('')}</div>`;
 }
 
+// ---- Prévia "a definir" da próxima fase do mata-mata (transição entre fases) ----
+// Topologia FIXA do chaveamento (igual ao resolve_bracket): cada slot da fase seguinte é
+// alimentado por dois slots da fase atual. Enquanto o confronto não está resolvido (sem os dois
+// times reais), mostramos "Vencedor de A×B × Vencedor de C×D" — assim a Central nunca fica
+// "vazia/confusa" na virada de fase, e dá pra ver o que vem.
+const KO_NEXT = {R32:'R16', R16:'QF', QF:'SF', SF:'FIN'};
+const KO_NSLOTS = {R16:8, QF:4, SF:2, FIN:1};
+const KO_PHASE_LABEL = {R32:'16 avos', R16:'Oitavas', QF:'Quartas', SF:'Semifinal', FIN:'Final', TER:'3º lugar'};
+const _p2 = n => String(n).padStart(2,'0');
+function nextPhasePreview(){
+  const ko = (DATA.matches||[]).filter(m=>m.phase && m.slot);
+  if(!ko.length) return [];
+  const bySlot = {}; ko.forEach(m=>{ bySlot[m.slot]=m; });
+  const out = [];
+  for(const cur of ['R32','R16','QF','SF']){
+    const nxt = KO_NEXT[cur];
+    for(let k=1; k<=KO_NSLOTS[nxt]; k++){
+      const slot = nxt==='FIN' ? 'FIN' : `${nxt}-${_p2(k)}`;
+      if(bySlot[slot]) continue;                          // já resolvido → aparece como jogo normal
+      const f1 = bySlot[`${cur}-${_p2(2*k-1)}`], f2 = bySlot[`${cur}-${_p2(2*k)}`];
+      if(f1 && f2) out.push({slot, phase:nxt, f1, f2});    // só prevê quando os 2 alimentadores existem
+    }
+  }
+  if(!bySlot['TER']){   // 3º lugar = perdedores das semis (previsível quando as SFs existem)
+    const s1=bySlot['SF-01'], s2=bySlot['SF-02'];
+    if(s1 && s2) out.push({slot:'TER', phase:'TER', f1:s1, f2:s2, losers:true});
+  }
+  return out;
+}
+function previewCardHTML(pv){
+  const verb = pv.losers ? 'Perdedor' : 'Vencedor';
+  const a = `${verb} de ${pv.f1.home_team} × ${pv.f1.away_team}`;
+  const b = `${verb} de ${pv.f2.home_team} × ${pv.f2.away_team}`;
+  return `<div class="mcard mcard-tbd">
+    <div class="top"><span class="grp">${KO_PHASE_LABEL[pv.phase]||pv.phase}</span><span class="chip chip-sched">A definir</span></div>
+    <div class="team team-tbd"><span>${esc(a)}</span></div>
+    <div class="team team-tbd"><span>${esc(b)}</span></div>
+    <div class="foot"><span>🔧 se define quando esses dois jogos terminam</span></div>
+  </div>`;
+}
+
 let matchExpanded=false;
 const MATCH_LIMIT=9;   // mostra ~3 linhas; o resto fica atrás de "Ver todos" (anti-scroll)
 function renderMatches(filter){
   const list = (DATA.matches||[]).filter(m=>m.status===filter)
     .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
+  const previews = filter==='scheduled' ? nextPhasePreview() : [];
   const el = document.getElementById('matchList');
   const more = document.getElementById('matchMore');
   const empty = filter==='scheduled' ? 'Sem próximos jogos no momento.' : 'Nenhum jogo encerrado ainda.';
-  if(!list.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; if(more) more.hidden=true; return; }
+  if(!list.length && !previews.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; if(more) more.hidden=true; return; }
   const collapsed = !matchExpanded && list.length>MATCH_LIMIT;
   const view = collapsed ? list.slice(0,MATCH_LIMIT) : list;
-  el.innerHTML = view.map(matchCardHTML).join('');
+  let html = view.map(matchCardHTML).join('');
+  if(previews.length){
+    const phs = [...new Set(previews.map(p=>p.phase))].map(p=>KO_PHASE_LABEL[p]||p);
+    const nome = phs.length===1 ? phs[0] : 'Próxima fase';
+    html += `<div class="match-note">🔧 <b>${nome} em montagem</b> — cada confronto abaixo se define quando os dois jogos que o alimentam terminam.</div>`;
+    html += previews.map(previewCardHTML).join('');
+  }
+  el.innerHTML = html;
   if(more){
     if(collapsed){ more.hidden=false; more.textContent=`Ver todos os ${list.length} jogos ▾`; }
     else if(matchExpanded && list.length>MATCH_LIMIT){ more.hidden=false; more.textContent='Recolher ▴'; }
