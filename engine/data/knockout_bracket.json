@@ -208,6 +208,13 @@
       "away": "Noruega",
       "kickoff": "2026-07-05T20:00Z",
       "special": false
+    },
+    {
+      "slot": "R16-01",
+      "home": "Paraguai",
+      "away": "França",
+      "kickoff": "2026-07-04T21:00Z",
+      "special": false
     }
   ]
 }
