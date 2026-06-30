@@ -2,7 +2,7 @@ slot,home_score,away_score,status,special,lock
 R32-03,0,1,finished,,
 R32-09,2,1,finished,,
 R32-01,1,1,finished,sim,
-R32-04,,,scheduled,,
+R32-04,0,0,live,,
 R32-10,,,scheduled,,
 R32-02,,,scheduled,,
 R32-11,,,scheduled,,
