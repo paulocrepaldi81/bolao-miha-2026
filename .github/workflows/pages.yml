@@ -15,9 +15,12 @@ permissions:
   pages: write
   id-token: write
 
+# MESMO grupo do atualiza-placar.yml: como os dois publicam no ambiente github-pages, precisam
+# compartilhar o grupo pra NUNCA rodar ao mesmo tempo (fim das colisões "deploy failed in 6s").
+# cancel-in-progress:false → ficam em FILA; nenhum cancela o robô no meio do trabalho.
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
 
 jobs:
   deploy:

@@ -29,9 +29,11 @@ permissions:
 
 # cancel-in-progress:false → os runs ficam EM FILA e rodam UM DE CADA VEZ. Como nunca há
 # dois ativos ao mesmo tempo, é IMPOSSÍVEL dois pushes colidirem (a raiz da corrida).
-# Combinado com o push resiliente abaixo, a publicação fica à prova de erro.
+# GRUPO COMPARTILHADO com o pages.yml: os DOIS publicam no MESMO ambiente github-pages, então
+# precisam do MESMO grupo de concorrência pra nunca rodar simultaneamente (o Pages só aceita 1
+# deploy por vez — senão dá "deploy failed in 6s"). Com o push resiliente abaixo, fica à prova de erro.
 concurrency:
-  group: atualiza-placar
+  group: github-pages
   cancel-in-progress: false
 
 jobs:
