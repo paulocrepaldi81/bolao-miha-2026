@@ -111,3 +111,38 @@ def test_prazo_por_jogo_trava_so_o_slot_de_hoje():
 if __name__ == "__main__":
     import pytest
     raise SystemExit(pytest.main([os.path.abspath(__file__), "-q"]))
+
+
+def test_cross_check_ignora_penaltis_no_KO(tmp_path, monkeypatch):
+    """Regressão: jogo de mata-mata decidido nos pênaltis NÃO pode gerar divergência falsa.
+    A football-data soma os pênaltis no fullTime (1×1 + 3×4 = 4×5); como nosso placar de KO fica
+    empatado (prorrogação), o cross_check deve PULAR o jogo. Jogo de KO normal segue conferindo."""
+    import json, catalog, fetch_results
+    import cross_check as CC
+    data = tmp_path / "data"; data.mkdir()
+    (data / "knockout_results.csv").write_text(
+        "slot,home_score,away_score,status,special,lock\n"
+        "R32-01,1,1,finished,,\n"      # pênaltis (empate na prorrogação) -> deve ser PULADO
+        "R32-09,2,1,finished,,\n",     # normal -> deve conferir e bater
+        encoding="utf-8")
+    (data / "knockout_bracket.json").write_text(json.dumps({"R32": [
+        {"slot": "R32-01", "home": "Alemanha", "away": "Paraguai"},
+        {"slot": "R32-09", "home": "Brasil", "away": "Japão"}]}), encoding="utf-8")
+    monkeypatch.setattr(CC, "HERE", str(tmp_path))
+    monkeypatch.setattr(CC, "OUT", str(data / "cross_check.json"))
+    monkeypatch.setenv("FOOTBALL_DATA_TOKEN", "x")
+    monkeypatch.setattr(catalog, "get_catalog", lambda *a, **k: [])
+    monkeypatch.setattr(fetch_results, "load_results", lambda *a, **k: ({}, None))
+    monkeypatch.setattr(CC, "fetch_football_data", lambda t: {"matches": [
+        {"homeTeam": {"name": "Germany"}, "awayTeam": {"name": "Paraguay"},
+         "status": "FINISHED", "score": {"fullTime": {"home": 4, "away": 5}}},   # 1×1 + pênaltis 3×4
+        {"homeTeam": {"name": "Brazil"}, "awayTeam": {"name": "Japan"},
+         "status": "FINISHED", "score": {"fullTime": {"home": 2, "away": 1}}}]})  # normal: bate
+    try:
+        CC.main()              # main() termina com sys.exit(0) — o resultado vai no arquivo
+    except SystemExit:
+        pass
+    rep = json.load(open(data / "cross_check.json", encoding="utf-8"))
+    assert rep.get("status") != "divergencia"
+    ids = [d.get("match_id") for d in rep.get("discrepancias", rep.get("discrepancies", []))]
+    assert "R32-01" not in ids           # pênalti: pulado, nada de divergência falsa
