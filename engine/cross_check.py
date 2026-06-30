@@ -56,10 +56,12 @@ def main():
                             "match_id": e["slot"], "home": e["home"], "away": e["away"]}
     except Exception:
         pass
+    ko_slots = set()
     try:
         for r in csv.DictReader(open(os.path.join(HERE, "data", "knockout_results.csv"),
                                      newline="", encoding="utf-8")):
             if r.get("slot"):
+                ko_slots.add(r["slot"])
                 results[r["slot"]] = {"status": r.get("status"), "home_score": r.get("home_score"),
                                       "away_score": r.get("away_score"), "lock": r.get("lock", "")}
     except Exception:
@@ -103,6 +105,12 @@ def main():
         # derrubar a conferência (int() abaixo) — o módulo promete nunca derrubar o pipeline.
         our_finished = (our_status == "finished"
                         and str(hs).strip().isdigit() and str(as_).strip().isdigit())
+        # MATA-MATA decidido nos PÊNALTIS: nosso placar fica EMPATADO (vale a prorrogação), mas a
+        # football-data SOMA os pênaltis no fullTime (ex.: 1×1 + 3×4 = 4×5) → comparar daria
+        # divergência FALSA. Como jogo de KO não acaba empatado, placar igual = foi pênalti →
+        # não confere (o pênalti não conta no bolão de qualquer forma). Evita alerta à toa.
+        if mid in ko_slots and our_finished and int(hs) == int(as_):
+            continue
         # só compara quando AS DUAS fontes têm placar real; senão a 2ª ainda está apurando
         if our_finished and fd["finished"] and fd["has_score"]:
             compared += 1
