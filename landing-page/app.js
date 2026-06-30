@@ -988,21 +988,28 @@ function previewCardHTML(pv){
 let matchExpanded=false;
 const MATCH_LIMIT=9;   // mostra ~3 linhas; o resto fica atrás de "Ver todos" (anti-scroll)
 function renderMatches(filter){
-  const list = (DATA.matches||[]).filter(m=>m.status===filter)
-    .sort((a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0));
+  const sortK = (a,b)=>new Date(a.kickoff_sao_paulo||0)-new Date(b.kickoff_sao_paulo||0);
+  let list = (DATA.matches||[]).filter(m=>m.status===filter).sort(sortK);
   const previews = filter==='scheduled' ? nextPhasePreview() : [];
+  // A próxima fase vira UM grupo só: os confrontos JÁ definidos dela (ex.: Canadá × Marrocos)
+  // saem da lista cronológica (onde ficavam soterrados, por serem mais à frente) e aparecem
+  // JUNTO dos "em montagem" — assim a foto das oitavas fica completa num lugar só.
+  const montPhases = new Set(previews.map(p=>p.phase));
+  const resolvedNext = list.filter(m=>m.phase && montPhases.has(m.phase)).sort(sortK);
+  if(resolvedNext.length) list = list.filter(m=>!(m.phase && montPhases.has(m.phase)));
   const el = document.getElementById('matchList');
   const more = document.getElementById('matchMore');
   const empty = filter==='scheduled' ? 'Sem próximos jogos no momento.' : 'Nenhum jogo encerrado ainda.';
-  if(!list.length && !previews.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; if(more) more.hidden=true; return; }
+  if(!list.length && !previews.length && !resolvedNext.length){ el.innerHTML = `<div class="mcard" style="grid-column:1/-1;text-align:center;color:var(--ink-faint)">${empty}</div>`; if(more) more.hidden=true; return; }
   const collapsed = !matchExpanded && list.length>MATCH_LIMIT;
   const view = collapsed ? list.slice(0,MATCH_LIMIT) : list;
   let html = view.map(matchCardHTML).join('');
-  if(previews.length){
-    const phs = [...new Set(previews.map(p=>p.phase))].map(p=>KO_PHASE_LABEL[p]||p);
+  if(resolvedNext.length || previews.length){
+    const phs = [...new Set([...montPhases, ...resolvedNext.map(m=>m.phase)])].map(p=>KO_PHASE_LABEL[p]||p);
     const nome = phs.length===1 ? phs[0] : 'Próxima fase';
-    html += `<div class="match-note">🔧 <b>${nome} em montagem</b> — cada confronto abaixo se define quando os dois jogos que o alimentam terminam.</div>`;
-    html += previews.map(previewCardHTML).join('');
+    html += `<div class="match-note">🔧 <b>${nome}</b> — os confrontos já definidos aparecem aqui; os outros se montam conforme os jogos terminam.</div>`;
+    html += resolvedNext.map(matchCardHTML).join('');   // já definidos (ex.: Canadá × Marrocos)
+    html += previews.map(previewCardHTML).join('');      // ainda em montagem
   }
   el.innerHTML = html;
   if(more){
