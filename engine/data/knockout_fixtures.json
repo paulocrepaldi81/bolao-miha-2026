@@ -36,8 +36,8 @@
   "status": "live",
   "winner": null,
   "decided_by": null,
-  "pen_home": null,
-  "pen_away": null
+  "pen_home": 2,
+  "pen_away": 2
  },
  "R32-10": {
   "home": "Costa do Marfim",
