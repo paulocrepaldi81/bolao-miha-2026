@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-29T21:25:20.126007-03:00",
+  "checked_at": "2026-06-29T21:30:25.558588-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
@@ -11,7 +11,7 @@
       "match_id": "R32-01",
       "teams": "Alemanha x Paraguai",
       "primaria": "1x1  (ESPN)",
-      "secundaria": "5x6  (football-data)",
+      "secundaria": "4x5  (football-data)",
       "lock": false
     }
   ],
