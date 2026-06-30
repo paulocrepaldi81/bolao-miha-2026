@@ -962,15 +962,26 @@ function nextPhasePreview(){
   }
   return out;
 }
+// rótulo de UM lado do confronto futuro: se o jogo alimentador já tem vencedor, mostra o time
+// REAL (com bandeira) — resolução PARCIAL; senão "Vencedor/Perdedor de A × B". 3º lugar = perdedor.
+function koSide(feed, losers){
+  if(!feed) return {label:'—', team:null};
+  if(feed.winner){
+    const team = losers ? (feed.winner===feed.home_team ? feed.away_team : feed.home_team) : feed.winner;
+    return {label:team, team};
+  }
+  return {label:`${losers?'Perdedor':'Vencedor'} de ${feed.home_team} × ${feed.away_team}`, team:null};
+}
 function previewCardHTML(pv){
-  const verb = pv.losers ? 'Perdedor' : 'Vencedor';
-  const a = `${verb} de ${pv.f1.home_team} × ${pv.f1.away_team}`;
-  const b = `${verb} de ${pv.f2.home_team} × ${pv.f2.away_team}`;
+  const a = koSide(pv.f1, pv.losers), b = koSide(pv.f2, pv.losers);
+  const side = s => `<div class="team ${s.team?'':'team-tbd'}"><span>${s.team?flag(s.team):''}${esc(s.label)}</span></div>`;
+  const n = (a.team?1:0) + (b.team?1:0);
+  const foot = n===2 ? '🔧 confronto definido' : n===1 ? '🔧 já tem um lado — aguarda o outro classificado'
+                                                        : '🔧 se define quando esses dois jogos terminam';
   return `<div class="mcard mcard-tbd">
     <div class="top"><span class="grp">${KO_PHASE_LABEL[pv.phase]||pv.phase}</span><span class="chip chip-sched">A definir</span></div>
-    <div class="team team-tbd"><span>${esc(a)}</span></div>
-    <div class="team team-tbd"><span>${esc(b)}</span></div>
-    <div class="foot"><span>🔧 se define quando esses dois jogos terminam</span></div>
+    ${side(a)}${side(b)}
+    <div class="foot"><span>${foot}</span></div>
   </div>`;
 }
 

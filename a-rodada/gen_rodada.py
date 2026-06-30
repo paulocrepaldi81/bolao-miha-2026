@@ -276,8 +276,10 @@ def _artilharia_top3():
 
 
 def _proxima_fase(next_round, pairs):
-    """'Quem vencer A×B pega o vencedor de C×D nas oitavas' — do slot-irmão no chaveamento."""
+    """'Quem vencer A×B pega o vencedor de C×D nas oitavas' — do slot-irmão no chaveamento.
+    RESOLUÇÃO PARCIAL: se o jogo irmão JÁ foi decidido, mostra o time que passou (não 'vencedor de…')."""
     bracket = _load_json(os.path.join(ENG_DATA, "knockout_bracket.json"), {})
+    fixtures = _load_json(os.path.join(ENG_DATA, "knockout_fixtures.json"), {})
     for j in next_round:
         e = pairs.get(frozenset((j["home"], j["away"])))
         if not e or "-" not in str(e.get("slot", "")):
@@ -289,8 +291,11 @@ def _proxima_fase(next_round, pairs):
         if not s:
             continue
         nxt = _PHASE_NEXT.get(rnd, "próxima fase")
-        return (f"Quem vencer {flag(j['home'])} {j['home']} × {j['away']} {flag(j['away'])} pega o "
-                f"vencedor de {flag(s['home'])} {s['home']} × {s['away']} {flag(s['away'])} nas <b>{nxt}</b>.")
+        win = fixtures.get(sib, {}).get("winner")    # irmão já decidido? mostra o time que passou
+        adv = (f"{flag(win)} {win}" if win
+               else f"o vencedor de {flag(s['home'])} {s['home']} × {s['away']} {flag(s['away'])}")
+        return (f"Quem vencer {flag(j['home'])} {j['home']} × {j['away']} {flag(j['away'])} "
+                f"pega {adv} nas <b>{nxt}</b>.")
     return None
 
 
