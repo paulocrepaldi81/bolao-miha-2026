@@ -33,11 +33,11 @@
   "home": "Holanda",
   "away": "Marrocos",
   "kickoff": "2026-06-30T01:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Marrocos",
+  "decided_by": "pen",
   "pen_home": 2,
-  "pen_away": 2
+  "pen_away": 3
  },
  "R32-10": {
   "home": "Costa do Marfim",
