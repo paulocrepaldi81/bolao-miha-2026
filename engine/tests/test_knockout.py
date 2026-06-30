@@ -146,3 +146,36 @@ def test_cross_check_ignora_penaltis_no_KO(tmp_path, monkeypatch):
     assert rep.get("status") != "divergencia"
     ids = [d.get("match_id") for d in rep.get("discrepancias", rep.get("discrepancies", []))]
     assert "R32-01" not in ids           # pênalti: pulado, nada de divergência falsa
+
+
+def test_jogos_especiais_batem_com_a_planilha():
+    """Regressão CRÍTICA: os jogos ESPECIAIS (verde = 5 pts) configurados no sistema têm que bater
+    com a planilha oficial. O marcador é a cor VERDE no BLOCO do confronto (célula do time mandante
+    e bordas) — NÃO só a célula de placar (foi esse o erro que deixou R32-05 e R32-10 passarem)."""
+    import json, openpyxl, resolve_bracket
+    from catalog import _solid_fill
+    HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))      # .../engine
+    ROOT = os.path.dirname(HERE)
+    wb = openpyxl.load_workbook(os.path.join(ROOT, "Bolão Miha 2026 Modelo v2.1.xlsx"), data_only=True)
+    ws = wb["Mata-Mata"]
+    GREEN = "FFDBFC14"
+    def green_rows(rows, cols):
+        return {i for i, r in enumerate(rows, 1)
+                if any(_solid_fill(ws.cell(row=r, column=c)) == GREEN for c in cols)}
+    plan = set()
+    for fmt, cols, rows in [
+        ("R32-{:02d}", range(1, 7),   [3,7,11,15,19,23,27,31,35,39,43,47,51,55,59,63]),
+        ("R16-{:02d}", range(7, 13),  [5,13,21,29,37,45,53,61]),
+        ("QF-{:02d}",  range(13, 19), [9,25,41,57]),
+        ("SF-{:02d}",  range(19, 25), [17,49]),
+    ]:
+        for i in green_rows(rows, cols):
+            plan.add(fmt.format(i))
+    fincols = range(25, 31)   # Y..AD: FINAL (linha 24, normal) e DISPUTA 3º LUGAR (linha 34, especial)
+    if any(_solid_fill(ws.cell(row=24, column=c)) == GREEN for c in fincols): plan.add("FIN")
+    if any(_solid_fill(ws.cell(row=34, column=c)) == GREEN for c in fincols): plan.add("TER")
+    # o que o SISTEMA considera especial: bracket (R32) + resolve_bracket.SPECIAL_SLOTS (pós-R32)
+    bracket = json.load(open(os.path.join(HERE, "data", "knockout_bracket.json"), encoding="utf-8"))
+    sistema = {e["slot"] for e in bracket.get("R32", []) if e.get("special")} | set(resolve_bracket.SPECIAL_SLOTS)
+    assert plan == sistema, f"planilha={sorted(plan)} != sistema={sorted(sistema)}"
+    assert len(plan) == 12, f"esperado 12 especiais, achei {len(plan)}: {sorted(plan)}"

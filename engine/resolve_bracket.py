@@ -24,6 +24,10 @@ FIX = os.path.join(DATA, "knockout_fixtures.json")
 
 NEXT = {"R32": "R16", "R16": "QF", "QF": "SF", "SF": "FIN"}
 N_SLOTS = {"R16": 8, "QF": 4, "SF": 2, "FIN": 1}
+# Jogos ESPECIAIS (verde = 5 pts) das fases pós-R32, lidos da planilha v2.1 (cor da célula do time
+# mandante: H/N/T/Z). A FINAL é normal; a DISPUTA DE 3º LUGAR é especial. Os especiais do R32 ficam
+# direto no knockout_bracket.json. Mantido como conjunto fixo porque o chaveamento da planilha não muda.
+SPECIAL_SLOTS = {"R16-02", "R16-04", "R16-06", "R16-08", "QF-02", "QF-04", "SF-02", "TER"}
 
 
 def _load(path, d):
@@ -80,7 +84,7 @@ def resolve():
     for nxt, slot, home, away in new:
         bracket.setdefault(nxt, []).append(
             {"slot": slot, "home": home, "away": away,
-             "kickoff": kicks.get(frozenset((home, away))), "special": False})
+             "kickoff": kicks.get(frozenset((home, away))), "special": slot in SPECIAL_SLOTS})
     return bracket, new
 
 
