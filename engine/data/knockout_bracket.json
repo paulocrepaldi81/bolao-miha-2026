@@ -201,6 +201,13 @@
       "away": "Marrocos",
       "kickoff": "2026-07-04T17:00Z",
       "special": false
+    },
+    {
+      "slot": "R16-05",
+      "home": "Brasil",
+      "away": "Noruega",
+      "kickoff": "2026-07-05T20:00Z",
+      "special": false
     }
   ]
 }

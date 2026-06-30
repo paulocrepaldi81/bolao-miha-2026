@@ -43,9 +43,9 @@
   "home": "Costa do Marfim",
   "away": "Noruega",
   "kickoff": "2026-06-30T17:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Noruega",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
