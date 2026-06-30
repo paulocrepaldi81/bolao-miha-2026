@@ -169,6 +169,16 @@
   "pen_home": null,
   "pen_away": null
  },
+ "R16-01": {
+  "home": "Paraguai",
+  "away": "França",
+  "kickoff": "2026-07-04T21:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
  "R16-05": {
   "home": "Brasil",
   "away": "Noruega",
