@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-06-30T01:20:24.805411-03:00",
+  "checked_at": "2026-06-30T01:25:21.889742-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
@@ -18,7 +18,7 @@
       "match_id": "R32-04",
       "teams": "Holanda x Marrocos",
       "primaria": "1x1  (ESPN)",
-      "secundaria": "3x4  (football-data)",
+      "secundaria": "4x4  (football-data)",
       "lock": false
     }
   ],
