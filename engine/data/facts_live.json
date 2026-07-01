@@ -36,6 +36,11 @@
         "equipe": "Marrocos"
       },
       {
+        "nome": "Ismaïla Sarr",
+        "gols": 4,
+        "equipe": "Senegal"
+      },
+      {
         "nome": "Ousmane Dembélé",
         "gols": 4,
         "equipe": "França"
@@ -64,11 +69,6 @@
         "nome": "Elijah Just",
         "gols": 3,
         "equipe": "Nova Zelândia"
-      },
-      {
-        "nome": "Ismaïla Sarr",
-        "gols": 3,
-        "equipe": "Senegal"
       },
       {
         "nome": "Johan Manzambi",
