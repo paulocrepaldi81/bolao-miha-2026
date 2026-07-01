@@ -242,24 +242,42 @@ def _short_name(nome):
     return f"{parts[0][0]}. {parts[-1]}" if len(parts) >= 2 else (nome or "?")
 
 
-def _artil_row(medal, nome, team, gols, gmax):
-    pct = int(gols / gmax * 100) if gmax else 0
-    bar = (f'<span style="flex:0 0 64px;height:8px;border-radius:5px;background:rgba(244,196,48,.18);'
-           f'overflow:hidden;display:inline-block"><span style="display:block;height:100%;width:{pct}%;'
-           f'background:#f4c430;border-radius:5px"></span></span>')
-    return (f'<div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);'
-            f'border-radius:10px;padding:6px 12px">'
-            f'<span style="font-size:15px;flex:0 0 auto">{medal}</span>'
-            f'<span style="flex:0 0 22px;text-align:center">{flag(team) if team else ""}</span>'
-            f'<span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
-            f'font-size:14px;font-weight:600">{_short_name(nome)}</span>{bar}'
-            f'<span style="font-family:Anton,sans-serif;font-size:18px;min-width:20px;text-align:right;'
-            f'color:#f4c430">{gols}</span></div>')
+def _artil_chip(medal, nome, team, gols):
+    # chip vertical compacto: medalha em cima, bandeira + nº de gols (herói) no meio, nome embaixo.
+    return (f'<div style="flex:1 1 0;min-width:0;background:rgba(255,255,255,.06);border-radius:11px;'
+            f'padding:9px 8px 8px;text-align:center;border-top:2px solid rgba(244,196,48,.35)">'
+            f'<div style="font-size:14px;line-height:1;margin-bottom:4px">{medal}</div>'
+            f'<div style="display:flex;align-items:baseline;justify-content:center;gap:5px;margin-bottom:3px">'
+            f'<span style="font-size:16px">{flag(team) if team else ""}</span>'
+            f'<span style="font-family:Anton,sans-serif;font-size:24px;color:#f4c430;line-height:1">{gols}</span></div>'
+            f'<div style="font-size:11px;font-weight:600;color:#e9f5ef;white-space:nowrap;overflow:hidden;'
+            f'text-overflow:ellipsis">{_short_name(nome)}</div></div>')
+
+
+def _pf_linha(j, adv, nxt):
+    # AGENDA da próxima fase: "jogo do dia → adversário", seta dourada; ellipsis blinda nomes longos.
+    return (f'<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);'
+            f'border-radius:9px;padding:6px 11px">'
+            f'<span style="flex:1;min-width:0;font-size:12.5px;white-space:nowrap;overflow:hidden;'
+            f'text-overflow:ellipsis">{flag(j["home"])} {j["home"]} <span style="color:#7fae98">×</span> '
+            f'{j["away"]} {flag(j["away"])}</span>'
+            f'<span style="color:#f4c430;font-size:14px;flex:0 0 auto">→</span>'
+            f'<span style="flex:0 0 auto;font-size:11.5px;color:#bfe3d2;max-width:215px;white-space:nowrap;'
+            f'overflow:hidden;text-overflow:ellipsis">{adv} <span style="color:#f4c430;font-weight:600">'
+            f'{nxt}</span></span></div>')
+
+
+def _mini_cur(icon, titulo, body):
+    # card compacto p/ curiosidades lado a lado (mata-mata).
+    return (f'<div style="flex:1 1 0;min-width:0;background:rgba(244,196,48,.09);border-left:3px solid #f4c430;'
+            f'border-radius:8px;padding:8px 11px"><div style="font-family:Anton,sans-serif;font-size:10.5px;'
+            f'color:#f4c430;letter-spacing:.4px;margin-bottom:3px">{icon} {titulo}</div>'
+            f'<div style="font-size:12px;color:#e9f5ef;line-height:1.4">{body}</div></div>')
 
 
 def _subsec(txt):
-    return (f'<div style="font-family:Anton,sans-serif;font-size:13px;color:#f4c430;letter-spacing:.4px;'
-            f'margin:12px 0 6px;display:flex;align-items:center;gap:7px">{txt}'
+    return (f'<div style="font-family:Anton,sans-serif;font-size:12px;color:#f4c430;letter-spacing:.5px;'
+            f'margin:13px 0 6px;display:flex;align-items:center;gap:7px;text-transform:uppercase">{txt}'
             f'<span style="flex:1;height:1px;background:rgba(244,196,48,.20)"></span></div>')
 
 
@@ -270,16 +288,26 @@ def _card_curiosidade(txt):
             f'<div style="font-size:13px;color:#e9f5ef;line-height:1.45">{txt}</div></div>')
 
 
-def _artilharia_top3():
+def _artilharia_top(n=4):
     fl = _load_json(os.path.join(ENG_DATA, "facts_live.json"), {})
-    return ((fl.get("partials") or {}).get("scorers_top") or [])[:3]
+    return ((fl.get("partials") or {}).get("scorers_top") or [])[:n]
 
 
-def _proxima_fase(next_round, pairs):
-    """'Quem vencer A×B pega o vencedor de C×D nas oitavas' — do slot-irmão no chaveamento.
-    RESOLUÇÃO PARCIAL: se o jogo irmão JÁ foi decidido, mostra o time que passou (não 'vencedor de…')."""
+def _proxima_fase(next_round, pairs, last_round=None):
+    """Para CADA jogo do dia devolve (jogo, adversário na próxima fase, rótulo). RESOLUÇÃO PARCIAL:
+    se o jogo-IRMÃO já foi decidido, mostra o time que passou (bandeira); senão 'venc. C × D'.
+    Devolve lista (uma linha por jogo) ou None. Reaproveita a topologia de slot-irmão + winner."""
     bracket = _load_json(os.path.join(ENG_DATA, "knockout_bracket.json"), {})
     fixtures = _load_json(os.path.join(ENG_DATA, "knockout_fixtures.json"), {})
+    # Vencedores AO VIVO dos jogos JÁ ENCERRADOS (o pôster tem o resultado real via ESPN): cobre o
+    # caso das fixtures defasadas (ex.: México já ganhou mas o resolver ainda não rodou). Empate =
+    # pênaltis → não dá pra saber o vencedor daqui, cai no fixtures.
+    live_win = {}
+    for r in (last_round or []):
+        hs, as_ = r.get("hs"), r.get("as")
+        if hs is not None and as_ is not None and hs != as_:
+            live_win[frozenset((r["home"], r["away"]))] = r["home"] if hs > as_ else r["away"]
+    out = []
     for j in next_round:
         e = pairs.get(frozenset((j["home"], j["away"])))
         if not e or "-" not in str(e.get("slot", "")):
@@ -290,25 +318,30 @@ def _proxima_fase(next_round, pairs):
         s = next((x for x in bracket.get(rnd, []) if x.get("slot") == sib and x.get("home")), None)
         if not s:
             continue
-        nxt = _PHASE_NEXT.get(rnd, "próxima fase")
-        win = fixtures.get(sib, {}).get("winner")    # irmão já decidido? mostra o time que passou
+        nxt = _PHASE_NEXT.get(rnd, "próx. fase")
+        # irmão já decidido? mostra o time que passou — resultado AO VIVO na frente, fixtures atrás
+        win = live_win.get(frozenset((s["home"], s["away"]))) or fixtures.get(sib, {}).get("winner")
         adv = (f"{flag(win)} {win}" if win
-               else f"o vencedor de {flag(s['home'])} {s['home']} × {s['away']} {flag(s['away'])}")
-        return (f"Quem vencer {flag(j['home'])} {j['home']} × {j['away']} {flag(j['away'])} "
-                f"pega {adv} nas <b>{nxt}</b>.")
-    return None
+               else f"venc. {flag(s['home'])} {s['home']} × {s['away']} {flag(s['away'])}")
+        out.append((j, adv, nxt))
+    return out or None
 
 
-def _curiosidade_dia(next_round, up_day):
+def _curiosidades_dia(next_round, up_day, n=2, exclude=()):
+    """Até N curiosidades de seleções DISTINTAS entre os jogos do dia (escolha estável por dia)."""
     cur = _load_json(os.path.join(HERE, "curiosidades_selecoes.json"), {})
-    times = [t for j in next_round for t in (j["home"], j["away"]) if t in cur and not t.startswith("_")]
+    times = sorted({t for j in next_round for t in (j["home"], j["away"])
+                    if t in cur and not t.startswith("_") and t not in exclude})
     if not times:
-        return None
-    seed = int(hashlib.md5(str(up_day).encode()).hexdigest(), 16)   # escolha estável por dia
-    team = sorted(set(times))[seed % len(set(times))]
-    fatos = cur[team]
-    fato = fatos[seed % len(fatos)]
-    return f"{flag(team)} <b>{team}:</b> {fato}"
+        return []
+    seed = int(hashlib.md5(str(up_day).encode()).hexdigest(), 16)
+    off = seed % len(times)
+    rot = times[off:] + times[:off]                       # rotação estável por dia
+    out = []
+    for team in rot[:n]:
+        fatos = cur[team]
+        out.append(f"{flag(team)} <b>{team}:</b> {fatos[seed % len(fatos)]}")
+    return out
 
 
 _STAGE_RANK = {"final": 5, "semi-finals": 4, "third-place match": 4, "quarter-finals": 3,
@@ -324,9 +357,9 @@ def _card_h2h(titulo, body):
             f'<div style="font-size:13px;color:#e9f5ef;line-height:1.45">{body}</div></div>')
 
 
-def _h2h_dia(next_round):
-    """Card do confronto-direto em Copa MAIS MARCANTE entre os jogos de hoje (final>semi>recente).
-    Só os jogos cujo par tem histórico entram; se nenhum tiver, retorna None (cai no 'Você sabia?')."""
+def _h2h_dia_body(next_round):
+    """(título, linha) do confronto-direto de Copa MAIS MARCANTE entre os jogos de hoje
+    (final>semi>recente), ou None se nenhum par tiver histórico. O ícone ⚔️ é posto pelo card."""
     h2h = _load_json(os.path.join(HERE, "h2h_copa.json"), {})
     best = None
     for j in next_round:
@@ -340,9 +373,9 @@ def _h2h_dia(next_round):
     hs, as_ = (e["hs"], e["as"]) if e["home"] == j["home"] else (e["as"], e["hs"])
     stage = _STAGE_PT.get(e.get("stage"), "")
     quando = f"{stage} de {ano}" if (rank >= 4 and stage) else str(ano)
-    titulo = "⚔️ CLÁSSICO DE COPA" if rank >= 4 else "⚔️ JÁ SE ENFRENTARAM EM COPA"
+    titulo = "CLÁSSICO DE COPA" if rank >= 4 else "JÁ SE ENFRENTARAM"
     linha = f"{flag(j['home'])} {j['home']} <b>{hs}×{as_}</b> {j['away']} {flag(j['away'])} · {quando}"
-    return _card_h2h(titulo, linha)
+    return (titulo, linha)
 
 
 def curiosidades_html(last_round, next_round, up_day):
@@ -351,31 +384,41 @@ def curiosidades_html(last_round, next_round, up_day):
     pairs = _bracket_pairs()
     if next_round and is_knockout(next_round, pairs):
         blocks = []
+        # ARTILHARIA — faixa de chips compactos (top-4); medalha por RANK (empate divide: 6/6 = 🥇🥇)
         try:
-            top = _artilharia_top3()
+            top = _artilharia_top(4)
             if top:
-                gmax = top[0].get("gols") or 1
-                medals = ["🥇", "🥈", "🥉"]
-                rows = "".join(_artil_row(medals[i], t.get("nome"), t.get("equipe"), t.get("gols", 0), gmax)
-                               for i, t in enumerate(top[:3]))
-                blocks.append(_subsec("ARTILHARIA") + f'<div style="display:grid;gap:5px">{rows}</div>')
+                def _medal(i):
+                    g = top[i].get("gols", 0) or 0
+                    r = 1 + sum(1 for t in top if (t.get("gols", 0) or 0) > g)
+                    return {1: "🥇", 2: "🥈", 3: "🥉"}.get(r, "4º")
+                chips = "".join(_artil_chip(_medal(i), top[i].get("nome"), top[i].get("equipe"),
+                                            top[i].get("gols", 0)) for i in range(len(top)))
+                blocks.append(_subsec("⚽ Artilharia") +
+                              f'<div style="display:flex;gap:7px;align-items:stretch">{chips}</div>')
         except Exception:
             pass
+        # QUEM PEGA QUEM — grade cobrindo TODOS os jogos do dia (não só o 1º)
         try:
-            pf = _proxima_fase(next_round, pairs)
+            pf = _proxima_fase(next_round, pairs, last_round)
             if pf:
-                blocks.append(_subsec("🔜 PRÓXIMA FASE") +
-                              f'<div style="font-size:13px;color:#e9f5ef;line-height:1.5">{pf}</div>')
+                linhas = "".join(_pf_linha(j, adv, nxt) for j, adv, nxt in pf)
+                blocks.append(_subsec("🔜 Quem pega quem") +
+                              f'<div style="display:grid;gap:5px">{linhas}</div>')
         except Exception:
             pass
+        # DESTAQUES — 2 curiosidades: h2h de Copa (se houver) + você-sabia, ou 2 seleções distintas
         try:
-            # variação: o head-to-head de Copa ganha o slot quando existe; senão, "Você sabia?"
-            card = _h2h_dia(next_round)
-            if not card:
-                cd = _curiosidade_dia(next_round, up_day)
-                card = _card_curiosidade(cd) if cd else None
-            if card:
-                blocks.append(card)
+            cards = []
+            hb = _h2h_dia_body(next_round)
+            if hb:
+                cards.append(_mini_cur("⚔️", hb[0], hb[1]))
+                cards += [_mini_cur("💡", "VOCÊ SABIA?", c) for c in _curiosidades_dia(next_round, up_day, 1)]
+            else:
+                cards += [_mini_cur("💡", "VOCÊ SABIA?", c) for c in _curiosidades_dia(next_round, up_day, 2)]
+            if cards:
+                blocks.append(f'<div style="display:flex;gap:8px;align-items:stretch;margin-top:11px">'
+                              f'{"".join(cards)}</div>')
         except Exception:
             pass
         if blocks:

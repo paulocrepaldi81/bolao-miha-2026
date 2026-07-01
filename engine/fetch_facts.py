@@ -76,16 +76,13 @@ def fetch_espn_events():
                 id2pt[str(c.get("team", {}).get("id"))] = pt
             if not ok:
                 continue
-            m = pairs.get(frozenset(names))
-            if not m:
-                continue
             t = ev.get("status", {}).get("type", {})
             state = t.get("state")
-            events = []
+            # ARTILHARIA (ESPN = fonte completa): conta gols de QUALQUER jogo da Copa — grupo OU
+            # MATA-MATA — sem depender do catálogo de grupos (era aqui o bug: o mata-mata caía no
+            # 'continue' e os gols do KO nunca entravam). `scoringPlay` = gol de PARTIDA (pênalti no
+            # tempo conta; disputa por pênaltis não tem scoringPlay); gol contra NÃO conta.
             for det in comp.get("details", []):
-                # Artilharia (ESPN = fonte completa): conta gols de jogos que começaram (post/in);
-                # pênalti CONTA, gol contra NÃO conta pra ninguém. Usa só `scoringPlay` (sinal
-                # confiável) — evita o substring "goal" casar tipos como "Penalty - No Goal".
                 if state in ("post", "in") and det.get("scoringPlay") and not det.get("ownGoal"):
                     a0 = (det.get("athletesInvolved") or [{}])[0]
                     gnm = a0.get("displayName") or a0.get("shortName")
@@ -94,6 +91,12 @@ def fetch_espn_events():
                         rec = scorers.setdefault(gnm, {"goals": 0, "team": None})
                         rec["goals"] += 1
                         rec["team"] = rec["team"] or id2pt.get(gtid)
+            # LANCES (1º expulso / 1º gol contra) dependem do catálogo p/ mapear o match_id:
+            m = pairs.get(frozenset(names))
+            if not m:
+                continue
+            events = []
+            for det in comp.get("details", []):
                 if not (det.get("redCard") or det.get("ownGoal")):
                     continue
                 ath = (det.get("athletesInvolved") or [{}])[0]
