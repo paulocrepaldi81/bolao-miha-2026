@@ -73,9 +73,9 @@
   "home": "Inglaterra",
   "away": "RD Congo",
   "kickoff": "2026-07-01T16:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Inglaterra",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },

@@ -215,6 +215,13 @@
       "away": "França",
       "kickoff": "2026-07-04T21:00Z",
       "special": false
+    },
+    {
+      "slot": "R16-06",
+      "home": "México",
+      "away": "Inglaterra",
+      "kickoff": "2026-07-06T00:00Z",
+      "special": true
     }
   ]
 }
