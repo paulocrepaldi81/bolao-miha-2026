@@ -83,9 +83,9 @@
   "home": "Bélgica",
   "away": "Senegal",
   "kickoff": "2026-07-01T20:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Bélgica",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
