@@ -37381,5 +37381,362 @@
         "total": 123
       }
     }
+  },
+  {
+    "ts": "2026-07-01T15:15:24.046410-03:00",
+    "ranks": {
+      "Pati Mihalik": {
+        "rank": 1,
+        "total": 210
+      },
+      "VARíola dos Palpites": {
+        "rank": 2,
+        "total": 208
+      },
+      "Thiago Profili 1860": {
+        "rank": 3,
+        "total": 202
+      },
+      "Ticão": {
+        "rank": 4,
+        "total": 200
+      },
+      "Thiago Profili 1910": {
+        "rank": 5,
+        "total": 198
+      },
+      "Luis Luengo": {
+        "rank": 6,
+        "total": 196
+      },
+      "João Sergio": {
+        "rank": 7,
+        "total": 194
+      },
+      "Daniel Villar": {
+        "rank": 8,
+        "total": 193
+      },
+      "Pedro Marcondes": {
+        "rank": 9,
+        "total": 192
+      },
+      "Thiago Rosa": {
+        "rank": 9,
+        "total": 192
+      },
+      "Ricardo Mihalik": {
+        "rank": 11,
+        "total": 191
+      },
+      "Marcio Lauria 1": {
+        "rank": 12,
+        "total": 190
+      },
+      "Fred Paz": {
+        "rank": 13,
+        "total": 187
+      },
+      "Melhor Inimigo do Fred": {
+        "rank": 14,
+        "total": 186
+      },
+      "Vitor e Dani": {
+        "rank": 14,
+        "total": 186
+      },
+      "Pelé": {
+        "rank": 16,
+        "total": 185
+      },
+      "Profeta da Copa": {
+        "rank": 16,
+        "total": 185
+      },
+      "Só Te Vejo pelo Retrovisor": {
+        "rank": 18,
+        "total": 183
+      },
+      "Gab Miha Crep": {
+        "rank": 18,
+        "total": 183
+      },
+      "Gilvan": {
+        "rank": 18,
+        "total": 183
+      },
+      "Glauco Marcondes": {
+        "rank": 21,
+        "total": 182
+      },
+      "SD": {
+        "rank": 21,
+        "total": 182
+      },
+      "Zé Artur": {
+        "rank": 21,
+        "total": 182
+      },
+      "MP68": {
+        "rank": 24,
+        "total": 181
+      },
+      "Paulo Crepaldi - Cenário B": {
+        "rank": 24,
+        "total": 181
+      },
+      "Paulo Crepaldi - Codex": {
+        "rank": 24,
+        "total": 181
+      },
+      "Charles Miller": {
+        "rank": 24,
+        "total": 181
+      },
+      "Claudio Pasqualin 1": {
+        "rank": 24,
+        "total": 181
+      },
+      "João Mihalik": {
+        "rank": 29,
+        "total": 180
+      },
+      "Marcelo Morganti": {
+        "rank": 30,
+        "total": 179
+      },
+      "Guilherme Marcondes": {
+        "rank": 31,
+        "total": 178
+      },
+      "MENGO AREQUIPA": {
+        "rank": 31,
+        "total": 178
+      },
+      "Laura Mihalik": {
+        "rank": 33,
+        "total": 177
+      },
+      "San Lencina": {
+        "rank": 33,
+        "total": 177
+      },
+      "MMIFLY": {
+        "rank": 33,
+        "total": 177
+      },
+      "Renato Pasqualin": {
+        "rank": 33,
+        "total": 177
+      },
+      "Ric Mel": {
+        "rank": 33,
+        "total": 177
+      },
+      "Renato Kassab": {
+        "rank": 38,
+        "total": 176
+      },
+      "Nando Lorris": {
+        "rank": 38,
+        "total": 176
+      },
+      "André Melaragno": {
+        "rank": 40,
+        "total": 174
+      },
+      "Ivana Dalla Zanna": {
+        "rank": 41,
+        "total": 173
+      },
+      "Nelson Reis": {
+        "rank": 41,
+        "total": 173
+      },
+      "Ponti FC": {
+        "rank": 41,
+        "total": 173
+      },
+      "Melhor Amigo do Fred": {
+        "rank": 41,
+        "total": 173
+      },
+      "Signor Panini": {
+        "rank": 41,
+        "total": 173
+      },
+      "Gual Lencina": {
+        "rank": 41,
+        "total": 173
+      },
+      "Roberto Mihalik": {
+        "rank": 47,
+        "total": 171
+      },
+      "Marcio Lauria 2": {
+        "rank": 47,
+        "total": 171
+      },
+      "Rebecca Marcondes": {
+        "rank": 49,
+        "total": 169
+      },
+      "Pedro Mitev 2": {
+        "rank": 50,
+        "total": 168
+      },
+      "Ruy Monaco": {
+        "rank": 51,
+        "total": 167
+      },
+      "Paulo Ciasca": {
+        "rank": 52,
+        "total": 166
+      },
+      "Theo Reis": {
+        "rank": 52,
+        "total": 166
+      },
+      "Dani Cleim": {
+        "rank": 52,
+        "total": 166
+      },
+      "Mengão Malvadão": {
+        "rank": 55,
+        "total": 165
+      },
+      "Puglia": {
+        "rank": 56,
+        "total": 164
+      },
+      "Beto Ribeiro I": {
+        "rank": 56,
+        "total": 164
+      },
+      "Pedro Mitev 1": {
+        "rank": 56,
+        "total": 164
+      },
+      "Fabio Terzian": {
+        "rank": 56,
+        "total": 164
+      },
+      "MENGÃO TETRA": {
+        "rank": 56,
+        "total": 164
+      },
+      "Clarinha": {
+        "rank": 56,
+        "total": 164
+      },
+      "Claudio Pasqualin 2": {
+        "rank": 62,
+        "total": 163
+      },
+      "Tiago Okamoto": {
+        "rank": 63,
+        "total": 161
+      },
+      "Rmorganti": {
+        "rank": 63,
+        "total": 161
+      },
+      "Profeta": {
+        "rank": 63,
+        "total": 161
+      },
+      "Felipe Tadeu": {
+        "rank": 66,
+        "total": 160
+      },
+      "Leonardo Reis - Zebra": {
+        "rank": 66,
+        "total": 160
+      },
+      "FB": {
+        "rank": 68,
+        "total": 156
+      },
+      "Fla Mihalik": {
+        "rank": 69,
+        "total": 155
+      },
+      "Rafael Garcia": {
+        "rank": 69,
+        "total": 155
+      },
+      "Maradona": {
+        "rank": 69,
+        "total": 155
+      },
+      "Marina Mihalik": {
+        "rank": 72,
+        "total": 154
+      },
+      "Marcio Lauria 3": {
+        "rank": 73,
+        "total": 153
+      },
+      "Guiherme Reis": {
+        "rank": 73,
+        "total": 153
+      },
+      "André Pires": {
+        "rank": 75,
+        "total": 152
+      },
+      "Fernando Mihalik": {
+        "rank": 76,
+        "total": 150
+      },
+      "Grazi Marcondes": {
+        "rank": 76,
+        "total": 150
+      },
+      "Andrei Mitev": {
+        "rank": 78,
+        "total": 149
+      },
+      "PereiraP": {
+        "rank": 79,
+        "total": 147
+      },
+      "Náro": {
+        "rank": 79,
+        "total": 147
+      },
+      "Miha88": {
+        "rank": 81,
+        "total": 146
+      },
+      "Leonardo Reis - Hexa Vem Aí": {
+        "rank": 82,
+        "total": 144
+      },
+      "Beto Ribeiro II": {
+        "rank": 83,
+        "total": 139
+      },
+      "Rabelo": {
+        "rank": 83,
+        "total": 139
+      },
+      "PereiraB": {
+        "rank": 85,
+        "total": 134
+      },
+      "Tacito Andrade": {
+        "rank": 85,
+        "total": 134
+      },
+      "Reinaldo Ribeiro": {
+        "rank": 87,
+        "total": 130
+      },
+      "Inimigo do Acerto": {
+        "rank": 88,
+        "total": 120
+      }
+    }
   }
 ]
