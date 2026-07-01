@@ -26,6 +26,11 @@
         "equipe": "Noruega"
       },
       {
+        "nome": "Harry Kane",
+        "gols": 4,
+        "equipe": "Inglaterra"
+      },
+      {
         "nome": "Ismael Saibari",
         "gols": 4,
         "equipe": "Marrocos"
@@ -59,11 +64,6 @@
         "nome": "Elijah Just",
         "gols": 3,
         "equipe": "Nova Zelândia"
-      },
-      {
-        "nome": "Harry Kane",
-        "gols": 3,
-        "equipe": "Inglaterra"
       },
       {
         "nome": "Ismaïla Sarr",
