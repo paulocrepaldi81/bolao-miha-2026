@@ -169,6 +169,11 @@ jobs:
           path: landing-page
       - id: deployment
         uses: actions/deploy-pages@v4
+        timeout-minutes: 5          # se o backend do Pages travar, falha RÁPIDO (não 10 min)
+        continue-on-error: true     # deploy do Pages é NÃO-crítico: o placar do site vem do raw do
+                                    # GitHub (com cache-buster) e o COMMIT acima já publicou os dados.
+                                    # Um timeout transitório do Pages NÃO derruba o run (sem e-mail
+                                    # "All jobs failed"); o próximo ciclo (5 min) republica sozinho.
 
       # HEARTBEAT (dead-man's switch): pinga um monitor externo (ex.: healthchecks.io) DEPOIS de
       # publicar com sucesso. Se os pings PARAREM (robô parado, cron-job.org caído, workflow
