@@ -222,6 +222,13 @@
       "away": "Inglaterra",
       "kickoff": "2026-07-06T00:00Z",
       "special": true
+    },
+    {
+      "slot": "R16-04",
+      "home": "EUA",
+      "away": "Bélgica",
+      "kickoff": "2026-07-07T00:00Z",
+      "special": true
     }
   ]
 }
