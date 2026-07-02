@@ -198,5 +198,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "R16-04": {
+  "home": "EUA",
+  "away": "Bélgica",
+  "kickoff": "2026-07-07T00:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
