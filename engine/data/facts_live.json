@@ -41,6 +41,11 @@
         "equipe": "Senegal"
       },
       {
+        "nome": "Mikel Oyarzabal",
+        "gols": 4,
+        "equipe": "Espanha"
+      },
+      {
         "nome": "Ousmane Dembélé",
         "gols": 4,
         "equipe": "França"
@@ -79,11 +84,6 @@
         "nome": "Johan Manzambi",
         "gols": 3,
         "equipe": "Suíça"
-      },
-      {
-        "nome": "Jonathan David",
-        "gols": 3,
-        "equipe": "Canadá"
       }
     ]
   },
