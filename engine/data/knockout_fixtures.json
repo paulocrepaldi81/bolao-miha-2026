@@ -103,9 +103,9 @@
   "home": "Espanha",
   "away": "Áustria",
   "kickoff": "2026-07-02T19:00Z",
-  "status": "finished",
-  "winner": "Espanha",
-  "decided_by": "normal",
+  "status": "live",
+  "winner": null,
+  "decided_by": null,
   "pen_home": null,
   "pen_away": null
  },
