@@ -123,9 +123,9 @@
   "home": "Suíça",
   "away": "Argélia",
   "kickoff": "2026-07-03T03:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Suíça",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
