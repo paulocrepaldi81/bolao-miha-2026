@@ -133,9 +133,9 @@
   "home": "Austrália",
   "away": "Egito",
   "kickoff": "2026-07-03T18:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Egito",
+  "decided_by": "pen",
   "pen_home": 2,
   "pen_away": 4
  },
