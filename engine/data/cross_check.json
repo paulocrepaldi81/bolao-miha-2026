@@ -1,20 +1,12 @@
 {
-  "checked_at": "2026-07-02T22:25:20.430374-03:00",
+  "checked_at": "2026-07-02T22:30:32.178071-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
-  "status": "divergencia",
+  "status": "ok",
   "compared": 82,
-  "agree": 81,
-  "discrepancies": [
-    {
-      "match_id": "R32-05",
-      "teams": "Portugal x Croácia",
-      "primaria": "2x1  (ESPN)",
-      "secundaria": "2x2  (football-data)",
-      "lock": false
-    }
-  ],
+  "agree": 82,
+  "discrepancies": [],
   "resolvidas": [],
   "pendente_2a_fonte": []
 }
