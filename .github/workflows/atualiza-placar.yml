@@ -96,7 +96,11 @@ jobs:
         run: |
           python - <<'PY'
           import json, os
-          PERSIST = 3   # checagens consecutivas com a MESMA divergência antes de alertar
+          PERSIST = 6   # checagens (~30 min) com a MESMA divergência antes de alertar por e-mail.
+                        # 15 min (3) pegava glitch TRANSITÓRIO de uma fonte (ex.: football-data marcou
+                        # Portugal 2x2 vs ESPN 2x1, corrigiu sozinha em ~15 min) — barulho inútil, já
+                        # que a ESPN (primária) acerta. 30 min alerta só divergência TRAVADA (pede lock
+                        # manual). O banner do site já mostra a divergência enquanto ela durar.
           def load(p, d):
               try: return json.load(open(p, encoding="utf-8"))
               except Exception: return d
