@@ -4,21 +4,21 @@
     "mais_gols_jogo": "8 gols (Alemanha 7×1 Curaçao)",
     "mais_goleadora": "3 seleções com 10 gols: Alemanha, França, Holanda",
     "menos_vazada": "2 seleções ainda sem sofrer gol: Espanha, México",
-    "artilheiro_nome": "Empatados em 1º: 2 com 6 gols — Kylian Mbappé (França), Lionel Messi (Argentina)",
-    "artilheiro_equipe": "empate: Argentina, França (6 gols cada)",
-    "artilheiro_gols": "6 (parcial · 2 empatados)",
+    "artilheiro_nome": "Lionel Messi (Argentina) — 7 gol(s)",
+    "artilheiro_equipe": "Argentina",
+    "artilheiro_gols": "7 (parcial)",
     "equipe_1o_expulso": "África do Sul (Sphephelo Sithole, 49')",
     "equipe_1o_gol_contra": "Paraguai (Damián Bobadilla, 7')",
     "scorers_top": [
       {
+        "nome": "Lionel Messi",
+        "gols": 7,
+        "equipe": "Argentina"
+      },
+      {
         "nome": "Kylian Mbappé",
         "gols": 6,
         "equipe": "França"
-      },
-      {
-        "nome": "Lionel Messi",
-        "gols": 6,
-        "equipe": "Argentina"
       },
       {
         "nome": "Erling Haaland",
