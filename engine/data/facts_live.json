@@ -66,6 +66,11 @@
         "equipe": "Holanda"
       },
       {
+        "nome": "Cristiano Ronaldo",
+        "gols": 3,
+        "equipe": "Portugal"
+      },
+      {
         "nome": "Deniz Undav",
         "gols": 3,
         "equipe": "Alemanha"
@@ -79,11 +84,6 @@
         "nome": "Folarin Balogun",
         "gols": 3,
         "equipe": "EUA"
-      },
-      {
-        "nome": "Johan Manzambi",
-        "gols": 3,
-        "equipe": "Suíça"
       }
     ]
   },
