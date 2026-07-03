@@ -229,6 +229,13 @@
       "away": "Bélgica",
       "kickoff": "2026-07-07T00:00Z",
       "special": true
+    },
+    {
+      "slot": "R16-03",
+      "home": "Portugal",
+      "away": "Espanha",
+      "kickoff": null,
+      "special": false
     }
   ]
 }
