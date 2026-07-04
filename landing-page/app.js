@@ -165,7 +165,14 @@ const TAGLINES = [
   "No bolão da família não tem tigrinho: tem tabela, vergonha e zoeira.",
   "Assistiu pela CazéTV, gritou com o Casimiro, mas na hora do palpite gelou.",
   "Sua confiança é igual narrador na abertura: jurou que era mascote, era Labubu.",
-  "O cara entrou no ônibus agora, nem tá em pé e já quer sentar na janela."
+  "O cara entrou no ônibus agora, nem tá em pé e já quer sentar na janela.",
+  // referências do mata-mata 2026 (Vozinha, meme Vini Jr/Haaland) — trocar à vontade
+  "O Vozinha tem 40 anos e não vaza nada. Seu palpite tem 3 dias e já afundou.",
+  "Aos 40 anos o Vozinha virou sensação da Copa. Aos 3 acertos, você virou piada do grupo.",
+  "Vini Jr e Haaland recriaram meme antes do jogo. Seu palpite recriou foi vexame.",
+  "Ninguém segura o Vozinha no gol. Ninguém segura a zebra que virou sua tabela.",
+  "Sua confiança começou igual parede do Vozinha. Seu resultado terminou igual sua torcida: vazado.",
+  "JÁ ERA! Seu palpite não foi eliminado — ele pediu pra se aposentar de vergonha."
 ];
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026

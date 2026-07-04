@@ -20,7 +20,7 @@
  * Os confrontos já vêm com as SELEÇÕES REAIS das oitavas, na ordem/mando dos slots R16-01..08.
  * NÃO reordene os jogos (o "Jogo N" tem que casar com o slot R16-NN).
  *
- * REGRA DE PRAZO (combinada): prazo ÚNICO — todas as oitavas fecham SÁBADO 04/07 ao MEIO-DIA
+ * REGRA DE PRAZO (combinada): prazo ÚNICO — todas as oitavas fecham SÁBADO 04/07 ÀS 13H (GMT-3, Brasília)
  * (antes do 1º jogo, que é 14h). Quem não mexer num jogo (branco ou "Manter meu palpite original")
  * fica com o placar da APOSTA ORIGINAL da planilha. A trava real é feita pelo robô.
  */
@@ -32,7 +32,7 @@ var FASE = 'Mata-mata · Oitavas de final';
 var PASTA_ID = '16F9MjNdz7dIZqmbZjNOSxCEkj1K9-nph';
 
 // Confrontos REAIS das oitavas — ordem = slot R16-NN, home = mandante (orientação do bracket).
-// >>> O Jogo 8 (away) sai HOJE no Colômbia × Gana — troque 'Colômbia ou Gana' pelo vencedor. <<<
+// Os 8 já estão definitivos (o R32 encerrou; Colômbia bateu Gana e pegou a Suíça no Jogo 8).
 var MATCHES = [
   { n: 1, home: 'Paraguai',   away: 'França',          quando: '04/07 · 18h00' }, // R16-01
   { n: 2, home: 'Canadá',     away: 'Marrocos',        quando: '04/07 · 14h00' }, // R16-02 (⭐ especial)
@@ -87,7 +87,7 @@ function criarFormularioR16() {
     '✅ Para cada jogo, escolha o placar OU deixe "Manter meu palpite original". O que você NÃO mexer ' +
     'fica com o placar que você já tinha na sua aposta da planilha — ou seja, NÃO precisa preencher tudo, ' +
     'só o que quiser mudar.\n\n' +
-    '⏰ PRAZO: todas as oitavas fecham SÁBADO 04/07 ao MEIO-DIA (antes do 1º jogo). Pode reenviar ' +
+    '⏰ PRAZO: todas as oitavas fecham SÁBADO 04/07 ÀS 13H — GMT-3, Brasília (antes do 1º jogo, 14h). Pode reenviar ' +
     'quantas vezes quiser até lá: vale o último envio dentro do prazo.\n\n' +
     '📝 Tem mais de uma aposta? Preencha UM formulário para cada apelido.\n\n' +
     '⚽ Os placares contam até o FIM DA PRORROGAÇÃO — pênaltis não dão pontos.'
@@ -109,7 +109,7 @@ function criarFormularioR16() {
   MATCHES.forEach(function (m) {
     form.addListItem()
       .setTitle('Jogo ' + m.n + ' — ' + m.home + ' × ' + m.away)
-      .setHelpText('Placar ' + m.home + ' (casa) × ' + m.away + '. Fecha sáb 04/07 ao meio-dia. ' +
+      .setHelpText('Placar ' + m.home + ' (casa) × ' + m.away + '. Fecha sáb 04/07 às 13h (GMT-3). ' +
                    'Em branco ou "Manter meu palpite original" = fica com seu palpite original.')
       .setChoiceValues(sl)
       .setRequired(false);
@@ -121,7 +121,7 @@ function criarFormularioR16() {
 
   form.setConfirmationMessage(
     '✅ Recebido! Seus palpites das oitavas estão salvos.\n' +
-    'Quer mudar algo antes de sábado ao meio-dia? Use o MESMO link e edite sua resposta — vale a última.\n' +
+    'Quer mudar algo antes de sábado às 13h? Use o MESMO link e edite sua resposta — vale a última.\n' +
     'Tem outra aposta? Preencha de novo com o outro apelido.'
   );
 

@@ -47,7 +47,7 @@ O robô já faz o trabalho de **dados** sozinho; o que sobra é **criar o Form**
 ## Prazos combinados (BRT)
 | Fase | Prazo padrão |
 |---|---|
-| Oitavas | meio-dia de sáb 04/07 |
+| Oitavas | 13h de sáb 04/07 |
 | Quartas | 23h de 08/07 |
 | Semis | 23h de 13/07 |
 | 3º + Final | 23h de 17/07 |
