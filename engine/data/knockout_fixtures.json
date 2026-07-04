@@ -228,5 +228,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "R16-08": {
+  "home": "Suíça",
+  "away": "Colômbia",
+  "kickoff": "2026-07-07T20:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
