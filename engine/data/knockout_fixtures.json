@@ -218,5 +218,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "R16-07": {
+  "home": "Argentina",
+  "away": "Egito",
+  "kickoff": "2026-07-07T16:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
