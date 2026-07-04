@@ -1,20 +1,12 @@
 {
-  "checked_at": "2026-07-04T00:55:18.645728-03:00",
+  "checked_at": "2026-07-04T01:00:38.097879-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
-  "status": "divergencia",
+  "status": "ok",
   "compared": 85,
-  "agree": 84,
-  "discrepancies": [
-    {
-      "match_id": "R32-16",
-      "teams": "Colômbia x Gana",
-      "primaria": "1x0  (ESPN)",
-      "secundaria": "2x0  (football-data)",
-      "lock": false
-    }
-  ],
+  "agree": 85,
+  "discrepancies": [],
   "resolvidas": [],
   "pendente_2a_fonte": []
 }
