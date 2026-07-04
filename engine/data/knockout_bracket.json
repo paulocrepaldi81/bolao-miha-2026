@@ -251,5 +251,14 @@
       "kickoff": "2026-07-07T20:00Z",
       "special": true
     }
+  ],
+  "QF": [
+    {
+      "slot": "QF-01",
+      "home": "França",
+      "away": "Marrocos",
+      "kickoff": null,
+      "special": false
+    }
   ]
 }
