@@ -236,6 +236,13 @@
       "away": "Espanha",
       "kickoff": null,
       "special": false
+    },
+    {
+      "slot": "R16-07",
+      "home": "Argentina",
+      "away": "Egito",
+      "kickoff": "2026-07-07T16:00Z",
+      "special": false
     }
   ]
 }
