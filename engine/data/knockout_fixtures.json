@@ -153,9 +153,9 @@
   "home": "Colômbia",
   "away": "Gana",
   "kickoff": "2026-07-04T01:30Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Colômbia",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },

@@ -243,6 +243,13 @@
       "away": "Egito",
       "kickoff": "2026-07-07T16:00Z",
       "special": false
+    },
+    {
+      "slot": "R16-08",
+      "home": "Suíça",
+      "away": "Colômbia",
+      "kickoff": "2026-07-07T20:00Z",
+      "special": true
     }
   ]
 }
