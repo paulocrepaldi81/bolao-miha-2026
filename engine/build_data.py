@@ -422,11 +422,22 @@ def main():
     paid_n = sum(1 for p in participants if p["paid"])
     now = datetime.now(SP).isoformat()
     # link do Form da FASE ATUAL do mata-mata (p/ o botão "Atualizar meus palpites" na landing).
-    # Vem do campo opcional 'form_url' da ÚLTIMA rodada do knockout_forms.json (a fase corrente).
+    # Vem do 'form_url' da ÚLTIMA rodada do knockout_forms.json — MAS só se o PRAZO dela ainda não
+    # passou. Senão o botão apontaria pro Form de uma fase JÁ ENCERRADA (ex.: o R32 durante as
+    # oitavas, enquanto a rodada R16 não é cadastrada). Prazo vencido → botão SOME (melhor que
+    # mandar pro formulário errado).
     ko_form_url = None
     try:
         _rounds = (json.load(open(os.path.join(DATA, "knockout_forms.json"), encoding="utf-8")).get("rounds") or [])
-        ko_form_url = _rounds[-1].get("form_url") if _rounds else None
+        if _rounds:
+            _last = _rounds[-1]
+            _aberta = True
+            if _last.get("deadline"):
+                try:
+                    _aberta = datetime.strptime(_last["deadline"], "%Y-%m-%d %H:%M") > datetime.now(SP).replace(tzinfo=None)
+                except Exception:
+                    _aberta = True
+            ko_form_url = _last.get("form_url") if _aberta else None
     except Exception:
         ko_form_url = None
     data = {

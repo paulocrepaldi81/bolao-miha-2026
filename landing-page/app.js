@@ -1140,14 +1140,28 @@ function renderMinhaAposta(){
     // confronto REAL (só slots com times definidos) + o placar que VAI VALER (used = Form OU original).
     const koEntries=Object.entries(picks.knockout||{}).map(([slot,k])=>(
         {mid:slot, m:mm[slot], ph:k.used[0], pa:k.used[1], pts:k.pts, changed:k.changed, orig:k.orig}))
-      .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
+      .filter(e=>e.m)
+      // NÃO-jogados primeiro (a fase que importa agora, ex.: oitavas), depois os encerrados —
+      // senão a fase atual fica soterrada sob os jogos já disputados. Dentro de cada grupo, por horário.
+      .sort((a,b)=> ((a.m.status==='finished')-(b.m.status==='finished'))
+                    || (new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0)));
     if(koEntries.length){
       const koPts=koEntries.reduce((s,e)=> s+(e.pts||0),0);
       const koBtn = DATA.knockout_form_url
         ? `<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ Atualizar meus palpites do mata-mata</a>`
         : '';
+      // divisória "já encerrados" entre os pendentes e os jogados (só quando há os dois)
+      const hasP=koEntries.some(e=>e.m.status!=='finished'), hasD=koEntries.some(e=>e.m.status==='finished');
+      let koRows='', div=false;
+      for(const e of koEntries){
+        if(hasP && hasD && !div && e.m.status==='finished'){
+          koRows+='<div style="font-size:10.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.6px;margin:11px 0 5px">— já encerrados —</div>';
+          div=true;
+        }
+        koRows+=maPickRow(e);
+      }
       h+=`<div class="ma-sec"><h4>🏆 Meus palpites — mata-mata <span style="float:right;color:var(--gold);font-weight:700;font-size:13px">+${koPts} pts</span></h4>
-        ${koEntries.map(maPickRow).join('')}${koBtn}</div>`;
+        ${koRows}${koBtn}</div>`;
     }
     const entries=Object.entries(picks.groups||{}).map(([mid,a])=>({mid,m:mm[mid],ph:a[0],pa:a[1],pts:a[2]}))
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));
