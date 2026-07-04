@@ -163,9 +163,9 @@
   "home": "Canadá",
   "away": "Marrocos",
   "kickoff": "2026-07-04T17:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Marrocos",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
