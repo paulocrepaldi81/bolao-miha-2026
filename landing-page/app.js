@@ -1201,7 +1201,12 @@ function renderMinhaAposta(){
       const real=fact?fact.real:null;
       let mark='<span class="ma-pend">a definir</span>';
       if(real!==null&&real!==undefined&&real!==''){
-        mark=(maNorm(String(real))===maNorm(String(g)))
+        // usa a MESMA lista de vencedores já calculada no motor (fact.winners, list-aware p/
+        // empate) em vez de recomparar string aqui — evita divergir do card agregado de Extras
+        // quando o real é um EMPATE ("Empate: A, B, C"): comparar a string toda contra o palpite
+        // individual (ex. "Austrália") nunca bateria, mesmo pra quem realmente cravou.
+        const cravou=(fact.winners||[]).includes(p.alias);
+        mark=cravou
           ? `<span class="ma-ok">✓ +${d.points} · você cravou!</span>`
           : '<span class="ma-pend">não veio dessa vez 😅</span>';
       } else if(fact&&fact.partial){
