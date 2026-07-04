@@ -238,5 +238,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "QF-01": {
+  "home": "França",
+  "away": "Marrocos",
+  "kickoff": "2026-07-09T20:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
