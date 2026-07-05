@@ -183,9 +183,9 @@
   "home": "Brasil",
   "away": "Noruega",
   "kickoff": "2026-07-05T20:00Z",
-  "status": "finished",
-  "winner": "Noruega",
-  "decided_by": "normal",
+  "status": "live",
+  "winner": null,
+  "decided_by": null,
   "pen_home": null,
   "pen_away": null
  },
