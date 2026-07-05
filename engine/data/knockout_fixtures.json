@@ -192,7 +192,7 @@
  "R16-06": {
   "home": "México",
   "away": "Inglaterra",
-  "kickoff": "2026-07-06T01:00Z",
+  "kickoff": "2026-07-06T00:00Z",
   "status": "scheduled",
   "winner": null,
   "decided_by": null,
