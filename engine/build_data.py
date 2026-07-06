@@ -21,6 +21,7 @@ from read_bets import read_bet
 from scoring import score_bet, score_knockout
 import knockout as KO
 import leaderboard as LB
+import fun_stats as FUN
 
 SP = timezone(timedelta(hours=-3))   # America/Sao_Paulo (GMT-3)
 
@@ -415,6 +416,18 @@ def main():
                               "changed": slot in form_a, "pts": ko_by.get(slot)}
         p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"], "knockout": knockout}
 
+    # ---- estatísticas "divertidas" (fun_stats.py) — não afetam pontuação, só a landing ----
+    twins = FUN.compute_twins(bets)
+    goal_profile = FUN.compute_goal_profile(bets)
+    for p in participants:
+        p["fun"] = {"twin": twins.get(p["alias"], {}).get("twin"),
+                    "rival": twins.get(p["alias"], {}).get("rival"),
+                    "goal_profile": goal_profile.get(p["alias"])}
+    wisdom = FUN.compute_wisdom(bets, results, catalog)
+    history_dates, rank_series = FUN.compute_rank_history(history, [p["alias"] for p in participants])
+    for p in participants:
+        p["fun"]["rank_series"] = rank_series.get(p["alias"], [])
+
     # ---- estatísticas reais ----
     stats = build_stats(bets, scored, history)
     movement = build_movement(participants)
@@ -457,6 +470,8 @@ def main():
         "knockout_form_url": ko_form_url,
         "movement": movement,
         "stats": stats,
+        "wisdom": wisdom,
+        "history_dates": history_dates,
         "probability": {"method": "Modelo simples: pontos máximos possíveis e 'matematicamente vivo'. "
                                   "Sem simulação de força de seleção no lançamento.", "simulations": 0},
         "history_note": "Hall da Fama vem do data.json (campo 'history').",

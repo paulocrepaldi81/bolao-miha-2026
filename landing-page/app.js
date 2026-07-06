@@ -565,6 +565,7 @@ function render(){
   renderMovement();
   // stats
   renderNumberStats();
+  renderWisdom();
   renderCurrentGameStats();
   // corrida pelo título — modelo simples: pontos atuais × máximo ainda possível
   const ranked = [...P].sort((a,b)=> b.score - a.score || (b.max_possible??0)-(a.max_possible??0));
@@ -870,6 +871,24 @@ function renderNumberStats(){
   el.innerHTML = cards.join('') || '<div class="lb-empty">Sem números ainda — os jogos decidem.</div>';
 }
 
+// "Sabedoria das multidões": o placar-consenso (mediana do palpite de todo o bolão) erra menos
+// que o apostador médio? Vem pronto do motor (fun_stats.compute_wisdom) — só exibe.
+function renderWisdom(){
+  const el=document.getElementById('wisdomCard'); if(!el) return;
+  const w=DATA.wisdom;
+  if(!w){ el.innerHTML='<div class="lb-empty">Ainda sem jogos suficientes pra medir isso.</div>'; return; }
+  const better=w.pct_better>=0;
+  const bc=w.best_call, wc=w.worst_call;
+  const call=(c,ico,lab)=>`<div class="extra">${ico} ${lab}: ${flag(c.home)}${esc(c.home)} <b>${c.real[0]}×${c.real[1]}</b> ${esc(c.away)}${flagA(c.away)} — o bolão previu ${c.consensus[0]}×${c.consensus[1]} (mediana).</div>`;
+  el.innerHTML=`<div class="stat ${better?'stat-good':'stat-cold'}" style="grid-column:1/-1">
+    <div class="ico">🧠</div><div class="lab">A sabedoria do bolão</div>
+    <div class="val"><b>${better?'−':'+'}${Math.abs(w.pct_better)}%</b><span class="u">de erro vs. o apostador médio</span></div>
+    <div class="who">${better?'O "placar-consenso" (mediana dos 88 palpites) erra MENOS que qualquer um sozinho':'Dessa vez o apostador médio venceu o consenso'} · ${w.games_evaluated} jogos avaliados</div>
+    ${call(bc,'✅','Onde o consenso mais acertou')}
+    ${call(wc,'😅','Onde o consenso mais errou')}
+  </div>`;
+}
+
 // Categorias Extras — três estados claros (Definido/Parcial/Em aberto) + quem pontuou
 function renderExtras(){
   const list = DATA.extras_summary || EXTRAS_DEF.map(d => ({...d, real:null, winners:[]}));
@@ -1105,6 +1124,26 @@ function maPickRow(e){
   </div>`;
 }
 
+// mini-gráfico de linha da POSIÇÃO ao longo do tempo (rank 1 = melhor, fica no TOPO do desenho).
+// series = [[rank,total]|null, ...] alinhado a DATA.history_dates; pontos ausentes (dia sem
+// snapshot pra essa pessoa, ex.: entrou depois) são simplesmente pulados na linha.
+function journeySVG(series){
+  const pts=series.map((v,i)=>v?{i,rank:v[0]}:null).filter(Boolean);
+  if(pts.length<2) return '';
+  const ranks=pts.map(x=>x.rank), minR=Math.min(...ranks), maxR=Math.max(...ranks);
+  const W=320,H=64,pad=6,n=series.length;
+  const x=i=>pad+(W-2*pad)*(n>1?i/(n-1):0);
+  const y=r=>pad+(H-2*pad)*(maxR===minR?0.5:(r-minR)/(maxR-minR));   // rank baixo (melhor) -> y pequeno (topo)
+  const line=pts.map(pt=>`${x(pt.i).toFixed(1)},${y(pt.rank).toFixed(1)}`).join(' ');
+  const last=pts[pts.length-1], first=pts[0];
+  const melhorou=first.rank-last.rank;
+  const color=melhorou>0?'#27B14B':(melhorou<0?'#E6533D':'#F4C430');
+  const dots=pts.map(pt=>`<circle cx="${x(pt.i).toFixed(1)}" cy="${y(pt.rank).toFixed(1)}" r="2.2" fill="${color}" opacity="${pt===last?1:0.4}"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:64px;display:block" preserveAspectRatio="none">
+    <polyline points="${line}" fill="none" stroke="${color}" stroke-width="2"/>${dots}
+  </svg>`;
+}
+
 function renderMinhaAposta(){
   const card=document.getElementById('maCard');
   const all=DATA.participants||[];
@@ -1137,6 +1176,44 @@ function renderMinhaAposta(){
   </div>
   <div class="ma-barwrap"><div class="ma-barlab"><span>corrida pelo título</span><span>${cur} / ${mx}</span></div>
     <div class="ma-bar"><i style="width:${curW}%"></i><u style="width:${avW}%"></u></div></div>`;
+
+  // ---- estatísticas "divertidas" (fun_stats.py já manda tudo pronto; só exibe) ----
+  const fun=p.fun||{};
+  if(fun.twin || fun.rival){
+    const names=a=>a.map(esc).join(' + ');
+    const twinTxt = fun.twin
+      ? (fun.twin.distance===0
+          ? `${names(fun.twin.aliases)} — apostas IDÊNTICAS. Só pode ser telepatia (ou a mesma pessoa) 👀`
+          : `${names(fun.twin.aliases)} (diferença de ${fun.twin.distance} gol${fun.twin.distance!==1?'s':''} no total dos 72 jogos)`)
+      : '—';
+    const rivalTxt = fun.rival ? `${names(fun.rival.aliases)} (diferença de ${fun.rival.distance} gols)` : '—';
+    h+=`<div class="ma-sec"><h4>🧬 Seu gêmeo de aposta</h4>
+      <div class="ma-final-row"><span><span class="pos">Mais parecido com você:</span> ${twinTxt}</span></div>
+      <div class="ma-final-row"><span><span class="pos">Seu arqui-rival:</span> ${rivalTxt}</span></div>
+    </div>`;
+  }
+  const gp=fun.goal_profile;
+  if(gp){
+    const ICO={quente:'🔥 Time-Quente',frio:'❄️ Cabeça-Fria',equilibrado:'⚖️ Equilibrado'};
+    const diffPct=gp.bolao_avg?Math.round((gp.avg_goals/gp.bolao_avg-1)*100):0;
+    const diffTxt=diffPct===0?'bem na média do bolão':(diffPct>0?`${diffPct}% ACIMA da média do bolão`:`${Math.abs(diffPct)}% ABAIXO da média do bolão`);
+    h+=`<div class="ma-sec"><h4>🌡️ Seu perfil de apostador</h4>
+      <div class="ma-final-row"><span>${ICO[gp.label]} — média de <b>${gp.avg_goals}</b> gols/jogo apostado, ${diffTxt} (bolão: ${gp.bolao_avg}).</span></div>
+    </div>`;
+  }
+  const rs=fun.rank_series||[], hdates=DATA.history_dates||[];
+  const known=rs.filter(Boolean);
+  if(known.length>=2 && hdates.length===rs.length){
+    const firstIdx=rs.findIndex(Boolean), lastIdx=rs.length-1-[...rs].reverse().findIndex(Boolean);
+    const firstRank=rs[firstIdx][0], lastRank=rs[lastIdx][0];
+    const delta=firstRank-lastRank;
+    const deltaTxt = delta>0?`subiu ${delta} posiç${delta!==1?'ões':'ão'}`:(delta<0?`caiu ${Math.abs(delta)} posiç${Math.abs(delta)!==1?'ões':'ão'}`:'ficou estável');
+    const desde=hdates[firstIdx].split('-').reverse().join('/');
+    h+=`<div class="ma-sec"><h4>📈 Sua jornada no bolão</h4>
+      <div style="font-size:12.5px;color:var(--ink-dim);margin-bottom:6px">Desde ${desde}, você ${deltaTxt} (${firstRank}º → ${lastRank}º).</div>
+      ${journeySVG(rs)}
+    </div>`;
+  }
 
   const picks=p.picks;
   if(!picks){
