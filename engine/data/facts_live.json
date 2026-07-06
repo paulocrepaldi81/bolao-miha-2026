@@ -46,6 +46,11 @@
         "equipe": "Inglaterra"
       },
       {
+        "nome": "Julián Quiñones",
+        "gols": 4,
+        "equipe": "México"
+      },
+      {
         "nome": "Mikel Oyarzabal",
         "gols": 4,
         "equipe": "Espanha"
@@ -79,11 +84,6 @@
         "nome": "Deniz Undav",
         "gols": 3,
         "equipe": "Alemanha"
-      },
-      {
-        "nome": "Elijah Just",
-        "gols": 3,
-        "equipe": "Nova Zelândia"
       }
     ]
   },
