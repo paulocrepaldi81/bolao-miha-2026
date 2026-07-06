@@ -248,5 +248,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "QF-03": {
+  "home": "Noruega",
+  "away": "Inglaterra",
+  "kickoff": "2026-07-11T21:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
