@@ -193,9 +193,9 @@
   "home": "México",
   "away": "Inglaterra",
   "kickoff": "2026-07-06T01:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Inglaterra",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
