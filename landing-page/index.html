@@ -21,13 +21,18 @@
     --blue:#3D6BFF; --blue-deep:#2A398D;      /* EUA */
     --blue-ink:#7DA2FF;                       /* azul p/ TEXTO de dados (passa AA no escuro) */
     --coral:#E61D25;                          /* alias semântico: quedas = vermelho oficial */
-    --gold:#F4C430;                           /* troféu */
+    --gold:#C9973F;                           /* troféu — dourado latão (era #F4C430, amarelo vivo) */
+    --gold-bright:#EBC873;                    /* variante clara: só p/ números marquee (líder, prêmio, campeão) */
     --r:16px; --r-sm:10px; --maxw:1160px;
     --shadow:0 12px 34px rgba(0,0,0,.45);
     --brand-grad:linear-gradient(90deg,var(--red) 0%,var(--gold) 38%,var(--green) 68%,var(--blue) 100%);
     --grad-hero:radial-gradient(110% 130% at 88% -12%, rgba(230,29,37,.15), transparent 52%),
                 radial-gradient(110% 120% at 6% -6%, rgba(61,107,255,.16), transparent 50%),
                 radial-gradient(120% 130% at 50% 125%, rgba(39,177,75,.13), transparent 55%);
+    /* escala Anton de 6 degraus (era: 14 tamanhos ad hoc sem proporção entre eles) */
+    --t1:18px; --t2:22px; --t3:26px; --t4:30px; --t5:36px;
+    --t6:clamp(40px,7.4vw,80px); --t6-prize:clamp(38px,6.6vw,64px); --t6-champ:clamp(32px,5.6vw,52px);
+    --serif:ui-serif,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -74,13 +79,14 @@
 
   /* ---- Hero ---- */
   .hero{background:var(--grad-hero);border-bottom:1px solid var(--line);padding:54px 0 40px}
-  .hero h1{font-size:clamp(38px,7.4vw,80px);line-height:1.02;margin:16px 0 8px;padding-top:2px}
-  .hero h1 .g{color:var(--gold)}
+  .hero h1{font-size:var(--t6);line-height:1.02;margin:16px 0 8px;padding-top:2px}
+  .hero h1 .g{color:var(--gold-bright)}
   /* dourado sólido (não o arco-íris) — a faixa tri-nação já assinou a marca lá em cima;
      repeti-la aqui na mesma tela a dilui em papel de parede em vez de significar algo */
   .brandline{height:5px;width:128px;border-radius:3px;background:var(--gold);margin:12px 0 0}
   .hero .sub{color:var(--ink-dim);font-size:15px;max-width:540px}
-  .tagline{margin-top:18px;font-size:clamp(16px,3.6vw,22px);font-weight:700;color:var(--gold);min-height:1.4em}
+  .tagline{margin-top:18px;font-size:clamp(16px,3.6vw,22px);font-weight:500;font-style:italic;
+    font-family:var(--serif);color:var(--gold);min-height:1.4em}
   /* indicador simples de jogo AO VIVO no hero (só aparece quando há jogo rolando) */
   .hero-live{display:inline-flex;align-items:center;gap:10px;margin-top:16px;text-decoration:none;
     background:rgba(230,29,37,.10);border:1px solid rgba(230,29,37,.45);border-radius:999px;
@@ -91,16 +97,16 @@
   .hero-live .hl-game{font-weight:600}
   .hero-live .hl-game b{color:var(--gold);font-family:Anton,sans-serif;font-weight:400;letter-spacing:.5px}
   /* selo de frescura contextual: só aparece se há jogo agora E os pontos estão atrasados */
-  .fresh-warn{margin-top:12px;font-size:12.5px;color:var(--gold);background:rgba(242,196,48,.10);
-    border:1px solid rgba(242,196,48,.4);border-radius:10px;padding:7px 13px;max-width:560px}
+  .fresh-warn{margin-top:12px;font-size:12.5px;color:var(--gold);background:rgba(201,151,63,.10);
+    border:1px solid rgba(201,151,63,.4);border-radius:10px;padding:7px 13px;max-width:560px}
   .countdown{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     background:rgba(255,255,255,.04);border:1px solid var(--line-2);border-radius:var(--r);padding:12px 16px}
   .cd-lab{font-size:12px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.6px}
   .cd-units{display:flex;align-items:center;gap:6px}
   .cd-units span{display:flex;flex-direction:column;align-items:center;min-width:42px}
-  .cd-units b{font-family:Anton;font-size:30px;line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
+  .cd-units b{font-family:Anton;font-size:var(--t4);line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
   .cd-units i{font-style:normal;font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
-  .cd-sep{font-family:Anton;font-size:24px;color:var(--ink-faint);min-width:auto!important;align-self:flex-start;margin-top:2px}
+  .cd-sep{font-family:Anton;font-size:var(--t2);color:var(--ink-faint);min-width:auto!important;align-self:flex-start;margin-top:2px}
   .cd-match{font-size:13px;font-weight:700;color:var(--ink-dim);margin-left:auto}
   @media(max-width:560px){.cd-match{width:100%;margin-left:0;order:3}}
   .seg{display:inline-flex;background:var(--bg-2);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
@@ -112,22 +118,27 @@
   .hcard{background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
     border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
   .hcard .lab{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-faint);font-weight:700}
+  /* líder ganha tratamento de marquee; os outros dois cards ficam quietos — hierarquia real
+     em vez de 3 caixas com o mesmo peso visual */
+  .hcard.lead{border-color:rgba(201,151,63,.32);box-shadow:var(--shadow),0 0 0 1px rgba(201,151,63,.08) inset}
+  .hcard.quiet{background:var(--bg-2);box-shadow:none;padding:14px}
+  .hcard.quiet .lab{opacity:.82}
   .leader-row{display:flex;align-items:center;gap:14px;margin-top:10px}
-  .crown{font-size:30px;flex:0 0 auto;filter:drop-shadow(0 2px 6px rgba(244,196,48,.5))}
-  .leader-name{font-size:26px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crown{font-size:var(--t4);flex:0 0 auto;filter:drop-shadow(0 2px 6px rgba(201,151,63,.5))}
+  .leader-name{font-size:var(--t3);font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .leader-score{flex:0 0 auto;text-align:right}
-  .leader-score b{font-family:Anton;font-size:34px;color:var(--gold);line-height:1}
+  .leader-score b{font-family:Anton;font-size:var(--t5);color:var(--gold-bright);line-height:1}
   .mini-result{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-weight:700}
-  .mini-result .sc{font-family:Anton;font-size:22px}
+  .mini-result .sc{font-family:Anton;font-size:var(--t2)}
 
   /* ---- Prêmio acumulado ---- */
   .prize-card{display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:space-between;
-    background:linear-gradient(135deg,rgba(244,196,48,.17),var(--card) 60%);
-    border:1px solid rgba(244,196,48,.4);border-radius:var(--r);padding:22px 24px;box-shadow:var(--shadow)}
+    background:linear-gradient(135deg,rgba(201,151,63,.17),var(--card) 60%);
+    border:1px solid rgba(201,151,63,.4);border-radius:var(--r);padding:22px 24px;box-shadow:var(--shadow)}
   .prize-left{min-width:240px}
   .prize-lab{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--gold)}
-  .prize-amount{font-family:Anton,sans-serif;font-size:clamp(40px,9vw,66px);line-height:1;color:var(--gold);
-    text-shadow:0 2px 18px rgba(244,196,48,.35);margin-top:4px}
+  .prize-amount{font-family:Anton,sans-serif;font-size:var(--t6-prize);line-height:1;color:var(--gold-bright);
+    text-shadow:0 2px 18px rgba(201,151,63,.35);margin-top:4px}
   .prize-sub{font-size:13px;color:var(--ink-dim);margin-top:8px;max-width:360px}
   .prize-split{display:grid;grid-template-columns:1fr;gap:6px;min-width:280px;flex:1}
   .psplit{display:grid;grid-template-columns:24px 1fr auto auto;align-items:center;gap:10px;
@@ -140,12 +151,12 @@
 
   /* ---- Tela de encerramento (aparece só quando a Copa acaba) ---- */
   .closing{padding:26px 0 6px}
-  .closing-card{background:linear-gradient(180deg,rgba(244,196,48,.16),rgba(244,196,48,.05));
-    border:1px solid rgba(244,196,48,.45);border-radius:20px;padding:26px 22px;text-align:center;
-    box-shadow:0 18px 60px rgba(244,196,48,.12)}
+  .closing-card{background:linear-gradient(180deg,rgba(201,151,63,.16),rgba(201,151,63,.05));
+    border:1px solid rgba(201,151,63,.45);border-radius:20px;padding:26px 22px;text-align:center;
+    box-shadow:0 18px 60px rgba(201,151,63,.12)}
   .closing-kicker{font-size:12.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold)}
-  .closing-champ{font-family:Anton,sans-serif;font-size:clamp(30px,7vw,52px);line-height:1.05;color:var(--gold);
-    margin-top:8px;text-shadow:0 2px 22px rgba(244,196,48,.35)}
+  .closing-champ{font-family:Anton,sans-serif;font-size:var(--t6-champ);line-height:1.05;color:var(--gold-bright);
+    margin-top:8px;text-shadow:0 2px 22px rgba(201,151,63,.35)}
   .closing-champ small{display:block;font-family:Inter,system-ui,sans-serif;font-size:13px;font-weight:700;
     color:var(--ink-dim);letter-spacing:.3px;margin-top:6px}
   .closing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:20px;text-align:left}
@@ -154,12 +165,12 @@
     text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint)}
   .closing-prize .cp-win{font-weight:800;color:var(--ink);margin-top:6px;font-size:15px;line-height:1.25}
   .closing-prize .cp-amt{font-weight:800;color:var(--gold);margin-top:4px;font-variant-numeric:tabular-nums}
-  .closing-prize.is-champ{border-color:rgba(244,196,48,.5);background:rgba(244,196,48,.08)}
+  .closing-prize.is-champ{border-color:rgba(201,151,63,.5);background:rgba(201,151,63,.08)}
   .closing-foot{font-size:12px;color:var(--ink-faint);margin-top:16px;line-height:1.5}
 
   /* ---- Central de Jogos: prévia "a definir" da próxima fase (transição) ---- */
-  .match-note{grid-column:1/-1;font-size:12.5px;color:var(--gold);background:rgba(242,196,48,.08);
-    border:1px solid rgba(242,196,48,.25);border-radius:10px;padding:9px 12px;margin:4px 0 2px}
+  .match-note{grid-column:1/-1;font-size:12.5px;color:var(--gold);background:rgba(201,151,63,.08);
+    border:1px solid rgba(201,151,63,.25);border-radius:10px;padding:9px 12px;margin:4px 0 2px}
   .mcard-tbd{border-style:dashed;opacity:.92}
   .mcard-tbd .team-tbd span{color:var(--ink-dim);font-weight:600;font-size:13px;line-height:1.3}
 
@@ -170,19 +181,23 @@
   .sec-head .kick{color:var(--ink-faint);font-size:13px;font-weight:600}
 
   /* ---- Leaderboard ---- */
-  .lb{display:flex;flex-direction:column;gap:10px}
-  .lb-row{display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:14px;
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;transition:border-color .2s}
-  .lb-row:hover{border-color:var(--line-2)}
-  .lb-row.first{border-color:rgba(244,196,48,.5);background:linear-gradient(90deg,rgba(244,196,48,.1),var(--card) 42%)}
-  .lb-row.first .lb-score{color:var(--gold)}
-  .lb-row.second{border-color:rgba(200,206,216,.38);background:linear-gradient(90deg,rgba(200,206,216,.07),var(--card) 42%)}
+  /* lista tabular disciplinada — cada linha é uma linha (hairline), não uma caixa com borda própria;
+     lê como um placar, não como uma pilha de recibos */
+  .lb{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r);padding:2px 16px}
+  .lb-row{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:14px;
+    padding:13px 0;border-bottom:1px solid var(--line);transition:background-color .15s}
+  .lb-row:last-child{border-bottom:0}
+  .lb-row:hover{background:rgba(255,255,255,.025)}
+  .lb-row.first{background:linear-gradient(90deg,rgba(201,151,63,.09),transparent 60%)}
+  .lb-row.first .lb-score{color:var(--gold-bright)}
+  .lb-row.second{background:linear-gradient(90deg,rgba(200,206,216,.06),transparent 60%)}
   .lb-row.second .rk{color:#C8CED8}
-  .lb-row.third{border-color:rgba(205,127,80,.4);background:linear-gradient(90deg,rgba(205,127,80,.08),var(--card) 42%)}
+  .lb-row.third{background:linear-gradient(90deg,rgba(205,127,80,.07),transparent 60%)}
   .lb-row.third .rk{color:#D08A4E}
-  .lb-row.last{border-color:rgba(230,29,37,.32)}
-  .rk{font-family:Anton;font-size:26px;color:var(--ink-faint);text-align:center}
-  .lb-row.first .rk{color:var(--gold)}
+  .lb-row.last{background:linear-gradient(90deg,rgba(230,29,37,.06),transparent 60%)}
+  .rk{font-family:Anton;font-size:var(--t3);color:var(--ink-faint);text-align:center}
+  .lb-row.first .rk{color:var(--gold-bright)}
   .who{display:flex;flex-direction:column;gap:3px;min-width:0}
   .who .nm{font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px}
   .who .meta{font-size:12px;color:var(--ink-faint)}
@@ -190,10 +205,11 @@
   .lb-right .pwin{text-align:right}
   .lb-right .pwin .v{font-weight:800;color:var(--blue-ink)}
   .lb-right .pwin .l{font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
-  .lb-score{font-family:Anton;font-size:28px;min-width:60px;text-align:right}
+  .lb-score{font-family:Anton;font-size:var(--t4);min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
   @media(max-width:620px){
     .lb-right .pwin{display:none}
-    .lb-row{grid-template-columns:38px 1fr auto;padding:12px}
+    .lb-row{grid-template-columns:32px 1fr auto}
+    .lb{padding:2px 12px}
   }
   /* ---- Controles de classificação (escala 70 apostas) ---- */
   .lb-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
@@ -201,13 +217,13 @@
     border-radius:999px;padding:11px 16px;color:var(--ink);font-size:14px;font-family:inherit}
   .lb-input::placeholder{color:var(--ink-faint)}
   .lb-input:focus{outline:none;border-color:var(--green)}
-  .chip-prize{background:rgba(244,196,48,.16);color:var(--gold);border:1px solid rgba(244,196,48,.42)}
+  .chip-prize{background:rgba(201,151,63,.16);color:var(--gold);border:1px solid rgba(201,151,63,.42)}
   .chip-special{background:rgba(39,177,75,.18);color:#5FE08A;border:1px solid rgba(39,177,75,.45)}
   .lb-more{width:100%;margin-top:12px;background:var(--card);border:1px solid var(--line-2);
     color:var(--ink-dim);font-weight:700;border-radius:999px;padding:12px;cursor:pointer;font-family:inherit;font-size:13.5px}
   .lb-more:hover{border-color:var(--green-deep);color:var(--ink)}
-  .lb-empty{background:var(--card);border:1px dashed var(--line-2);border-radius:var(--r);
-    padding:22px;text-align:center;color:var(--ink-faint);font-weight:600}
+  /* aparece DENTRO do container .lb (que já tem borda própria) — sem caixa própria pra não duplicar */
+  .lb-empty{padding:20px 0;text-align:center;color:var(--ink-faint);font-weight:600}
   .lb-row .you-tag{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.5px}
   .prob-note{padding:12px 0 2px;color:var(--ink-faint);font-size:12.5px;font-weight:600}
   .lb-note{font-size:12px;color:var(--ink-faint);margin:-4px 0 14px}
@@ -216,17 +232,17 @@
   .bp-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
   .bp-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;background:var(--card);border:1px solid var(--line);
     border-radius:var(--r-sm);padding:10px 14px}
-  .bp-rk{font-family:Anton,sans-serif;font-size:20px;color:var(--ink-faint);min-width:30px;text-align:center}
+  .bp-rk{font-family:Anton,sans-serif;font-size:var(--t2);color:var(--ink-faint);min-width:30px;text-align:center}
   .bp-row.bp-lead .bp-rk{color:var(--gold)}
   .bp-nm{flex:1;min-width:0;display:flex;align-items:center;gap:7px;font-weight:700}
   .bp-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bp-nm .chip{flex:0 0 auto}
-  .bp-pts{font-family:Anton,sans-serif;font-size:18px;color:var(--ink);flex:0 0 auto}
+  .bp-pts{font-family:Anton,sans-serif;font-size:var(--t1);color:var(--ink);flex:0 0 auto}
   /* vencedor dos 20% = líder PAGANTE (pode não ser o 1º em pontos se um café-com-leite liderar) */
-  .bp-win{border-color:rgba(244,196,48,.5);background:rgba(244,196,48,.07)}
+  .bp-win{border-color:rgba(201,151,63,.5);background:rgba(201,151,63,.07)}
   .bp-win-badge{flex:0 0 100%;text-align:center;font-size:10px;font-weight:800;letter-spacing:.4px;
-    text-transform:uppercase;color:var(--gold);background:rgba(244,196,48,.13);
-    border:1px solid rgba(244,196,48,.4);border-radius:7px;padding:4px 8px}
+    text-transform:uppercase;color:var(--gold);background:rgba(201,151,63,.13);
+    border:1px solid rgba(201,151,63,.4);border-radius:7px;padding:4px 8px}
   .bp-foot{grid-column:1/-1;margin-top:4px;font-size:12px;color:var(--ink-faint);line-height:1.5}
   .bp-foot b{color:var(--ink-dim)}
   /* Corrida pelo título — barra empilhada (atual + em jogo) */
@@ -254,7 +270,7 @@
   .mcard .grp{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
   .team{display:flex;align-items:center;justify-content:space-between;font-weight:700;padding:5px 0;gap:10px}
   .team span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .team .sc{font-family:Anton;font-size:20px;color:var(--ink);flex:0 0 auto}
+  .team .sc{font-family:Anton;font-size:var(--t2);color:var(--ink);flex:0 0 auto}
   .mcard .foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;
     padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint)}
   .verif{display:inline-flex;align-items:center;gap:5px}
@@ -273,7 +289,7 @@
     border-left:3px solid var(--green);border-radius:var(--r);padding:18px;margin-bottom:14px}
   .move-hero .lab{font-size:12px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
   .move-hero .hero-v{margin-top:6px;display:flex;align-items:baseline;gap:7px}
-  .move-hero .hero-v b{font-family:Anton,sans-serif;font-weight:400;font-size:34px;line-height:1;color:var(--green)}
+  .move-hero .hero-v b{font-family:Anton,sans-serif;font-weight:400;font-size:var(--t5);line-height:1;color:var(--green)}
   .move-hero .hero-v .u{font-size:13px;font-weight:600;color:var(--ink-dim)}
   .move-hero .who{font-size:14px;font-weight:700;margin-top:7px;line-height:1.4}
   .move-hero .extra{font-size:12px;color:var(--ink-dim);margin-top:3px}
@@ -311,7 +327,7 @@
   .cg-game + .cg-game{margin-top:20px;padding-top:20px;border-top:1px solid var(--line-2)}
   .cg-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
   .cg-match{font-weight:800;font-size:17px}
-  .cg-match b{font-family:Anton;font-size:19px;margin:0 4px}
+  .cg-match b{font-family:Anton;font-size:var(--t2);margin:0 4px}
   .cg-more{font-size:11px;color:var(--ink-faint);font-weight:700}
   .cg-status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim)}
   .cg-min{font-family:Anton;color:#FF8A90}
@@ -319,7 +335,7 @@
   .cg-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;text-align:center}
   .cg-ic{font-size:20px}
   .cg-cl{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
-  .cg-sc{font-family:Anton;font-size:30px;color:var(--ink);line-height:1.1;margin:4px 0}
+  .cg-sc{font-family:Anton;font-size:var(--t4);color:var(--ink);line-height:1.1;margin:4px 0}
   .cg-n{font-weight:800;color:var(--green)}
   .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
   .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
@@ -346,7 +362,7 @@
   .stat .ico{font-size:20px}
   .stat .lab{font-size:12px;color:var(--ink-faint);font-weight:700;margin-top:8px;text-transform:uppercase;letter-spacing:.4px}
   .stat .val{font-size:18px;font-weight:800;margin-top:4px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
-  .stat .val b{font-family:Anton,sans-serif;font-weight:400;font-size:28px;line-height:1;color:var(--ink)}
+  .stat .val b{font-family:Anton,sans-serif;font-weight:400;font-size:var(--t4);line-height:1;color:var(--ink)}
   .stat .val .u{font-size:12.5px;font-weight:600;color:var(--ink-dim)}
   .stat .who{font-size:13.5px;font-weight:700;margin-top:7px;line-height:1.35;color:var(--ink)}
   .stat .who .more{color:var(--ink-faint);font-weight:600}
@@ -370,7 +386,7 @@
   .ex-card.done{border-color:rgba(39,177,75,.45);background:linear-gradient(180deg,rgba(39,177,75,.08),var(--card) 55%)}
   .ex-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
   .ex-lab{font-size:13px;font-weight:700;min-width:0}
-  .ex-pts{flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--gold);border:1px solid rgba(244,196,48,.4);
+  .ex-pts{flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--gold);border:1px solid rgba(201,151,63,.4);
     border-radius:999px;padding:2px 8px;white-space:nowrap}
   .ex-status{font-size:12px;color:var(--ink-faint)}
   .ex-real{font-size:16px;font-weight:800;color:var(--green);margin:2px 0}
@@ -411,14 +427,17 @@
   .ma-card{margin-top:18px;background:linear-gradient(180deg,var(--card-2),var(--card));
     border:1px solid var(--line-2);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
   .ma-hero{display:flex;align-items:center;gap:14px;padding:18px;border-bottom:1px solid var(--line);
-    background:linear-gradient(90deg,rgba(244,196,48,.06),transparent 60%)}
+    background:linear-gradient(90deg,rgba(201,151,63,.06),transparent 60%)}
+  /* dourado latão (não o arco-íris tri-nação) — a faixa lá em cima já é o único lugar onde
+     as 4 cores aparecem juntas; repeti-las aqui era decoração, não significado */
   .ma-av{width:54px;height:54px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;
-    font-family:Anton,sans-serif;font-size:22px;color:#0C0D10;background:var(--brand-grad)}
+    font-family:Anton,sans-serif;font-size:var(--t2);color:#0C0D10;
+    background:linear-gradient(160deg,#F9DA83,var(--gold) 60%,#D9A322)}
   .ma-who{flex:1;min-width:0}
   .ma-name{font-size:21px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .ma-sub{font-size:12.5px;color:var(--ink-dim);margin-top:2px}
   .ma-score{flex:0 0 auto;text-align:right}
-  .ma-score b{font-family:Anton,sans-serif;font-size:32px;color:var(--gold);line-height:1}
+  .ma-score b{font-family:Anton,sans-serif;font-size:var(--t5);color:var(--gold-bright);line-height:1}
   .ma-score span{display:block;font-size:10px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.5px}
 
   .ma-break{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line)}
@@ -446,7 +465,7 @@
   .ma-pick .guess b{color:var(--ink)}
   .ma-pts{flex:0 0 auto;font-weight:800;font-size:13px;border-radius:999px;padding:3px 10px;white-space:nowrap;justify-self:end}
   .ma-pts.win{background:rgba(39,177,75,.16);color:#5FE08A;border:1px solid rgba(39,177,75,.4)}
-  .ma-pts.exato{background:rgba(244,196,48,.16);color:var(--gold);border:1px solid rgba(244,196,48,.42)}
+  .ma-pts.exato{background:rgba(201,151,63,.16);color:var(--gold);border:1px solid rgba(201,151,63,.42)}
   .ma-pts.zero{background:rgba(230,29,37,.12);color:#FF8A8A;border:1px solid rgba(230,29,37,.3)}
   .ma-pts.wait{background:rgba(255,255,255,.05);color:var(--ink-faint);border:1px solid var(--line)}
   .ma-final-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
@@ -458,14 +477,14 @@
   /* ---- Hall da Fama ---- */
   #historia{border-top:1px solid var(--line)}
   .fame-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-  .fame-highlight{background:linear-gradient(90deg,rgba(244,196,48,.13),var(--card));
-    border:1px solid rgba(244,196,48,.32);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;
-    font-size:14.5px;color:var(--ink-dim);line-height:1.6}
+  .fame-highlight{background:linear-gradient(90deg,rgba(201,151,63,.13),var(--card));
+    border:1px solid rgba(201,151,63,.32);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;
+    font-family:var(--serif);font-style:italic;font-size:15.5px;color:var(--ink-dim);line-height:1.6}
   .fame-highlight b{color:var(--gold)}
   .fame-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(218px,1fr));gap:14px}
   .fame-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
   .fame-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
-  .fame-year{font-family:Anton,sans-serif;font-size:30px;line-height:1}
+  .fame-year{font-family:Anton,sans-serif;font-size:var(--t4);line-height:1}
   .fame-host{font-size:12px;color:var(--ink-faint);font-weight:700;text-align:right}
   .podium{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
   .podium li{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink-dim);min-width:0}
@@ -566,7 +585,7 @@
     </div>
 
     <div class="hero-grid">
-      <div class="hcard">
+      <div class="hcard lead">
         <div class="lab">🏆 Líder do bolão</div>
         <div class="leader-row">
           <span class="crown">👑</span>
@@ -575,12 +594,12 @@
         </div>
         <div style="margin-top:10px;font-size:12.5px;color:var(--ink-dim)" id="leaderNote">Líder por enquanto. Não mande imprimir a faixa.</div>
       </div>
-      <div class="hcard">
+      <div class="hcard quiet">
         <div class="lab">⚽ Último resultado</div>
         <div class="mini-result" id="lastResult"><span>—</span><span class="sc">vs</span><span>—</span></div>
         <div style="margin-top:8px;font-size:12.5px;color:var(--ink-faint)" id="lastResultNote">A bola ainda não rolou. Calma.</div>
       </div>
-      <div class="hcard">
+      <div class="hcard quiet">
         <div class="lab">📅 Próximo jogo</div>
         <div class="mini-result" id="nextMatch"><span>—</span><span class="sc">×</span><span>—</span></div>
         <div style="margin-top:8px;font-size:12.5px;color:var(--ink-faint)" id="nextWhen">—</div>
