@@ -3,19 +3,14 @@
  * ---------------------------------------------------------------------------------------
  * Cópia fiel do criar_form_R16.gs — só mudaram FASE, os 4 confrontos e o texto do prazo.
  *
- * >>> ANTES DE RODAR <<< 3 dos 4 confrontos já são reais e definitivos (França×Marrocos,
- * Espanha×Bélgica ⭐, Noruega×Inglaterra). O mandante do 4º (QF-04) já é Argentina (venceu
- * Argentina×Egito) — só falta o adversário, que sai de Suíça×Colômbia ⭐ (em andamento). O
- * robô resolve sozinho assim que o jogo acabar (resolve_bracket.py já roda no pipeline
- * automático). Quando isso acontecer, rode `cd engine && python3 resolve_bracket.py --dry-run`
- * (ou veja o log do robô) pra pegar o adversário e o horário do Jogo 4, e complete a linha
- * marcada TBD abaixo antes de rodar este script. CONFIRME também que o kickoff do Jogo 4 é
- * DEPOIS do meio-dia de 09/07 (os outros 3 são à tarde/noite, sem exceção) — se cair de manhã
- * no mesmo dia do prazo, avise antes de criar o Form (precisaria de slot_deadlines, como no R32).
+ * Os 4 confrontos das quartas já são reais e DEFINITIVOS: França×Marrocos, Espanha×Bélgica ⭐,
+ * Noruega×Inglaterra e Argentina×Suíça ⭐ (QF-04 resolvido — Argentina bateu o Egito, Suíça
+ * bateu a Colômbia). Todos os 4 jogos começam depois do meio-dia de 09/07 (o prazo), sem
+ * exceção de slot_deadlines necessária. PRONTO PRA RODAR, sem editar nada.
  *
  * COMO USAR (leva ~3 min):
  *  1) Abra https://script.google.com  ->  Novo projeto.
- *  2) Apague tudo e cole ESTE arquivo inteiro (depois de completar o Jogo 4 abaixo).
+ *  2) Apague tudo e cole ESTE arquivo inteiro (os 4 jogos já estão prontos, sem editar nada).
  *  3) Menu: Executar -> criarFormularioQF. Autorize quando pedir.
  *  4) No painel "Registros de execução" vão aparecer 3 links: PUBLICO (mandar no zap),
  *     EDITAR (seu) e PLANILHA (respostas). Guarde os três.
@@ -44,13 +39,12 @@ var FASE = 'Mata-mata · Quartas de final';
 var PASTA_ID = '16F9MjNdz7dIZqmbZjNOSxCEkj1K9-nph';
 
 // Confrontos REAIS das quartas — ordem = slot QF-NN, home = mandante (orientação do bracket).
-// 3 de 4 já são definitivos. QF-04: mandante já é Argentina (venceu Argentina×Egito); o
-// adversário sai de Suíça×Colômbia (em andamento agora) — COMPLETE 'away' antes de rodar o script.
+// Os 4 já são definitivos (chaveamento fechado).
 var MATCHES = [
   { n: 1, home: 'França',    away: 'Marrocos',   quando: '09/07 · 17h00' }, // QF-01
   { n: 2, home: 'Espanha',   away: 'Bélgica',    quando: '10/07 · 16h00' }, // QF-02 (⭐ especial)
   { n: 3, home: 'Noruega',   away: 'Inglaterra', quando: '11/07 · 18h00' }, // QF-03
-  { n: 4, home: 'Argentina', away: 'TBD',        quando: 'a definir' },     // QF-04 (⭐ especial) — COMPLETAR 'away'
+  { n: 4, home: 'Argentina', away: 'Suíça',      quando: '11/07 · 22h00' }, // QF-04 (⭐ especial)
 ];
 
 // 88 apostas (apelidos). Cada aposta = 1 envio. Quem tem mais de uma, preenche 1 vez por apelido.
