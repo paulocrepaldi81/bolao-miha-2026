@@ -136,12 +136,23 @@ def load_knockout_results(path):
 
 def _read_form_source(src):
     """Lê o CSV do Form: URL (Drive/Sheets publicado) ou arquivo local. FALHA-FECHADA: qualquer
-    erro retorna None → aquela rodada é ignorada e vale o fallback (nunca derruba o pipeline)."""
+    erro (ou HTML de login/erro no lugar do CSV — planilha não publicada/compartilhada) retorna
+    None -> aquela rodada é ignorada e vale o fallback (nunca derruba o pipeline). Achado real
+    (07/jul, Quartas): uma URL /export mal configurada devolve 200 com a TELA DE LOGIN do Google
+    em vez de erro -> sem essa checagem, parse_form_csv não acha cabeçalho e a rodada fica muda
+    em silêncio, sem nenhum aviso apontando a causa."""
     try:
         if str(src).startswith("http"):
             import urllib.request
             with urllib.request.urlopen(src, timeout=20) as r:
-                return r.read().decode("utf-8", "replace")
+                final_url = r.geturl()
+                text = r.read().decode("utf-8", "replace")
+            if "accounts.google.com" in final_url or text.lstrip()[:15].lower().startswith(("<!doctype", "<html")):
+                print(f"  ⚠⚠ fonte do form parece HTML de login/erro, não CSV ({src}) — a "
+                      f"planilha provavelmente não está publicada/compartilhada. Rodada ficará "
+                      f"SEM os palpites do Form até corrigir.")
+                return None
+            return text
         if os.path.exists(src):
             with open(src, encoding="utf-8") as f:
                 return f.read()
