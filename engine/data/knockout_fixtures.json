@@ -249,6 +249,16 @@
   "pen_home": null,
   "pen_away": null
  },
+ "QF-02": {
+  "home": "Espanha",
+  "away": "Bélgica",
+  "kickoff": "2026-07-10T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
  "QF-03": {
   "home": "Noruega",
   "away": "Inglaterra",
