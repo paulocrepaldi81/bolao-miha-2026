@@ -213,9 +213,9 @@
   "home": "EUA",
   "away": "Bélgica",
   "kickoff": "2026-07-07T00:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Bélgica",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },

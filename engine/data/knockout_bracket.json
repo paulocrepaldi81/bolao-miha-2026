@@ -266,6 +266,13 @@
       "away": "Inglaterra",
       "kickoff": "2026-07-11T21:00Z",
       "special": false
+    },
+    {
+      "slot": "QF-02",
+      "home": "Espanha",
+      "away": "Bélgica",
+      "kickoff": "2026-07-10T19:00Z",
+      "special": true
     }
   ]
 }
