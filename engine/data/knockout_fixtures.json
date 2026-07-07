@@ -268,5 +268,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "QF-04": {
+  "home": "Argentina",
+  "away": "Suíça",
+  "kickoff": "2026-07-12T01:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
