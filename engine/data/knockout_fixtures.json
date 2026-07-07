@@ -236,8 +236,8 @@
   "status": "live",
   "winner": null,
   "decided_by": null,
-  "pen_home": 1,
-  "pen_away": 1
+  "pen_home": 3,
+  "pen_away": 3
  },
  "QF-01": {
   "home": "França",
