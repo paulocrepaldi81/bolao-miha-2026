@@ -342,38 +342,48 @@ function gameBlockHTML(m, live){
   const preds=[];
   // 🎭 Traição Estatística + 🙈 Quem tá torcendo escondido: cruza o pódio/azarão/artilheiro
   // (picks fixos da temporada) com os dois times DESTE jogo — tudo em anônimo, num pass só.
-  let traidores=0, azaraoCount=0, podioCount=0, artCount=0;
+  // Azarão/artilheiro/pódio contam SEPARADO por lado (não "um dos dois") — sem isso o número
+  // não tem dono e ninguém entende o que ele quer dizer (achado ao vivo com o dono do bolão).
+  let traidores=0, azaraoHome=0, azaraoAway=0, podioHome=0, podioAway=0, artHome=0, artAway=0;
   (DATA.participants||[]).forEach(p=>{
     const gk=p.picks&&p.picks.knockout&&p.picks.knockout[m.match_id];
     const g=(p.picks&&p.picks.groups&&p.picks.groups[m.match_id]) || (gk&&gk.used);
     if(g&&g[0]!=null&&g[1]!=null) preds.push(g[0]+'×'+g[1]);
     const ex=(p.picks&&p.picks.extras)||{}, fin=(p.picks&&p.picks.final)||{};
     const podio=[fin.champion,fin.vice,fin.third];
-    if(ex.azarao===m.home_team||ex.azarao===m.away_team) azaraoCount++;
-    if(podio.includes(m.home_team)||podio.includes(m.away_team)) podioCount++;
-    if(ex.artilheiro_equipe===m.home_team||ex.artilheiro_equipe===m.away_team) artCount++;
+    if(ex.azarao===m.home_team) azaraoHome++; if(ex.azarao===m.away_team) azaraoAway++;
+    if(podio.includes(m.home_team)) podioHome++; if(podio.includes(m.away_team)) podioAway++;
+    if(ex.artilheiro_equipe===m.home_team) artHome++; if(ex.artilheiro_equipe===m.away_team) artAway++;
     if(g&&g[0]!=null&&g[1]!=null){
       const homeLosing=g[0]<g[1], awayLosing=g[1]<g[0];
       if((podio.includes(m.home_team)&&homeLosing)||(podio.includes(m.away_team)&&awayLosing)) traidores++;
     }
   });
-  // 👑 O Xerife Deu o Play: única linha nomeada do bloco — o palpite do líder atual pra este jogo.
+  // 👑 O Xerife Deu o Play: única linha nomeada do bloco. O PALPITE só aparece com o jogo AO VIVO
+  // (antes disso vira teaser — não entrega o placar, só deixa todo mundo curioso pra descobrir).
   const leader=[...(DATA.participants||[])].sort((a,b)=>a.rank-b.rank)[0];
   let xerifeHTML='';
   if(leader){
     const lgk=leader.picks&&leader.picks.knockout&&leader.picks.knockout[m.match_id];
     const lg=(leader.picks&&leader.picks.groups&&leader.picks.groups[m.match_id]) || (lgk&&lgk.used);
     if(lg&&lg[0]!=null&&lg[1]!=null){
-      const lfin=(leader.picks&&leader.picks.final)||{};
-      let overlapTeam=null, overlapPos=null;
-      if(lfin.champion===m.home_team||lfin.champion===m.away_team){overlapTeam=lfin.champion;overlapPos='campeão';}
-      else if(lfin.vice===m.home_team||lfin.vice===m.away_team){overlapTeam=lfin.vice;overlapPos='vice';}
-      else if(lfin.third===m.home_team||lfin.third===m.away_team){overlapTeam=lfin.third;overlapPos='3º lugar';}
-      const overlapNote = overlapTeam
-        ? ` E não é só isso: ${esc(leader.alias)} também apostou <b>${esc(overlapTeam)}</b> como ${overlapPos} da Copa toda.`
-        : '';
-      xerifeHTML = `<div class="cg-xerife"><span class="cg-xerife-ic">👑</span><span>O xerife deu o play: `
-        + `<b>${esc(leader.alias)}</b> apostou <b>${lg[0]}×${lg[1]}</b> nesse jogo.${overlapNote}</span></div>`;
+      if(live){
+        const lfin=(leader.picks&&leader.picks.final)||{};
+        let overlapTeam=null, overlapPos=null;
+        if(lfin.champion===m.home_team||lfin.champion===m.away_team){overlapTeam=lfin.champion;overlapPos='campeão';}
+        else if(lfin.vice===m.home_team||lfin.vice===m.away_team){overlapTeam=lfin.vice;overlapPos='vice';}
+        else if(lfin.third===m.home_team||lfin.third===m.away_team){overlapTeam=lfin.third;overlapPos='3º lugar';}
+        const overlapNote = overlapTeam
+          ? ` E não é só isso: ${esc(leader.alias)} também apostou <b>${esc(overlapTeam)}</b> como ${overlapPos} da Copa toda.`
+          : '';
+        xerifeHTML = `<div class="cg-xerife"><span class="cg-xerife-dot"></span><span class="cg-xerife-ic">👑</span><span>O xerife deu o play: `
+          + `<b>${esc(leader.alias)}</b> apostou <b>${lg[0]}×${lg[1]}</b> nesse jogo.${overlapNote}</span></div>`;
+      } else {
+        const specialNote = m.is_special ? ' E esse aqui vale ⭐ 5 pts em dobro de tensão.' : '';
+        xerifeHTML = `<div class="cg-xerife cg-xerife--teaser"><span class="cg-xerife-ic">🔒</span><span>`
+          + `<b>${esc(leader.alias)}</b> já escolheu o placar de ${flag(m.home_team)}${m.home_team} × ${m.away_team}${flagA(m.away_team)} `
+          + `— mas o cofre só abre quando a bola rolar.${specialNote}</span></div>`;
+      }
     }
   }
   const status = live
@@ -405,10 +415,25 @@ function gameBlockHTML(m, live){
   cards += `<div class="cg-card"><div class="cg-ic">🎭</div><div class="cg-cl">Traição Estatística</div>
     <div class="cg-sc">${traidores}</div>
     <div class="cg-sub">${traidores===0?'ninguém traindo o próprio campeão agora — fé que não escala, é chão':(traidores===1?'pessoa torcendo contra o próprio campeão agora':'pessoas torcendo contra o próprio campeão agora')}</div></div>`;
-  cards += `<div class="cg-card cg-card-multi"><div class="cg-ic">🙈</div><div class="cg-cl">Quem tá torcendo escondido</div>
-    <div class="cg-multi-row"><span>🃏 Azarão da Copa</span><b>${azaraoCount}</b></div>
-    <div class="cg-multi-row"><span>🏆 Tem um no pódio</span><b>${podioCount}</b></div>
-    <div class="cg-multi-row"><span>⚽ Artilheiro daqui</span><b>${artCount}</b></div></div>`;
+  // tabela casa×fora (não "um dos dois") — cada número tem um DONO (o time da coluna), e a
+  // linha de contexto dá a escala (de quantos apostadores no total). Sem isso ninguém entendia
+  // o que "0" ou "1" queriam dizer (achado ao vivo com o dono do bolão).
+  const torcidaTotal = azaraoHome+azaraoAway+podioHome+podioAway+artHome+artAway;
+  const nBolao = (DATA.participants||[]).length;
+  const torcidaFoot = torcidaTotal===0
+    ? 'Jogo neutro por aqui — ninguém tem parte nesse duelo. Pode assistir sem culpa (ou sem torcida escondida, pelo menos).'
+    : (torcidaTotal<5
+        ? `${torcidaTotal} palpite${torcidaTotal>1?'s':''} de temporada cruzando esse jogo — tem gente de coração dividido.`
+        : `${torcidaTotal} palpites de temporada cruzando esse jogo. Muita gente com pele nisso — bora ver quem disfarça melhor o nervosismo.`);
+  cards += `<div class="cg-card cg-card-torcida"><div class="cg-cl">🙈 Quem tá torcendo escondido</div>
+    <div class="cg-sub">Só nesse jogo, de ${nBolao} apostadores no bolão:</div>
+    <table class="cg-torcida-table">
+      <tr><th></th><th>${flag(m.home_team)}${m.home_team}</th><th>${m.away_team}${flagA(m.away_team)}</th></tr>
+      <tr><td>🃏 Azarão da Copa</td><td>${azaraoHome}</td><td>${azaraoAway}</td></tr>
+      <tr><td>🏆 Pódio (campeão/vice/3º)</td><td>${podioHome}</td><td>${podioAway}</td></tr>
+      <tr><td>⚽ Artilheiro daqui</td><td>${artHome}</td><td>${artAway}</td></tr>
+    </table>
+    <div class="cg-sub" style="margin-top:8px">${torcidaFoot}</div></div>`;
 
   // Palpite de RESULTADO (1X2): quantos no mandante / empate / visitante
   let hw=0,dr=0,aw=0;
@@ -440,7 +465,7 @@ function gameBlockHTML(m, live){
     ? `<div class="cg-mosca"><span class="cg-mosca-dot"></span><span>Se acabasse agora (<b>${m.home_score??0} × ${m.away_score??0}</b>): <b>${naMosca}</b> aposta${naMosca!==1?'s':''} ${naMosca?'cravando o placar exato 🎯':'nesse placar ainda 👀'}</span></div>`
     : '';
   return `<div class="cg-game">${headLine}${xerifeHTML}${moscaLine}${r1x2}<div class="cg-grid">${cards}</div>`
-    +`<div class="cg-foot">${preds.length} palpites para este jogo · anônimo, com uma exceção — o líder 👑 aparece sempre. O resto do suspense continua 🤫</div></div>`;
+    +`<div class="cg-foot">${preds.length} palpites para este jogo · anônimo, com uma exceção — o líder 👑 aparece quando a bola rolar. O resto do suspense continua 🤫</div></div>`;
 }
 function renderCurrentGameStats(){
   const box=document.getElementById('cgStats'); if(!box) return;

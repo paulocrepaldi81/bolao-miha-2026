@@ -346,11 +346,15 @@
   .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
   .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
   .cg-empty{color:var(--ink-dim);font-size:13px}
-  /* "torcendo escondido" — mesma casca do .cg-card, mas 3 linhas rotuladas em vez de 1 número grande */
-  .cg-card-multi{text-align:left}
-  .cg-card-multi .cg-multi-row{display:flex;justify-content:space-between;align-items:center;
-    font-size:12px;color:var(--ink-dim);margin-top:7px}
-  .cg-card-multi .cg-multi-row b{font-family:Anton,sans-serif;font-weight:400;font-size:var(--t2);color:var(--ink)}
+  /* "torcendo escondido" — tabela casa×fora em vez de 3 números soltos: cada número precisa
+     de um DONO (o time da coluna) pra fazer sentido de cara. Ocupa a largura toda do grid. */
+  .cg-card-torcida{grid-column:1/-1;text-align:left}
+  .cg-torcida-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+  .cg-torcida-table th{font-weight:700;color:var(--ink-dim);text-align:center;padding:4px 6px;font-size:12px}
+  .cg-torcida-table th:first-child{width:44%}
+  .cg-torcida-table td{padding:6px;text-align:center;border-top:1px solid var(--line);color:var(--ink-dim)}
+  .cg-torcida-table td:first-child{text-align:left}
+  .cg-torcida-table td:not(:first-child){font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
   /* Palpite de resultado (1X2) */
   /* selo "na mosca" ao vivo: placar exato batido agora (só durante jogo ao vivo) */
   .cg-mosca{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:9px 13px;border-radius:10px;
@@ -358,12 +362,14 @@
   .cg-mosca b{color:var(--green);font-weight:800}
   .cg-mosca-dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex:0 0 auto;animation:pulse 1.2s infinite}
   /* "O Xerife Deu o Play" — mesma casca visual do .cg-mosca, mas em dourado (é o líder, não um
-     evento ao vivo) e sem o ponto pulsante. É a ÚNICA linha nomeada dentro do bloco anônimo do
-     "jogo de agora" — deliberado (o líder já é figura pública no leaderboard). */
+     evento ao vivo). É a ÚNICA linha nomeada dentro do bloco anônimo do "jogo de agora" —
+     deliberado (o líder já é figura pública no leaderboard). O PALPITE só aparece com o jogo
+     ao vivo (ponto dourado pulsante = revelação real); antes disso é só um teaser (🔒, sem pulso). */
   .cg-xerife{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:9px 13px;border-radius:10px;
     background:rgba(201,151,63,.08);border:1px solid rgba(201,151,63,.35);font-size:13.5px;color:var(--ink);line-height:1.4}
   .cg-xerife b{color:var(--gold-bright)}
   .cg-xerife-ic{font-size:16px;flex:0 0 auto}
+  .cg-xerife-dot{width:9px;height:9px;border-radius:50%;background:var(--gold-bright);flex:0 0 auto;animation:pulse 1.2s infinite}
   .cg-1x2{margin-bottom:16px}
   .cg-1x2-h{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px}
   .cg-1x2-bar{display:flex;height:24px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.06)}
@@ -823,6 +829,6 @@
 
 <!-- ?v= força o navegador a baixar o app.js novo junto com este HTML (evita cache antigo
      rodando contra HTML novo). BUMPAR este número sempre que editar app.js. -->
-<script src="app.js?v=20260707a" defer></script>
+<script src="app.js?v=20260707b" defer></script>
 </body>
 </html>
