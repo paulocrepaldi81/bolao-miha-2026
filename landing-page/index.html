@@ -284,6 +284,12 @@
   .move-card .lab-sub{display:block;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-faint);font-size:10px;margin-top:2px}
   .move-card .who{font-size:13px;font-weight:700;margin-top:6px;line-height:1.35}
   .move-card .extra{font-size:11.5px;color:var(--ink-dim);margin-top:3px}
+  .vs-sep{color:var(--ink-faint);font-weight:600;margin:0 3px}
+  /* "Novela das Ultrapassagens" — par vs par, não cabe no formato de 1 nome + 1 valor */
+  .h2h-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .h2h-name{font-size:13px;font-weight:700;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .h2h-vs{font-family:Anton,sans-serif;font-size:var(--t3);color:var(--gold-bright);line-height:1;text-align:center;flex:0 0 auto}
+  .h2h-vs i{display:block;font-style:normal;font-size:9px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
   /* destaque do bloco: mais pontos na rodada */
   .move-hero{background:linear-gradient(180deg,var(--card-2),var(--card));border:1px solid var(--line);
     border-left:3px solid var(--green);border-radius:var(--r);padding:18px;margin-bottom:14px}
@@ -340,12 +346,24 @@
   .cg-sub{font-size:11px;color:var(--ink-faint);margin-top:3px}
   .cg-foot{margin-top:12px;font-size:12px;color:var(--ink-faint)}
   .cg-empty{color:var(--ink-dim);font-size:13px}
+  /* "torcendo escondido" — mesma casca do .cg-card, mas 3 linhas rotuladas em vez de 1 número grande */
+  .cg-card-multi{text-align:left}
+  .cg-card-multi .cg-multi-row{display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;color:var(--ink-dim);margin-top:7px}
+  .cg-card-multi .cg-multi-row b{font-family:Anton,sans-serif;font-weight:400;font-size:var(--t2);color:var(--ink)}
   /* Palpite de resultado (1X2) */
   /* selo "na mosca" ao vivo: placar exato batido agora (só durante jogo ao vivo) */
   .cg-mosca{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:9px 13px;border-radius:10px;
     background:rgba(39,177,75,.10);border:1px solid rgba(39,177,75,.4);font-size:13.5px;color:var(--ink);line-height:1.4}
   .cg-mosca b{color:var(--green);font-weight:800}
   .cg-mosca-dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex:0 0 auto;animation:pulse 1.2s infinite}
+  /* "O Xerife Deu o Play" — mesma casca visual do .cg-mosca, mas em dourado (é o líder, não um
+     evento ao vivo) e sem o ponto pulsante. É a ÚNICA linha nomeada dentro do bloco anônimo do
+     "jogo de agora" — deliberado (o líder já é figura pública no leaderboard). */
+  .cg-xerife{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:9px 13px;border-radius:10px;
+    background:rgba(201,151,63,.08);border:1px solid rgba(201,151,63,.35);font-size:13.5px;color:var(--ink);line-height:1.4}
+  .cg-xerife b{color:var(--gold-bright)}
+  .cg-xerife-ic{font-size:16px;flex:0 0 auto}
   .cg-1x2{margin-bottom:16px}
   .cg-1x2-h{font-size:11px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px}
   .cg-1x2-bar{display:flex;height:24px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.06)}

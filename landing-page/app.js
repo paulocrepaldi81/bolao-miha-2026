@@ -340,11 +340,42 @@ function gamesNow(){
 function gameBlockHTML(m, live){
   const sum=k=>{ const [h,a]=k.split('×').map(Number); return h+a; };
   const preds=[];
+  // 🎭 Traição Estatística + 🙈 Quem tá torcendo escondido: cruza o pódio/azarão/artilheiro
+  // (picks fixos da temporada) com os dois times DESTE jogo — tudo em anônimo, num pass só.
+  let traidores=0, azaraoCount=0, podioCount=0, artCount=0;
   (DATA.participants||[]).forEach(p=>{
     const gk=p.picks&&p.picks.knockout&&p.picks.knockout[m.match_id];
     const g=(p.picks&&p.picks.groups&&p.picks.groups[m.match_id]) || (gk&&gk.used);
     if(g&&g[0]!=null&&g[1]!=null) preds.push(g[0]+'×'+g[1]);
+    const ex=(p.picks&&p.picks.extras)||{}, fin=(p.picks&&p.picks.final)||{};
+    const podio=[fin.champion,fin.vice,fin.third];
+    if(ex.azarao===m.home_team||ex.azarao===m.away_team) azaraoCount++;
+    if(podio.includes(m.home_team)||podio.includes(m.away_team)) podioCount++;
+    if(ex.artilheiro_equipe===m.home_team||ex.artilheiro_equipe===m.away_team) artCount++;
+    if(g&&g[0]!=null&&g[1]!=null){
+      const homeLosing=g[0]<g[1], awayLosing=g[1]<g[0];
+      if((podio.includes(m.home_team)&&homeLosing)||(podio.includes(m.away_team)&&awayLosing)) traidores++;
+    }
   });
+  // 👑 O Xerife Deu o Play: única linha nomeada do bloco — o palpite do líder atual pra este jogo.
+  const leader=[...(DATA.participants||[])].sort((a,b)=>a.rank-b.rank)[0];
+  let xerifeHTML='';
+  if(leader){
+    const lgk=leader.picks&&leader.picks.knockout&&leader.picks.knockout[m.match_id];
+    const lg=(leader.picks&&leader.picks.groups&&leader.picks.groups[m.match_id]) || (lgk&&lgk.used);
+    if(lg&&lg[0]!=null&&lg[1]!=null){
+      const lfin=(leader.picks&&leader.picks.final)||{};
+      let overlapTeam=null, overlapPos=null;
+      if(lfin.champion===m.home_team||lfin.champion===m.away_team){overlapTeam=lfin.champion;overlapPos='campeão';}
+      else if(lfin.vice===m.home_team||lfin.vice===m.away_team){overlapTeam=lfin.vice;overlapPos='vice';}
+      else if(lfin.third===m.home_team||lfin.third===m.away_team){overlapTeam=lfin.third;overlapPos='3º lugar';}
+      const overlapNote = overlapTeam
+        ? ` E não é só isso: ${esc(leader.alias)} também apostou <b>${esc(overlapTeam)}</b> como ${overlapPos} da Copa toda.`
+        : '';
+      xerifeHTML = `<div class="cg-xerife"><span class="cg-xerife-ic">👑</span><span>O xerife deu o play: `
+        + `<b>${esc(leader.alias)}</b> apostou <b>${lg[0]}×${lg[1]}</b> nesse jogo.${overlapNote}</span></div>`;
+    }
+  }
   const status = live
     ? `<span class="chip chip-live live"><span class="dot"></span> ao vivo</span> <span class="cg-min">${esc(m.minute||'em andamento')}</span>`
     : `<span class="chip chip-sched">📅 próximo</span> <span class="cg-min">${fmtDateTime(m.kickoff_sao_paulo)}</span>`;
@@ -371,6 +402,13 @@ function gameBlockHTML(m, live){
   let cards = card('🎯','Placar mais escolhido',most[0],most[1],'o palpite da maioria');
   if(boldest) cards += card('🚀','Palpite mais ousado',boldest[0],boldest[1],'mais gols apostados');
   if(lonely)  cards += card('🎲', lonely[1]===1?'Aposta solitária':'Placar menos escolhido', lonely[0], lonely[1], lonely[1]===1?'só uma cravou esse':'o menos escolhido');
+  cards += `<div class="cg-card"><div class="cg-ic">🎭</div><div class="cg-cl">Traição Estatística</div>
+    <div class="cg-sc">${traidores}</div>
+    <div class="cg-sub">${traidores===0?'ninguém traindo o próprio campeão agora — fé que não escala, é chão':(traidores===1?'pessoa torcendo contra o próprio campeão agora':'pessoas torcendo contra o próprio campeão agora')}</div></div>`;
+  cards += `<div class="cg-card cg-card-multi"><div class="cg-ic">🙈</div><div class="cg-cl">Quem tá torcendo escondido</div>
+    <div class="cg-multi-row"><span>🃏 Azarão da Copa</span><b>${azaraoCount}</b></div>
+    <div class="cg-multi-row"><span>🏆 Tem um no pódio</span><b>${podioCount}</b></div>
+    <div class="cg-multi-row"><span>⚽ Artilheiro daqui</span><b>${artCount}</b></div></div>`;
 
   // Palpite de RESULTADO (1X2): quantos no mandante / empate / visitante
   let hw=0,dr=0,aw=0;
@@ -401,8 +439,8 @@ function gameBlockHTML(m, live){
   const moscaLine = live
     ? `<div class="cg-mosca"><span class="cg-mosca-dot"></span><span>Se acabasse agora (<b>${m.home_score??0} × ${m.away_score??0}</b>): <b>${naMosca}</b> aposta${naMosca!==1?'s':''} ${naMosca?'cravando o placar exato 🎯':'nesse placar ainda 👀'}</span></div>`
     : '';
-  return `<div class="cg-game">${headLine}${moscaLine}${r1x2}<div class="cg-grid">${cards}</div>`
-    +`<div class="cg-foot">${preds.length} palpites para este jogo · só números, sem nomes — o suspense continua 🤫</div></div>`;
+  return `<div class="cg-game">${headLine}${xerifeHTML}${moscaLine}${r1x2}<div class="cg-grid">${cards}</div>`
+    +`<div class="cg-foot">${preds.length} palpites para este jogo · anônimo, com uma exceção — o líder 👑 aparece sempre. O resto do suspense continua 🤫</div></div>`;
 }
 function renderCurrentGameStats(){
   const box=document.getElementById('cgStats'); if(!box) return;
@@ -834,9 +872,30 @@ function renderMovement(){
         <div class="who">${holdersWrap(o.holders)}</div>
         <div class="extra">${o.count>1?tie:solo}</div></div>`
     : `<div class="move-card"><div class="lab">${lab}</div><div class="who" style="margin-top:8px;color:var(--ink-dim);font-weight:600">${empty}</div></div>`;
+  // 🏘️ Clássico de Vizinhos: o par mais colado na tabela agora (menor gap POSITIVO de pontos —
+  // empate não conta como disputa, o motor já pula). 📖 Novela das Ultrapassagens: o par que mais
+  // trocou de posição entre si na Copa inteira (history.json). Ambos rivalidade "de temporada",
+  // por isso vivem aqui e não dentro do "jogo de agora" (que é só do jogo específico rolando).
+  const cv = mv.classico_vizinhos;
+  const clHTML = cv
+    ? `<div class="move-card"><div class="lab">🏘️ Clássico de Vizinhos</div>
+        <div class="big">${cv.gap} <span class="u">pt${cv.gap!==1?'s':''} de diferença</span></div>
+        <div class="who">${esc(cv.a)} (${cv.a_rank}º) <span class="vs-sep">×</span> ${esc(cv.b)} (${cv.b_rank}º)</div>
+        <div class="extra">só ${cv.gap} ${cv.gap===1?'ponto separa':'pontos separam'} vocês — a dupla mais grudada do pelotão</div></div>`
+    : `<div class="move-card"><div class="lab">🏘️ Clássico de Vizinhos</div><div class="who" style="margin-top:8px;color:var(--ink-dim);font-weight:600">Ainda sem dado suficiente pra achar um clássico.</div></div>`;
+  const nv = mv.novela_ultrapassagens;
+  const nvExtra = nv && (nv.count===1
+    ? 'capítulo piloto da novela — o resto do elenco ainda vai aparecer'
+    : 'quem leva a taça da novela?');
+  const nvHTML = nv
+    ? `<div class="move-card"><div class="lab">📖 Novela das Ultrapassagens</div>
+        <div class="h2h-row"><span class="h2h-name">${esc(nv.a)}</span><span class="h2h-vs">${nv.count}<i>troca${nv.count!==1?'s':''}</i></span><span class="h2h-name">${esc(nv.b)}</span></div>
+        <div class="extra">${nvExtra}</div></div>`
+    : `<div class="move-card"><div class="lab">📖 Novela das Ultrapassagens</div><div class="who" style="margin-top:8px;color:var(--ink-dim);font-weight:600">A novela ainda não tem elenco definido. Zero trocas até aqui — a trama tá devagar.</div></div>`;
   grid.innerHTML =
       card('up','📈 Maior salto','▲',mv.biggest_jump,'disparou na rodada 🚀','subiram junto 🚀','Ninguém saltou nessa rodada.')
-    + card('down','📉 Maior tombo','▼',mv.biggest_drop,'escorregou na rodada — dá pra recuperar 🍀','azar coletivo — tão no mesmo barco 🍀','Rodada tranquila — ninguém despencou. 😌');
+    + card('down','📉 Maior tombo','▼',mv.biggest_drop,'escorregou na rodada — dá pra recuperar 🍀','azar coletivo — tão no mesmo barco 🍀','Rodada tranquila — ninguém despencou. 😌')
+    + clHTML + nvHTML;
 }
 
 // 🎯 Números do bolão — superlativos com EMPATE EXPLÍCITO: mostra TODOS que alcançaram o

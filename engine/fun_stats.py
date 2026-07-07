@@ -118,6 +118,61 @@ def compute_goal_profile(bets):
     return out
 
 
+def compute_classico_vizinhos(participants):
+    """Acha o par de apostadores mais 'colados' na tabela: ordena por pontuação e procura o
+    MENOR GAP POSITIVO entre dois vizinhos consecutivos (gap=0 = empate, que não é disputa —
+    já é decidido; por isso é ignorado, senão o resultado seria quase sempre um empate trivial
+    em 88 apostas). Em caso de empate no menor gap, fica com o par mais alto na tabela (mais
+    dramático). Retorna {"a","a_rank","b","b_rank","gap"} ou None (<2 apostadores ou só empates).
+    """
+    if len(participants) < 2:
+        return None
+    ranked = sorted(participants, key=lambda p: -p["score"])
+    best = None
+    for i in range(len(ranked) - 1):
+        a, b = ranked[i], ranked[i + 1]
+        gap = a["score"] - b["score"]
+        if gap <= 0:
+            continue
+        if best is None or gap < best["gap"]:
+            best = {"a": a["alias"], "a_rank": a["rank"], "b": b["alias"], "b_rank": b["rank"], "gap": gap}
+    return best
+
+
+def compute_novela_ultrapassagens(history, aliases):
+    """Para cada par de apostadores, conta quantas vezes a ordem relativa entre os dois se
+    inverteu ao longo dos snapshots do history.json (ex.: A passou de na-frente pra atrás de B).
+    Ignora transições que passam por empate exato (rank igual não conta como 'na frente'), só
+    soma quando o sinal realmente inverte de um lado pro outro. Retorna o par com MAIS trocas:
+    {"a","b","count"} (ordenado alfabeticamente) ou None (histórico insuficiente / nunca houve
+    troca — não distingue os dois casos, a landing trata como 'a novela ainda não tem elenco').
+    """
+    if len(history) < 2:
+        return None
+    last_sign, flips = {}, {}
+    for snap in history:
+        ranks = snap.get("ranks", {})
+        present = [a for a in aliases if a in ranks]
+        for i in range(len(present)):
+            for j in range(i + 1, len(present)):
+                a, b = present[i], present[j]
+                ra, rb = ranks[a].get("rank"), ranks[b].get("rank")
+                if ra is None or rb is None or ra == rb:
+                    continue
+                key = (a, b) if a < b else (b, a)
+                rank0 = ra if key[0] == a else rb
+                rank1 = rb if key[0] == a else ra
+                sign = 1 if rank0 < rank1 else -1   # +1 = key[0] na frente de key[1] agora
+                prev = last_sign.get(key)
+                if prev is not None and prev != sign:
+                    flips[key] = flips.get(key, 0) + 1
+                last_sign[key] = sign
+    if not flips:
+        return None
+    (a, b), count = min(flips.items(), key=lambda kv: (-kv[1], kv[0]))
+    return {"a": a, "b": b, "count": count}
+
+
 def compute_rank_history(history, aliases):
     """Reduz o history.json (um snapshot a cada MUDANÇA de classificação, não por tempo fixo)
     a 1 PONTO POR DIA CORRIDO (o último snapshot de cada dia — 'ts' já vem no fuso de SP) —

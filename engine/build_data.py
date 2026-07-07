@@ -431,6 +431,9 @@ def main():
     # ---- estatísticas reais ----
     stats = build_stats(bets, scored, history)
     movement = build_movement(participants)
+    # rivalidades "de temporada" (zoeira) — entram no mesmo bloco de Movimentação
+    movement["classico_vizinhos"] = FUN.compute_classico_vizinhos(participants)
+    movement["novela_ultrapassagens"] = FUN.compute_novela_ultrapassagens(history, [p["alias"] for p in participants])
 
     paid_n = sum(1 for p in participants if p["paid"])
     now = datetime.now(SP).isoformat()

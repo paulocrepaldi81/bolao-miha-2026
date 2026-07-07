@@ -96,3 +96,50 @@ def test_rank_history_downsample_1_por_dia_e_ignora_alias_ausente():
 def test_rank_history_vazio_e_fail_safe():
     dates, series = FS.compute_rank_history([], ["X"])
     assert dates == [] and series == {"X": []}
+
+
+def _p(alias, rank, score):
+    return {"alias": alias, "rank": rank, "score": score}
+
+
+def test_classico_vizinhos_ignora_empate_acha_menor_gap_positivo():
+    # A e B empatados em 1º (gap 0, não é disputa) -> deve pular pro próximo par real: B/C (gap 1)
+    parts = [_p("A", 1, 100), _p("B", 1, 100), _p("C", 3, 99), _p("D", 4, 80)]
+    out = FS.compute_classico_vizinhos(parts)
+    assert out == {"a": "B", "a_rank": 1, "b": "C", "b_rank": 3, "gap": 1}
+
+
+def test_classico_vizinhos_empate_no_menor_gap_fica_com_o_mais_alto():
+    # dois candidatos empatam no menor gap (1): topo(100/99) e base(50/49) -> fica com o do topo
+    parts = [_p("A", 1, 100), _p("B", 2, 99), _p("C", 3, 50), _p("D", 4, 49)]
+    out = FS.compute_classico_vizinhos(parts)
+    assert out == {"a": "A", "a_rank": 1, "b": "B", "b_rank": 2, "gap": 1}
+
+
+def test_classico_vizinhos_todo_mundo_empatado_retorna_none():
+    parts = [_p("A", 1, 50), _p("B", 1, 50), _p("C", 1, 50)]
+    assert FS.compute_classico_vizinhos(parts) is None
+
+
+def test_novela_conta_troca_de_posicao_ignorando_empate():
+    history = [
+        {"ranks": {"A": {"rank": 1}, "B": {"rank": 2}}},   # A na frente
+        {"ranks": {"A": {"rank": 1}, "B": {"rank": 1}}},   # empate -> não conta como troca
+        {"ranks": {"A": {"rank": 2}, "B": {"rank": 1}}},   # B ultrapassa A -> 1ª troca
+        {"ranks": {"A": {"rank": 1}, "B": {"rank": 2}}},   # A retoma -> 2ª troca
+    ]
+    out = FS.compute_novela_ultrapassagens(history, ["A", "B"])
+    assert out == {"a": "A", "b": "B", "count": 2}
+
+
+def test_novela_sem_troca_retorna_none():
+    history = [
+        {"ranks": {"A": {"rank": 1}, "B": {"rank": 2}}},
+        {"ranks": {"A": {"rank": 1}, "B": {"rank": 2}}},
+    ]
+    assert FS.compute_novela_ultrapassagens(history, ["A", "B"]) is None
+
+
+def test_novela_historico_insuficiente_retorna_none():
+    history = [{"ranks": {"A": {"rank": 1}, "B": {"rank": 2}}}]
+    assert FS.compute_novela_ultrapassagens(history, ["A", "B"]) is None
