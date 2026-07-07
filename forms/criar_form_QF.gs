@@ -9,7 +9,9 @@
  * robô resolve sozinho assim que o jogo acabar (resolve_bracket.py já roda no pipeline
  * automático). Quando isso acontecer, rode `cd engine && python3 resolve_bracket.py --dry-run`
  * (ou veja o log do robô) pra pegar o adversário e o horário do Jogo 4, e complete a linha
- * marcada TBD abaixo antes de rodar este script.
+ * marcada TBD abaixo antes de rodar este script. CONFIRME também que o kickoff do Jogo 4 é
+ * DEPOIS do meio-dia de 09/07 (os outros 3 são à tarde/noite, sem exceção) — se cair de manhã
+ * no mesmo dia do prazo, avise antes de criar o Form (precisaria de slot_deadlines, como no R32).
  *
  * COMO USAR (leva ~3 min):
  *  1) Abra https://script.google.com  ->  Novo projeto.
@@ -28,10 +30,11 @@
  * Os confrontos já vêm com as SELEÇÕES REAIS das quartas, na ordem/mando dos slots QF-01..04.
  * NÃO reordene os jogos (o "Jogo N" tem que casar com o slot QF-NN).
  *
- * REGRA DE PRAZO (combinada, RUNBOOK-fases.md): prazo ÚNICO — todas as quartas fecham
- * QUARTA 08/07 ÀS 23H (GMT-3, Brasília). Quem não mexer num jogo (branco ou "Manter meu
- * palpite original") fica com o placar da APOSTA ORIGINAL da planilha. A trava real é
- * feita pelo robô.
+ * REGRA DE PRAZO (combinada, RUNBOOK-fases.md — MUDOU em 07/07): prazo ÚNICO — todas as
+ * quartas fecham QUINTA 09/07 AO MEIO-DIA (12h, GMT-3, Brasília) — antes era 23h da véspera,
+ * agora é meio-dia do PRÓPRIO DIA do 1º jogo (QF-01 kicka 17h, 5h de folga). Quem não mexer
+ * num jogo (branco ou "Manter meu palpite original") fica com o placar da APOSTA ORIGINAL da
+ * planilha. A trava real é feita pelo robô.
  */
 
 // ====== EDITE AQUI (só se precisar) ======
@@ -93,8 +96,10 @@ function criarFormularioQF() {
     '✅ Para cada jogo, escolha o placar OU deixe "Manter meu palpite original". O que você NÃO mexer ' +
     'fica com o placar que você já tinha na sua aposta da planilha — ou seja, NÃO precisa preencher tudo, ' +
     'só o que quiser mudar.\n\n' +
-    '⏰ PRAZO: todas as quartas fecham QUARTA 08/07 ÀS 23H — GMT-3, Brasília. Pode reenviar ' +
-    'quantas vezes quiser até lá: vale o último envio dentro do prazo.\n\n' +
+    '⏰ PRAZO: todas as quartas fecham QUINTA 09/07 AO MEIO-DIA (12h) — GMT-3, Brasília. Pode ' +
+    'reenviar quantas vezes quiser até lá: vale o último envio dentro do prazo.\n' +
+    '⚠️ Mudou! Nas oitavas o prazo fechava 23h da véspera — agora fecha ao MEIO-DIA do próprio ' +
+    'dia do 1º jogo. Não deixa pra decidir de noite, que já era.\n\n' +
     '📝 Tem mais de uma aposta? Preencha UM formulário para cada apelido.\n\n' +
     '⚽ Os placares contam até o FIM DA PRORROGAÇÃO — pênaltis não dão pontos.'
   );
@@ -115,7 +120,7 @@ function criarFormularioQF() {
   MATCHES.forEach(function (m) {
     form.addListItem()
       .setTitle('Jogo ' + m.n + ' — ' + m.home + ' × ' + m.away)
-      .setHelpText('Placar ' + m.home + ' (casa) × ' + m.away + '. Fecha qua 08/07 às 23h (GMT-3). ' +
+      .setHelpText('Placar ' + m.home + ' (casa) × ' + m.away + '. Fecha qui 09/07 ao meio-dia (GMT-3). ' +
                    'Em branco ou "Manter meu palpite original" = fica com seu palpite original.')
       .setChoiceValues(sl)
       .setRequired(false);
@@ -127,7 +132,7 @@ function criarFormularioQF() {
 
   form.setConfirmationMessage(
     '✅ Recebido! Seus palpites das quartas estão salvos.\n' +
-    'Quer mudar algo antes de quarta às 23h? Use o MESMO link e edite sua resposta — vale a última.\n' +
+    'Quer mudar algo antes de quinta 09/07 ao meio-dia? Use o MESMO link e edite sua resposta — vale a última.\n' +
     'Tem outra aposta? Preencha de novo com o outro apelido.'
   );
 

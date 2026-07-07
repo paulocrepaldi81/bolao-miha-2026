@@ -48,8 +48,20 @@ O robô já faz o trabalho de **dados** sozinho; o que sobra é **criar o Form**
 | Fase | Prazo padrão |
 |---|---|
 | Oitavas | 13h de sáb 04/07 |
-| Quartas | 23h de 08/07 |
-| Semis | 23h de 13/07 |
-| 3º + Final | 23h de 17/07 |
+| Quartas | 12h (meio-dia) de qui 09/07 |
+| Semis | 12h (meio-dia) de ter 14/07 |
+| 3º + Final | 12h (meio-dia) de sáb 18/07 |
 
 (No R32 foi: África do Sul × Canadá meio-dia 28/06; resto 23h 28/06.)
+
+> **MUDANÇA DE REGRA (definida 07/07, antes do Form de Quartas ser criado):** a partir das
+> Quartas o prazo virou **meio-dia do MESMO DIA do 1º jogo da fase** (era "23h da véspera").
+> Confirmado que dá folga real antes do 1º jogo (Quartas: QF-01 09/07 17h BRT — 5h de folga).
+> **Antes de criar o Form de cada fase, reconfira se o 1º jogo dela kicka DEPOIS do meio-dia**
+> (se algum jogo começar de manhã no mesmo dia do prazo, precisa de `slot_deadlines`
+> específico pra esse jogo, como foi feito no R32). Nas Quartas isso já foi conferido: os 3
+> confrontos definidos (QF-01/02/03) começam à tarde/noite, sem exceção necessária — falta só
+> reconferir o QF-04 assim que resolver. **Avise explicitamente nessa mudança de regra na
+> comunicação do WhatsApp** — "prazo mudou de 23h da véspera pra meio-dia do mesmo dia", não
+> só o prazo novo (quem já se acostumou com o padrão antigo pode perder o prazo achando que
+> ainda tem a noite inteira).
