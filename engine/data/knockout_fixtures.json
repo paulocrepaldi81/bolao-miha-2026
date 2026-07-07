@@ -223,9 +223,9 @@
   "home": "Argentina",
   "away": "Egito",
   "kickoff": "2026-07-07T16:00Z",
-  "status": "finished",
-  "winner": "Argentina",
-  "decided_by": "normal",
+  "status": "live",
+  "winner": null,
+  "decided_by": null,
   "pen_home": null,
   "pen_away": null
  },
