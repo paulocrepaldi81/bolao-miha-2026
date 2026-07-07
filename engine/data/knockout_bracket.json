@@ -273,6 +273,13 @@
       "away": "Bélgica",
       "kickoff": "2026-07-10T19:00Z",
       "special": true
+    },
+    {
+      "slot": "QF-04",
+      "home": "Argentina",
+      "away": "Suíça",
+      "kickoff": "2026-07-12T01:00Z",
+      "special": true
     }
   ]
 }

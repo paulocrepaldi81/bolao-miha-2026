@@ -233,9 +233,9 @@
   "home": "Suíça",
   "away": "Colômbia",
   "kickoff": "2026-07-07T20:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Suíça",
+  "decided_by": "pen",
   "pen_home": 4,
   "pen_away": 3
  },
