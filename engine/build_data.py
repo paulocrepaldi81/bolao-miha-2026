@@ -454,6 +454,7 @@ def main():
     # oitavas, enquanto a rodada R16 não é cadastrada). Prazo vencido → botão SOME (melhor que
     # mandar pro formulário errado).
     ko_form_url = None
+    ko_form_round = None   # 'round' da rodada aberta (ex.: "QF") — o front usa pra dar nome ao botão
     try:
         _rounds = (json.load(open(os.path.join(DATA, "knockout_forms.json"), encoding="utf-8")).get("rounds") or [])
         if _rounds:
@@ -465,8 +466,10 @@ def main():
                 except Exception:
                     _aberta = True
             ko_form_url = _last.get("form_url") if _aberta else None
+            ko_form_round = _last.get("round") if _aberta else None
     except Exception:
         ko_form_url = None
+        ko_form_round = None
     data = {
         "meta": {
             "pool_name": "Bolão Miha 2026", "timezone": "America/Sao_Paulo",
@@ -482,6 +485,7 @@ def main():
         "participants": participants,
         "matches": matches,
         "knockout_form_url": ko_form_url,
+        "knockout_form_round": ko_form_round,
         "movement": movement,
         "stats": stats,
         "wisdom": wisdom,

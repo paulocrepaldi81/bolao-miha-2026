@@ -38,7 +38,7 @@ O robô já faz o trabalho de **dados** sozinho; o que sobra é **criar o Form**
      "form_url": "<link PÚBLICO do Form da fase>" }
    ```
    - `round`: `R16` | `QF` | `SF` | `FIN` (a final e o 3º vêm no mesmo Form/rodada `FIN`; o slot do Jogo 1 = `FIN`, o Jogo 2 = `TER`).
-   - `form_url`: o link público do Form (o que vai no zap). Faz aparecer o botão **"Atualizar meus palpites do mata-mata"** na landing.
+   - `form_url`: o link público do Form (o que vai no zap). Faz aparecer o botão "Atualizar meus palpites" na landing — o texto muda sozinho por fase (ex.: **"...das Quartas de Finais"**, **"...da Final e do 3º Lugar"**), vem de `KO_BTN_TEXT` em `app.js` a partir do `round` acima.
    - `deadline`: prazo PADRÃO da fase. `slot_deadlines`: só para o(s) jogo(s) que começam mais cedo (trava por jogo).
    - **Limpe os `slot_deadlines` da fase anterior** (não copie os do R32).
 

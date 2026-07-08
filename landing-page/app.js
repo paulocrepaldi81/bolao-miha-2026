@@ -1051,6 +1051,16 @@ function renderLiveStrip(){
 const KO_NEXT = {R32:'R16', R16:'QF', QF:'SF', SF:'FIN'};
 const KO_NSLOTS = {R16:8, QF:4, SF:2, FIN:1};
 const KO_PHASE_LABEL = {R32:'16 avos', R16:'Oitavas', QF:'Quartas', SF:'Semifinal', FIN:'Final', TER:'3º lugar'};
+// texto COMPLETO do botão "Atualizar meus palpites" por fase — frase inteira (não dá pra montar
+// programaticamente a partir de KO_PHASE_LABEL, cada fase pede artigo/preposição diferente).
+// FIN junta Final + 3º lugar no mesmo Form/rodada (RUNBOOK-fases.md) — o texto reflete os dois.
+const KO_BTN_TEXT = {
+  R32: 'Atualizar meus palpites dos 16 avos de Final',
+  R16: 'Atualizar meus palpites das Oitavas de Final',
+  QF:  'Atualizar meus palpites das Quartas de Finais',
+  SF:  'Atualizar meus palpites da Semifinal',
+  FIN: 'Atualizar meus palpites da Final e do 3º Lugar',
+};
 const _p2 = n => String(n).padStart(2,'0');
 function nextPhasePreview(){
   const ko = (DATA.matches||[]).filter(m=>m.phase && m.slot);
@@ -1315,8 +1325,11 @@ function renderMinhaAposta(){
                     || (new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0)));
     if(koEntries.length){
       const koPts=koEntries.reduce((s,e)=> s+(e.pts||0),0);
+      // texto do botão muda por fase (fica claro de qual Form se trata); fallback genérico se
+      // 'knockout_form_round' vier ausente (data.json antigo em cache, transição de deploy).
+      const koBtnLabel = KO_BTN_TEXT[DATA.knockout_form_round] || 'Atualizar meus palpites do mata-mata';
       const koBtn = DATA.knockout_form_url
-        ? `<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ Atualizar meus palpites do mata-mata</a>`
+        ? `<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ ${koBtnLabel}</a>`
         : '';
       // divisória "já encerrados" entre os pendentes e os jogados (só quando há os dois)
       const hasP=koEntries.some(e=>e.m.status!=='finished'), hasD=koEntries.some(e=>e.m.status==='finished');
