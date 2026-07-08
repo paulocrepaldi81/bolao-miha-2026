@@ -70,6 +70,42 @@ def test_phase1_rank_por_pontos_da_1a_fase():
     assert r["A"]["phase1_rank"] == 1 and r["B"]["phase1_rank"] == 2
 
 
+def test_remaining_knockout_points_conta_so_slots_nao_encerrados():
+    # BUG real corrigido (08/jul): antes disso era um buffer fixo (KNOCKOUT_POTENTIAL=250) que
+    # NUNCA refletia o mata-mata de verdade. Slot normal aberto = 3+6=9; especial aberto = 5+6=11;
+    # slot encerrado não conta mais nada (já virou pontuação real, não "potencial").
+    ko_results = {
+        "R32-01": {"status": "finished", "home_score": 1, "away_score": 0},   # encerrado -> não conta
+        "R16-02": {"status": "scheduled", "home_score": None},               # especial (config.SPECIAL_SLOTS) aberto
+        "QF-01": {"status": "scheduled", "home_score": None},                # normal aberto
+    }
+    got = L.remaining_knockout_points(ko_results)
+    import config as C
+    n_slots = len(C.KNOCKOUT_CELLS)
+    # todo slot que NÃO é R32-01/R16-02/QF-01 também está "aberto" (dict não tem entrada = scheduled)
+    especiais_abertos = sum(1 for slot, _, _ in C.KNOCKOUT_CELLS if slot != "R32-01" and slot in C.SPECIAL_SLOTS)
+    normais_abertos = sum(1 for slot, _, _ in C.KNOCKOUT_CELLS if slot != "R32-01" and slot not in C.SPECIAL_SLOTS)
+    esperado = especiais_abertos * (5 + 6) + normais_abertos * (3 + 6)
+    assert got == esperado
+    assert n_slots == 32   # sanity check da premissa (32 slots no chaveamento inteiro)
+
+
+def test_eliminated_usa_pontos_reais_do_mata_mata_nao_buffer_fixo():
+    # com o mata-mata TODO encerrado (nenhum ponto restante), quem está muito atrás do líder
+    # e sem mais jogo de grupo é eliminado de verdade -- sem o antigo buffer de 250 escondendo isso.
+    scored, roster = [], {}
+    for i, (a, tot) in enumerate({"Lider": 300, "Ultimo": 10}.items()):
+        scored.append({"alias": a, "total": tot, "group_pts": tot, "exact_scores": 0,
+                      "correct_outcomes": 0, "by_match": {}})
+        roster[a.lower()] = {"paid": True, "order": i}
+    ko_results = {slot: {"status": "finished", "home_score": 0, "away_score": 0}
+                 for slot, _, _ in __import__("config").KNOCKOUT_CELLS}
+    out = {p["alias"]: p for p in L.build(scored, roster, [], {}, {"champion": "X"}, {}, {}, frozenset(),
+                                          ko_results=ko_results)}
+    assert out["Ultimo"]["eliminated"] is True
+    assert out["Lider"]["eliminated"] is False
+
+
 if __name__ == "__main__":
     import pytest
     raise SystemExit(pytest.main([os.path.abspath(__file__), "-q"]))

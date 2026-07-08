@@ -22,7 +22,23 @@ def remaining_group_points(catalog, results):
     return total
 
 
-def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids=frozenset()):
+def remaining_knockout_points(ko_results):
+    """Máximo ainda obtível nos slots do MATA-MATA não encerrados (1 aposta qualquer) — mesma
+    lógica de remaining_group_points, só que sobre config.KNOCKOUT_CELLS. Substitui o antigo
+    buffer fixo KNOCKOUT_POTENTIAL=250: antes 'eliminated'/'max_possible' ignoravam de vez os
+    pontos ainda em jogo no chaveamento; agora é uma cota real (upper bound honesto — nunca
+    subestima, então nunca elimina errado, só não finge que o mata-mata vale infinito)."""
+    total = 0
+    for slot, _, _ in C.KNOCKOUT_CELLS:
+        r = (ko_results or {}).get(slot)
+        if not r or r.get("status") != "finished" or r.get("home_score") is None:
+            base = C.PTS_OUTCOME_SPECIAL if slot in C.SPECIAL_SLOTS else C.PTS_OUTCOME_NORMAL
+            total += base + C.MAX_BONUS_CAP
+    return total
+
+
+def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids=frozenset(),
+          ko_results=None):
     """
     scored: lista de dicts (saída de scoring.score_bet)
     roster: {alias_lower: {"paid":bool, "order":int}}
@@ -33,6 +49,7 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
     Retorna lista de participantes prontos para o data.json + flags de movimento.
     """
     rem_groups = remaining_group_points(catalog, results)
+    rem_knockout = remaining_knockout_points(ko_results)
     final_open = not (real_final and any(real_final.values()))
     extras_open_max = sum([
         (0 if facts.get("artilheiro_nome") else C.PTS_ART_NOME),
@@ -41,15 +58,15 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
         C.PTS_ART_BONUS if not all(facts.get(k) not in (None, "") for k in
                                    ("artilheiro_nome", "artilheiro_equipe", "artilheiro_gols")) else 0,
     ]) + C.PTS_CURIOSIDADE * sum(1 for k in C.CURIOSIDADES if facts.get(k) in (None, ""))
-    # "máx possível" REAL: só o que o motor de fato pontua = jogos de grupo restantes +
-    # classificação final (30) + categorias extras. O mata-mata jogo-a-jogo ainda não é
-    # pontuado (v1); quando entrar (v2), os pontos dele somam aqui de verdade — sem placeholder.
+    # "máx possível" REAL: jogos de grupo restantes + slots do mata-mata ainda não encerrados +
+    # classificação final (30) + categorias extras — tudo que o motor de fato ainda pode pontuar,
+    # sem placeholder/buffer mágico (era KNOCKOUT_POTENTIAL=250 fixo até 08/jul).
 
     for s in scored:
         info = roster.get(s["alias"].lower(), {"paid": False, "order": 9999})
         s["paid"] = info["paid"]
         s["order"] = info["order"]
-        s["points_available"] = rem_groups + (30 if final_open else 0) + extras_open_max
+        s["points_available"] = rem_groups + rem_knockout + (30 if final_open else 0) + extras_open_max
         s["max_possible"] = s["total"] + s["points_available"]
 
     # Ordenação + desempate determinístico
@@ -99,9 +116,9 @@ def build(scored, roster, catalog, results, real_final, facts, prev_snapshot, ro
             "correct_outcomes": s["correct_outcomes"],
             "max_possible": s["max_possible"],
             "points_available": s["points_available"],
-            # + KNOCKOUT_POTENTIAL: o mata-mata ainda não pontua (v1), mas vale pontos de verdade —
-            # sem essa folga, ao fechar a 1ª fase alguém seria marcado "eliminado" sem estar.
-            "eliminated": (s["total"] + s["points_available"] + C.KNOCKOUT_POTENTIAL) < leader_total,
+            # "matematicamente vivo": points_available já inclui o mata-mata restante de verdade
+            # (remaining_knockout_points) — nunca elimina errado, sem depender de buffer fixo.
+            "eliminated": (s["total"] + s["points_available"]) < leader_total,
             "paid": s["paid"],
             # ---- flags de ranking/prêmio (derivadas; o front só lê, não recalcula) ----
             "phase1_rank": phase1_rank,        # posição na 1ª fase (Bom de Palpite)

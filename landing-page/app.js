@@ -748,18 +748,36 @@ function renderClosing(P){
   // agrupa pagantes por posição de prêmio (empate = mesma posição → dividem as posições ocupadas)
   const byPos = {};
   paid.forEach(p=>{ if(p.prize_pos){ (byPos[p.prize_pos] = byPos[p.prize_pos]||[]).push(p.alias); } });
+  // Math.floor (nunca round): garante que a soma distribuída NUNCA passa do pote — e, como o
+  // valor "each" é calculado 1x por grupo empatado (não por pessoa), todo mundo do grupo já
+  // recebe exatamente o mesmo tanto. A sobra de arredondamento (no máximo poucos reais) nunca é
+  // escondida: some inteira pra Lanterna de Ouro (é o prêmio "consolo" simbólico do bolão — mais
+  // simples de explicar no zap do que "sobrou troco, ninguém sabe de quem é").
+  let distributed = 0;
   const prizes = [];
   [1,2,3,4].forEach(pos=>{
     const win = byPos[pos]; if(!win || !win.length) return;
     let pct=0; for(let o=pos; o<pos+win.length; o++) pct += (PCT[o]||0);   // soma das posições ocupadas
-    prizes.push({ic:LAB[pos][0], lab:LAB[pos][1], win, each: base?Math.round(base*pct/win.length):0, champ:pos===1});
+    const each = base?Math.floor(base*pct/win.length):0;
+    distributed += each*win.length;
+    prizes.push({ic:LAB[pos][0], lab:LAB[pos][1], win, each, champ:pos===1});
   });
   const bp = paid.filter(p=>p.bom_palpite).map(p=>p.alias);
-  if(bp.length) prizes.push({ic:'⚡', lab:'Bom de Palpite', win:bp, each: base?Math.round(base*.20/bp.length):0});
+  if(bp.length){
+    const each = base?Math.floor(base*.20/bp.length):0;
+    distributed += each*bp.length;
+    prizes.push({ic:'⚡', lab:'Bom de Palpite', win:bp, each});
+  }
   if(paid.length){   // Lanterna de Ouro = último PAGANTE por pontos da 1ª fase (recebe a aposta de volta)
     const worst = Math.min(...paid.map(p=>p.phase1_points ?? p.score));
     const lant = paid.filter(p=>(p.phase1_points ?? p.score)===worst).map(p=>p.alias);
-    prizes.push({ic:'🔦', lab:'Lanterna de Ouro', win:lant, each: lant.length?Math.round(refund/lant.length):0, note:'devolução'});
+    // sobra de arredondamento dos outros baldes entra JUNTO na Lanterna (antes de dividir por
+    // quem estiver empatado nela) — assim nenhum centavo do pote "desaparece" sem explicação.
+    const leftover = Math.max(0, base - distributed);
+    const lantTotal = refund + leftover;
+    const each = lant.length ? Math.floor(lantTotal/lant.length) : 0;
+    prizes.push({ic:'🔦', lab:'Lanterna de Ouro', win:lant, each,
+                note: leftover>0 ? `devolução + ${brl(leftover)} de arredondamento` : 'devolução'});
   }
   const champs = byPos[1] || [];
   const worldCh = (fin && fin.winner) ? `${flag(fin.winner)} ${fin.winner}` : null;
@@ -774,7 +792,7 @@ function renderClosing(P){
           <div class="cp-win">${fmtWin(pz.win)}${pz.win.length>1?' <span style="font-weight:600;color:var(--ink-faint)">(dividem)</span>':''}</div>
           <div class="cp-amt">${pz.each?brl(pz.each)+(pz.win.length>1?' cada':''):'—'}${pz.note?` <span style="font-weight:600;color:var(--ink-faint)">· ${pz.note}</span>`:''}</div>
         </div>`).join('')}</div>
-     <div class="closing-foot">Prêmios sobre ${brl(pot)} (${paidN} aposta${paidN!==1?'s':''} paga${paidN!==1?'s':''}). A Lanterna recebe a aposta de volta; os percentuais incidem sobre o restante. Empate numa posição divide, em partes iguais, os prêmios das posições ocupadas. 🎉</div>`;
+     <div class="closing-foot">Prêmios sobre ${brl(pot)} (${paidN} aposta${paidN!==1?'s':''} paga${paidN!==1?'s':''}). A Lanterna recebe a aposta de volta (+ eventual sobra de arredondamento); os percentuais incidem sobre o restante. Empate numa posição divide, em partes EXATAMENTE iguais, os prêmios das posições ocupadas. 🎉</div>`;
   sec.hidden = false;
 }
 
@@ -1038,6 +1056,24 @@ const KO_BTN_TEXT = {
   SF:  'Atualizar meus palpites da Semifinal',
   FIN: 'Atualizar meus palpites da Final e do 3º Lugar',
 };
+// nome de fase p/ o selo (🏆 + prazo) acima do botão — mais completo que KO_PHASE_LABEL
+// ("Quartas"), mais curto que KO_BTN_TEXT (frase inteira do botão).
+const KO_PHASE_FULL = {
+  R32: '16 avos de Final', R16: 'Oitavas de Final', QF: 'Quartas de Final',
+  SF: 'Semifinal', FIN: 'Final e 3º Lugar',
+};
+const WD_PT = ['dom','seg','ter','qua','qui','sex','sáb'];
+// formata o prazo (ISO já em horário de SP, gravado por build_data.py) sem depender do fuso do
+// NAVEGADOR de quem olha a página — lê os dígitos direto da string em vez de `new Date(iso)`
+// (que reinterpretaria no fuso local do dispositivo e desalinharia dia/hora exibidos).
+function fmtDeadline(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(iso || '');
+  if(!m) return null;
+  const [, y, mo, d, h, mi] = m;
+  const wd = WD_PT[new Date(`${y}-${mo}-${d}T12:00:00Z`).getUTCDay()];   // meio-dia UTC: nunca vira o dia
+  const hora = (h === '12' && mi === '00') ? 'meio-dia' : `${parseInt(h,10)}h${mi!=='00'?mi:''}`;
+  return `${wd}, ${d}/${mo} (${hora})`;
+}
 const _p2 = n => String(n).padStart(2,'0');
 function nextPhasePreview(){
   const ko = (DATA.matches||[]).filter(m=>m.phase && m.slot);
@@ -1305,8 +1341,20 @@ function renderMinhaAposta(){
       // texto do botão muda por fase (fica claro de qual Form se trata); fallback genérico se
       // 'knockout_form_round' vier ausente (data.json antigo em cache, transição de deploy).
       const koBtnLabel = KO_BTN_TEXT[DATA.knockout_form_round] || 'Atualizar meus palpites do mata-mata';
+      // selo de fase + prazo: mesmo dado do botão (fase atual do mata-mata), num tom neutro pra
+      // não competir visualmente com o CTA dourado logo abaixo — só reforça QUAL fase é essa e
+      // ATÉ QUANDO dá pra atualizar, sem duplicar informação em outro canto da página.
+      const dl = fmtDeadline(DATA.knockout_form_deadline);
+      const phaseFull = KO_PHASE_FULL[DATA.knockout_form_round];
+      const koBadge = (DATA.knockout_form_url && phaseFull)
+        ? `<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;font-weight:700;
+             background:rgba(180,188,200,.12);border:1px solid var(--line-2);color:var(--ink-dim);
+             border-radius:10px;padding:7px 11px;margin-top:10px">
+             <span>🏆 ${esc(phaseFull)}</span>${dl?`<span style="color:var(--line-2)">·</span><span style="color:var(--ink)">⏳ até ${esc(dl)}</span>`:''}
+           </div>`
+        : '';
       const koBtn = DATA.knockout_form_url
-        ? `<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:10px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ ${koBtnLabel}</a>`
+        ? `${koBadge}<a href="${esc(DATA.knockout_form_url)}" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:8px;padding:11px;background:var(--gold);color:#0a3d2c;font-weight:800;border-radius:10px;text-decoration:none">✏️ ${koBtnLabel}</a>`
         : '';
       // divisória "já encerrados" entre os pendentes e os jogados (só quando há os dois)
       const hasP=koEntries.some(e=>e.m.status!=='finished'), hasD=koEntries.some(e=>e.m.status==='finished');

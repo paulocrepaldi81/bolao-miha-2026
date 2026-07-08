@@ -27,8 +27,7 @@ DATA = os.path.join(HERE, "data")
 FACTS = os.path.join(DATA, "facts.json")
 LIVE = os.path.join(DATA, "facts_live.json")
 FD = "https://api.football-data.org/v4"
-ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates={a}-{b}"
-WINDOWS = [("20260611", "20260625"), ("20260626", "20260710"), ("20260711", "20260719")]
+# ESPN: eventos vêm de fetch_results.load_espn_events() (cache compartilhado da rodada do robô).
 
 
 def fd_get(path, token):
@@ -51,7 +50,7 @@ def save_json(path, obj):
 
 def fetch_espn_events():
     """{match_id: {date, completed, events:[{kind,team,player,minute,order}]}} para todos os jogos."""
-    from fetch_results import EN_PT
+    from fetch_results import EN_PT, load_espn_events
     from catalog import get_catalog
     # TODO (mesma classe do bug corrigido em mais_goleadora/menos_vazada, 07/jul): `pairs` só
     # cobre os 72 jogos de grupo -> 1º expulso/1º gol contra de mata-mata nunca entrariam no
@@ -61,61 +60,57 @@ def fetch_espn_events():
     pairs = {frozenset((m["home"], m["away"])): m for m in get_catalog()}
     out = {}
     scorers = {}   # artilharia (ESPN, completa): {nome: {"goals": n, "team": pt}} acumulada
-    for a, b in WINDOWS:
-        req = urllib.request.Request(ESPN.format(a=a, b=b), headers={"User-Agent": "bolao-miha-bot"})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            data = json.load(r)
-        for ev in data.get("events", []):
-            comp = (ev.get("competitions") or [{}])[0]
-            cs = comp.get("competitors", [])
-            if len(cs) != 2:
+    for ev in load_espn_events():
+        comp = (ev.get("competitions") or [{}])[0]
+        cs = comp.get("competitors", [])
+        if len(cs) != 2:
+            continue
+        id2pt, names, ok = {}, [], True
+        for c in cs:
+            raw = (c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
+            pt = EN_PT.get(raw.strip().lower())
+            if not pt:
+                ok = False
+                break
+            names.append(pt)
+            id2pt[str(c.get("team", {}).get("id"))] = pt
+        if not ok:
+            continue
+        t = ev.get("status", {}).get("type", {})
+        state = t.get("state")
+        # ARTILHARIA (ESPN = fonte completa): conta gols de QUALQUER jogo da Copa — grupo OU
+        # MATA-MATA — sem depender do catálogo de grupos (era aqui o bug: o mata-mata caía no
+        # 'continue' e os gols do KO nunca entravam). `scoringPlay` = gol de PARTIDA (pênalti no
+        # tempo conta; disputa por pênaltis não tem scoringPlay); gol contra NÃO conta.
+        for det in comp.get("details", []):
+            if state in ("post", "in") and det.get("scoringPlay") and not det.get("ownGoal"):
+                a0 = (det.get("athletesInvolved") or [{}])[0]
+                gnm = a0.get("displayName") or a0.get("shortName")
+                if gnm:
+                    gtid = str((a0.get("team") or {}).get("id") or det.get("team", {}).get("id") or "")
+                    rec = scorers.setdefault(gnm, {"goals": 0, "team": None})
+                    rec["goals"] += 1
+                    rec["team"] = rec["team"] or id2pt.get(gtid)
+        # LANCES (1º expulso / 1º gol contra) dependem do catálogo p/ mapear o match_id:
+        m = pairs.get(frozenset(names))
+        if not m:
+            continue
+        events = []
+        for det in comp.get("details", []):
+            if not (det.get("redCard") or det.get("ownGoal")):
                 continue
-            id2pt, names, ok = {}, [], True
-            for c in cs:
-                raw = (c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
-                pt = EN_PT.get(raw.strip().lower())
-                if not pt:
-                    ok = False
-                    break
-                names.append(pt)
-                id2pt[str(c.get("team", {}).get("id"))] = pt
-            if not ok:
-                continue
-            t = ev.get("status", {}).get("type", {})
-            state = t.get("state")
-            # ARTILHARIA (ESPN = fonte completa): conta gols de QUALQUER jogo da Copa — grupo OU
-            # MATA-MATA — sem depender do catálogo de grupos (era aqui o bug: o mata-mata caía no
-            # 'continue' e os gols do KO nunca entravam). `scoringPlay` = gol de PARTIDA (pênalti no
-            # tempo conta; disputa por pênaltis não tem scoringPlay); gol contra NÃO conta.
-            for det in comp.get("details", []):
-                if state in ("post", "in") and det.get("scoringPlay") and not det.get("ownGoal"):
-                    a0 = (det.get("athletesInvolved") or [{}])[0]
-                    gnm = a0.get("displayName") or a0.get("shortName")
-                    if gnm:
-                        gtid = str((a0.get("team") or {}).get("id") or det.get("team", {}).get("id") or "")
-                        rec = scorers.setdefault(gnm, {"goals": 0, "team": None})
-                        rec["goals"] += 1
-                        rec["team"] = rec["team"] or id2pt.get(gtid)
-            # LANCES (1º expulso / 1º gol contra) dependem do catálogo p/ mapear o match_id:
-            m = pairs.get(frozenset(names))
-            if not m:
-                continue
-            events = []
-            for det in comp.get("details", []):
-                if not (det.get("redCard") or det.get("ownGoal")):
-                    continue
-                ath = (det.get("athletesInvolved") or [{}])[0]
-                # time que cometeu: o do JOGADOR (expulso / autor do gol contra)
-                tid = str((ath.get("team") or {}).get("id") or det.get("team", {}).get("id") or "")
-                events.append({
-                    "kind": "red" if det.get("redCard") else "own",
-                    "team": id2pt.get(tid),
-                    "player": ath.get("displayName") or ath.get("shortName") or "?",
-                    "minute": (det.get("clock", {}).get("displayValue") or "").replace("'", ""),
-                    "order": det.get("clock", {}).get("value") or 0,
-                })
-            out[m["match_id"]] = {"date": ev.get("date") or "", "completed": bool(t.get("completed")),
-                                  "events": events}
+            ath = (det.get("athletesInvolved") or [{}])[0]
+            # time que cometeu: o do JOGADOR (expulso / autor do gol contra)
+            tid = str((ath.get("team") or {}).get("id") or det.get("team", {}).get("id") or "")
+            events.append({
+                "kind": "red" if det.get("redCard") else "own",
+                "team": id2pt.get(tid),
+                "player": ath.get("displayName") or ath.get("shortName") or "?",
+                "minute": (det.get("clock", {}).get("displayValue") or "").replace("'", ""),
+                "order": det.get("clock", {}).get("value") or 0,
+            })
+        out[m["match_id"]] = {"date": ev.get("date") or "", "completed": bool(t.get("completed")),
+                              "events": events}
     return out, scorers
 
 

@@ -35,6 +35,10 @@ Screenshot*.png
 
 engine/data/audit_report.txt
 
+# Cache compartilhado dos eventos ESPN DENTRO de uma rodada do robô (efêmero — não persiste
+# entre rodadas, cada run do GitHub Actions começa de um checkout novo)
+engine/data/espn_events_cache.json
+
 # A Rodada — artefatos gerados
 a-rodada/preview.html
 a-rodada/hoje.png

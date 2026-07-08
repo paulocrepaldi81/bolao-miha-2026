@@ -349,7 +349,8 @@ def main():
     cur_round = max(finished_round.values()) if finished_round else None
     round_mids = frozenset(mid for mid, d in finished_round.items() if d == cur_round)
 
-    participants = LB.build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids)
+    participants = LB.build(scored, roster, catalog, results, real_final, facts, prev_snapshot, round_mids,
+                            ko_results=ko_results)
 
     # ---- matches p/ a Central de Jogos ----
     matches = []
@@ -453,7 +454,8 @@ def main():
     # oitavas, enquanto a rodada R16 não é cadastrada). Prazo vencido → botão SOME (melhor que
     # mandar pro formulário errado).
     ko_form_url = None
-    ko_form_round = None   # 'round' da rodada aberta (ex.: "QF") — o front usa pra dar nome ao botão
+    ko_form_round = None      # 'round' da rodada aberta (ex.: "QF") — o front usa pra dar nome ao botão
+    ko_form_deadline = None   # prazo da rodada aberta (ISO, fuso SP) — o front usa pro selo de prazo
     try:
         _rounds = (json.load(open(os.path.join(DATA, "knockout_forms.json"), encoding="utf-8")).get("rounds") or [])
         if _rounds:
@@ -466,9 +468,15 @@ def main():
                     _aberta = True
             ko_form_url = _last.get("form_url") if _aberta else None
             ko_form_round = _last.get("round") if _aberta else None
+            if _aberta and _last.get("deadline"):
+                try:
+                    ko_form_deadline = datetime.strptime(_last["deadline"], "%Y-%m-%d %H:%M").replace(tzinfo=SP).isoformat()
+                except Exception:
+                    ko_form_deadline = None
     except Exception:
         ko_form_url = None
         ko_form_round = None
+        ko_form_deadline = None
     data = {
         "meta": {
             "pool_name": "Bolão Miha 2026", "timezone": "America/Sao_Paulo",
@@ -485,6 +493,7 @@ def main():
         "matches": matches,
         "knockout_form_url": ko_form_url,
         "knockout_form_round": ko_form_round,
+        "knockout_form_deadline": ko_form_deadline,
         "movement": movement,
         "stats": stats,
         "history_dates": history_dates,

@@ -47,6 +47,12 @@ def _ko_cells():
 
 KNOCKOUT_CELLS = _ko_cells()   # [(slot, célula_placar_mandante, célula_placar_visitante)] — 32 slots
 
+# Jogos ESPECIAIS (5 pts) do mata-mata PÓS-R32 (R32 já vem marcado direto no knockout_bracket.json
+# via cor da planilha). Fonte única — resolve_bracket.py e leaderboard.py importam daqui (antes
+# vivia só em resolve_bracket.py; movido pra config porque leaderboard.py precisa dele pra calcular
+# pontos restantes do mata-mata sem arrastar fetch_results/urllib como dependência transitiva).
+SPECIAL_SLOTS = {"R16-02", "R16-04", "R16-06", "R16-08", "QF-02", "QF-04", "SF-02", "TER"}
+
 # ---- Categorias Extras (4ª aba, input uma linha abaixo de cada rótulo) ----
 EXTRA_SHEET = "Categorias Extras"
 EXTRA_CELLS = {
@@ -91,4 +97,3 @@ PRIZE_SPLIT = {"champ": 0.40, "vice": 0.25, "third": 0.10, "fourth": 0.05, "bom_
 
 # Limite superior generoso p/ "matematicamente vivo" (nunca elimina por engano)
 MAX_BONUS_CAP = 6           # bônus máximo plausível por jogo não disputado
-KNOCKOUT_POTENTIAL = 250    # estimativa de pontos ainda em jogo no mata-mata (v1: ninguém é eliminado na fase de grupos)

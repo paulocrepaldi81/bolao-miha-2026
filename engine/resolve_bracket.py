@@ -14,8 +14,9 @@ Roda no robô DEPOIS do fetch_knockout. Idempotente e FAIL-CLOSED:
 Puxa o horário (kickoff) da ESPN para o novo confronto, quando já publicado.
 Uso: python3 resolve_bracket.py [--dry-run]
 """
-import argparse, json, os, urllib.request
-from fetch_results import EN_PT, ESPN, WINDOWS
+import argparse, json, os
+from fetch_results import EN_PT, load_espn_events
+from config import SPECIAL_SLOTS   # fonte única (leaderboard.py também usa pra pontos restantes)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
@@ -24,10 +25,6 @@ FIX = os.path.join(DATA, "knockout_fixtures.json")
 
 NEXT = {"R32": "R16", "R16": "QF", "QF": "SF", "SF": "FIN"}
 N_SLOTS = {"R16": 8, "QF": 4, "SF": 2, "FIN": 1}
-# Jogos ESPECIAIS (verde = 5 pts) das fases pós-R32, lidos da planilha v2.1 (cor da célula do time
-# mandante: H/N/T/Z). A FINAL é normal; a DISPUTA DE 3º LUGAR é especial. Os especiais do R32 ficam
-# direto no knockout_bracket.json. Mantido como conjunto fixo porque o chaveamento da planilha não muda.
-SPECIAL_SLOTS = {"R16-02", "R16-04", "R16-06", "R16-08", "QF-02", "QF-04", "SF-02", "TER"}
 
 
 def _load(path, d):
@@ -39,20 +36,18 @@ def _load(path, d):
 
 
 def _espn_kickoffs():
-    """{frozenset(home,away): kickoff_iso} dos jogos de mata-mata na ESPN (p/ os novos confrontos)."""
+    """{frozenset(home,away): kickoff_iso} dos jogos de mata-mata na ESPN (p/ os novos confrontos).
+    Usa o cache compartilhado da rodada (load_espn_events) em vez de bater na API de novo —
+    fetch_results.py já buscou os mesmos eventos poucos segundos antes, nesta mesma rodada do robô."""
     out = {}
     try:
-        for a, b in WINDOWS:
-            req = urllib.request.Request(ESPN.format(a=a, b=b), headers={"User-Agent": "bolao-miha-bot"})
-            with urllib.request.urlopen(req, timeout=30) as r:
-                data = json.load(r)
-            for ev in data.get("events", []):
-                cs = (ev.get("competitions") or [{}])[0].get("competitors", [])
-                if len(cs) != 2:
-                    continue
-                names = [EN_PT.get((c.get("team", {}).get("displayName") or "").strip().lower()) for c in cs]
-                if all(names):
-                    out[frozenset(names)] = ev.get("date")
+        for ev in load_espn_events():
+            cs = (ev.get("competitions") or [{}])[0].get("competitors", [])
+            if len(cs) != 2:
+                continue
+            names = [EN_PT.get((c.get("team", {}).get("displayName") or "").strip().lower()) for c in cs]
+            if all(names):
+                out[frozenset(names)] = ev.get("date")
     except Exception as e:
         print(f"  ⚠ ESPN (kickoffs) indisponível: {e}")
     return out

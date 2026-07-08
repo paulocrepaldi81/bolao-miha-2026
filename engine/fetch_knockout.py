@@ -15,8 +15,8 @@ Regras:
 
 Uso: python3 fetch_knockout.py [--dry-run]
 """
-import argparse, csv, json, os, urllib.request
-from fetch_results import EN_PT, ESPN, WINDOWS
+import argparse, csv, json, os
+from fetch_results import EN_PT, load_espn_events
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
@@ -58,58 +58,54 @@ def load_existing():
 def fetch():
     pairs = load_bracket_pairs()
     res, fix, unmatched = {}, {}, []
-    for a, b in WINDOWS:
-        req = urllib.request.Request(ESPN.format(a=a, b=b), headers={"User-Agent": "bolao-miha-bot"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.load(resp)
-        for ev in data.get("events", []):
-            rnd = SLUG_ROUND.get(((ev.get("season") or {}).get("slug") or ""))
-            comp = (ev.get("competitions") or [{}])[0]
-            cs = comp.get("competitors", [])
-            if len(cs) != 2:
-                continue
-            score, names, winner, pen = {}, [], None, {}
-            ok = True
-            for c in cs:
-                raw = (c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
-                pt = EN_PT.get(raw.strip().lower())
-                if not pt:
-                    ok = False
-                    break
-                names.append(pt)
+    for ev in load_espn_events():
+        rnd = SLUG_ROUND.get(((ev.get("season") or {}).get("slug") or ""))
+        comp = (ev.get("competitions") or [{}])[0]
+        cs = comp.get("competitors", [])
+        if len(cs) != 2:
+            continue
+        score, names, winner, pen = {}, [], None, {}
+        ok = True
+        for c in cs:
+            raw = (c.get("team", {}).get("displayName") or c.get("team", {}).get("name") or "")
+            pt = EN_PT.get(raw.strip().lower())
+            if not pt:
+                ok = False
+                break
+            names.append(pt)
+            try:
+                score[pt] = int(c.get("score"))
+            except (TypeError, ValueError):
+                score[pt] = None
+            if c.get("winner"):
+                winner = pt
+            ss = c.get("shootoutScore")
+            if ss not in (None, ""):
                 try:
-                    score[pt] = int(c.get("score"))
+                    pen[pt] = int(ss)
                 except (TypeError, ValueError):
-                    score[pt] = None
-                if c.get("winner"):
-                    winner = pt
-                ss = c.get("shootoutScore")
-                if ss not in (None, ""):
-                    try:
-                        pen[pt] = int(ss)
-                    except (TypeError, ValueError):
-                        pass
-            if not ok:
-                continue
-            e = pairs.get(frozenset(names))
-            if not e:
-                if rnd:                       # parece mata-mata mas não casou → reporta
-                    unmatched.append(" x ".join(names))
-                continue
-            slot = e["slot"]
-            t = ev.get("status", {}).get("type", {})
-            state, completed = t.get("state"), bool(t.get("completed"))
-            status = "finished" if completed else ("live" if state == "in" else "scheduled")
-            hs, as_ = score.get(e["home"]), score.get(e["away"])
-            res[slot] = {"slot": slot, "home_score": hs, "away_score": as_,
-                         "status": status, "special": "sim" if e.get("special") else ""}
-            decided = None
-            if status == "finished":
-                decided = "pen" if (hs is not None and hs == as_) else "normal"
-            fix[slot] = {"home": e["home"], "away": e["away"],
-                         "kickoff": ev.get("date") or e.get("kickoff"),
-                         "status": status, "winner": winner, "decided_by": decided,
-                         "pen_home": pen.get(e["home"]), "pen_away": pen.get(e["away"])}
+                    pass
+        if not ok:
+            continue
+        e = pairs.get(frozenset(names))
+        if not e:
+            if rnd:                       # parece mata-mata mas não casou → reporta
+                unmatched.append(" x ".join(names))
+            continue
+        slot = e["slot"]
+        t = ev.get("status", {}).get("type", {})
+        state, completed = t.get("state"), bool(t.get("completed"))
+        status = "finished" if completed else ("live" if state == "in" else "scheduled")
+        hs, as_ = score.get(e["home"]), score.get(e["away"])
+        res[slot] = {"slot": slot, "home_score": hs, "away_score": as_,
+                     "status": status, "special": "sim" if e.get("special") else ""}
+        decided = None
+        if status == "finished":
+            decided = "pen" if (hs is not None and hs == as_) else "normal"
+        fix[slot] = {"home": e["home"], "away": e["away"],
+                     "kickoff": ev.get("date") or e.get("kickoff"),
+                     "status": status, "winner": winner, "decided_by": decided,
+                     "pen_home": pen.get(e["home"]), "pen_away": pen.get(e["away"])}
     return res, fix, unmatched
 
 

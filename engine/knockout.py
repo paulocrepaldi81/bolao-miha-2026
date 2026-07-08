@@ -62,7 +62,15 @@ def parse_form_csv(text, round_id, deadline, roster_aliases, slot_deadlines=None
     for i, h in enumerate(header):
         m = re.match(r"\s*jogo\s*(\d+)", _norm(h))
         if m:
-            game_cols[i] = f"{round_id}-{int(m.group(1)):02d}"
+            n = int(m.group(1))
+            # FIN é caso especial: Final + 3º lugar vêm no MESMO Form/rodada (mesmo prazo) —
+            # "Jogo 1" = a Final (slot "FIN") e "Jogo 2" = o 3º lugar (slot "TER"), não
+            # "FIN-01"/"FIN-02" (que não existem em config.KNOCKOUT_CELLS/knockout_bracket.json
+            # e faziam os palpites da Final serem ignorados em silêncio).
+            if round_id == "FIN":
+                game_cols[i] = "FIN" if n == 1 else "TER"
+            else:
+                game_cols[i] = f"{round_id}-{n:02d}"
     if alias_i is None or not game_cols:
         return {}
 

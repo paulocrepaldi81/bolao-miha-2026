@@ -93,6 +93,33 @@ def test_cabecalho_real_do_form_e_manter_original():
     assert r["Ricardo Mihalik"]["R32-02"] == (2, 1)      # placar normal entra
 
 
+def test_round_fin_mapeia_jogo1_pra_FIN_e_jogo2_pra_TER():
+    # BUG real (07/07): pra qualquer outra fase "Jogo N" vira "{round}-{NN}" (ex. "QF-01"), mas
+    # a Final+3º lugar vêm no MESMO Form (mesmo prazo) e os slots reais são "FIN"/"TER" puros —
+    # sem este caso especial, "FIN-01"/"FIN-02" nunca bateriam com config.KNOCKOUT_CELLS e os
+    # palpites da Final seriam ignorados em silêncio (ninguém percebe até a Final acontecer).
+    csv = (
+        "Carimbo de data/hora,Seu nome e sobrenome,Seu apelido,"
+        "Jogo 1 — Brasil × França,Jogo 2 — Argentina × Espanha\n"
+        "17/07/2026 09:00:00,Ric,Ricardo Mihalik,2 × 1,1 × 0\n"
+    )
+    dl = datetime(2026, 7, 18, 12, 0)
+    r = K.parse_form_csv(csv, "FIN", dl, ROSTER)
+    assert r["Ricardo Mihalik"]["FIN"] == (2, 1)
+    assert r["Ricardo Mihalik"]["TER"] == (1, 0)
+    assert "FIN-01" not in r["Ricardo Mihalik"] and "FIN-02" not in r["Ricardo Mihalik"]
+
+
+def test_round_fin_override_sobrepoe_o_TER_original_da_planilha():
+    # a aposta original do 3º lugar vem deduzida do chaveamento (célula AA34/AB34) com a chave
+    # "TER" (config._ko_cells()) — o override do Form só vale de verdade se casar com essa MESMA
+    # chave; antes do fix (round_id="FIN" gerando "FIN-02"), effective_picks nunca via o override.
+    orig = {"FIN": [1, 1], "TER": [0, 0]}
+    form = {"FIN": (2, 1), "TER": (3, 2)}
+    eff = K.effective_picks(orig, form)
+    assert eff["FIN"] == (2, 1) and eff["TER"] == (3, 2)
+
+
 def test_prazo_por_jogo_trava_so_o_slot_de_hoje():
     # África (R32-03) trava ao meio-dia; o resto às 23h. Envio às 14h: tarde p/ o Jogo 3,
     # mas a tempo p/ o Jogo 1 -> só o Jogo 1 entra; o Jogo 3 cai no palpite original.
