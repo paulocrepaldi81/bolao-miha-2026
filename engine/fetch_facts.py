@@ -163,10 +163,25 @@ def compute_tournament_extras(all_finished):
     return out
 
 
+def compute_penalty_partial(ko_fix, total_slots):
+    """Contagem parcial de jogos de MATA-MATA decididos nos pênaltis (conta o torneio inteiro —
+    16avos até a Final/3º, mesma regra de torneio-inteiro de compute_tournament_extras; só fecha
+    quando o organizador travar o valor definitivo em facts.json no fim da Copa). `ko_fix` =
+    knockout_fixtures.json achatado {slot:{...,"decided_by","status"}}; `total_slots` = nº fixo de
+    confrontos do chaveamento (32 = len(config.KNOCKOUT_CELLS): R32+R16+QF+SF+FIN+TER). Puro, sem
+    I/O. Fail-safe: nenhum jogo de mata-mata encerrado ainda -> None."""
+    finished = [v for v in ko_fix.values() if v.get("status") == "finished"]
+    if not finished:
+        return None
+    pens = sum(1 for v in finished if v.get("decided_by") == "pen")
+    return f"{pens} até agora ({len(finished)}/{total_slots} jogos de mata-mata encerrados)"
+
+
 def main():
     from catalog import get_catalog
     from fetch_results import EN_PT, load_results
     from build_data import load_knockout_results   # reusa o loader do motor principal (sem pênaltis)
+    import config as C
 
     token = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
     facts = load_json(FACTS, {})
@@ -184,6 +199,24 @@ def main():
     # no mata-mata. `m` aqui é só {"home","away"} (o bloco abaixo não usa mais nada de `m`).
     ko_results = load_knockout_results(os.path.join(DATA, "knockout_results.csv"))
     ko_fix = load_json(os.path.join(DATA, "knockout_fixtures.json"), {})
+
+    # AVISO ALTO (não bloqueia): knockout_fixtures.json é reescrito por completo a cada rodada,
+    # sem merge (diferente do CSV, que preserva slots ausentes na resposta da ESPN) — se um slot
+    # já encerrado sumir numa falha passageira de nome, o parcial de jogos_penaltis regrediria em
+    # silêncio. Compara contra o pico já visto (guardado em facts_live.json) e avisa se cair.
+    ko_finished_now = sum(1 for v in ko_fix.values() if v.get("status") == "finished")
+    ko_finished_peak = live.get("_ko_finished_peak", 0)
+    if ko_finished_now < ko_finished_peak:
+        print(f"  ⚠⚠ knockout_fixtures.json regrediu: {ko_finished_peak} jogo(s) de mata-mata "
+              f"encerrado(s) no pico visto antes, {ko_finished_now} agora — possível falha de nome "
+              f"da ESPN sumindo com um slot já resolvido. Parciais de mata-mata (jogos_penaltis "
+              f"incluído) podem estar incompletos nesta rodada.")
+    live["_ko_finished_peak"] = max(ko_finished_now, ko_finished_peak)
+
+    pen_partial = compute_penalty_partial(ko_fix, len(C.KNOCKOUT_CELLS))
+    if pen_partial:
+        partials["jogos_penaltis"] = pen_partial
+
     ko_finished = []
     for slot, r in ko_results.items():
         if r.get("status") != "finished" or r.get("home_score") is None:

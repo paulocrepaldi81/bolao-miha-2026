@@ -61,3 +61,27 @@ def test_mais_gols_jogo_com_multiplos_jogos_empatados():
     out = FF.compute_tournament_extras(jogos)
     assert "6 gols — 2 jogos" in out["mais_gols_jogo"]
     assert "A 3×3 B" in out["mais_gols_jogo"] and "C 4×2 D" in out["mais_gols_jogo"]
+
+
+def test_penalty_partial_conta_so_jogos_encerrados_decididos_nos_penaltis():
+    ko_fix = {
+        "R32-01": {"status": "finished", "decided_by": "pen"},
+        "R32-02": {"status": "finished", "decided_by": "normal"},
+        "R32-03": {"status": "finished", "decided_by": "pen"},
+        "R32-04": {"status": "scheduled", "decided_by": None},   # ainda não jogado -> não conta
+    }
+    assert FF.compute_penalty_partial(ko_fix, 32) == "2 até agora (3/32 jogos de mata-mata encerrados)"
+
+
+def test_penalty_partial_sem_jogo_encerrado_retorna_none():
+    ko_fix = {"QF-01": {"status": "scheduled", "decided_by": None}}
+    assert FF.compute_penalty_partial(ko_fix, 32) is None
+
+
+def test_penalty_partial_bracket_vazio_retorna_none():
+    assert FF.compute_penalty_partial({}, 32) is None
+
+
+def test_penalty_partial_zero_penaltis_ainda_mostra_contagem():
+    ko_fix = {"R32-01": {"status": "finished", "decided_by": "normal"}}
+    assert FF.compute_penalty_partial(ko_fix, 32) == "0 até agora (1/32 jogos de mata-mata encerrados)"
