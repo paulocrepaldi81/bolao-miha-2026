@@ -5,8 +5,13 @@ Pega da própria Copa (ESPN, API pública) a ÚLTIMA rodada encerrada (resultado
 curiosidades) e os PRÓXIMOS jogos (com horário de São Paulo), monta um pôster estilo
 futebol/cartoon com a caricatura do Ricardo e exporta a-rodada/hoje.png.
 
-Independe do relógio do runner: usa o estado real do torneio (jogos post/pre), não a
-data "de hoje". O rótulo de data vem da data do próximo jogo (string do evento).
+Usa o estado real do torneio (jogos post/pre) pra achar QUAL é o próximo jogo — mas o
+relógio real (UTC, comparado via agenda_day) decide COMO chamar isso: só diz "HOJE" se o
+próximo jogo for de fato hoje. Bug real corrigido em 08/07: entre Oitavas (terminaram
+06-07/07) e Quartas (começam 09/07) existe um vão de dias sem jogo nenhum — nesse vão o
+pôster dizia "JOGOS DE HOJE: França × Marrocos" quando esse jogo só ia acontecer 1-2 dias
+depois. Agora tem 3 estados: HOJE (jogo é hoje mesmo) / VÃO (próximo jogo é dia futuro,
+mostra a data e deixa claro que hoje não tem jogo) / FIM DE COPA (sem mais jogo nenhum).
 
 Caricatura: usa a-rodada/ricardo.png se existir; senão, um mascote vetorial (SVG).
 
@@ -161,6 +166,15 @@ def agenda_day(iso):
         return (sp - dt.timedelta(hours=6)).strftime("%Y-%m-%d")
     except Exception:
         return iso[:10]
+
+
+def today_agenda_day():
+    """'Hoje' pela MESMA regra de corte de agenda_day (6h SP) — reaproveita a função em vez de
+    duplicar a lógica, pra nunca divergir se o corte mudar. SEMPRE explícito em UTC
+    (datetime.now(timezone.utc)): datetime.now() sem argumento pega o fuso do RELÓGIO LOCAL de
+    quem roda o script — no GitHub Actions (UTC) "funciona por acidente", mas rodando local em
+    horário de Brasília deslocaria o corte em 3h por engano."""
+    return agenda_day(dt.datetime.now(dt.timezone.utc).isoformat())
 
 
 def label_day(daykey):
@@ -502,9 +516,29 @@ def grp_chip(j):
             f'border-radius:5px;padding:2px 7px;flex:0 0 auto;letter-spacing:.3px">GRUPO {gh}</span>')
 
 
-def build_html(last_round, next_round, res_day, up_day):
+def build_html(last_round, next_round, res_day, up_day, today_day=None):
+    # today_day como parâmetro (default = today_agenda_day() real) — permite testar os 3 estados
+    # abaixo com datas fixas, sem precisar mockar o relógio.
+    today_day = today_day or today_agenda_day()
     lbl_jogos = label_day(up_day)
     lbl_res = label_day(res_day)
+    # 3 estados do bloco "próximo(s) jogo(s)" — NUNCA diga "hoje" quando o próximo jogo é dia
+    # futuro (bug real de 08/07: disse "JOGOS DE HOJE: França × Marrocos" com o jogo 2 dias à
+    # frente, no vão entre Oitavas e Quartas). HOJE = o próximo jogo é hoje mesmo. VÃO = existe
+    # próximo jogo, mas não é hoje (mostra a data real + deixa explícito que hoje não tem jogo).
+    # FIM DE COPA = não há mais nenhum jogo futuro.
+    if up_day is None:
+        jogos_titulo = "🏆 ACABOU A COPA"
+        jogos_sub = "Sem mais jogos até 2030 — hora de cobrar o campeão do bolão"
+        header_sub = lbl_res
+    elif up_day == today_day:
+        jogos_titulo = "📅 JOGOS DE HOJE"
+        jogos_sub = f"{lbl_jogos} · horário de Brasília"
+        header_sub = f"Hoje · {lbl_jogos}"
+    else:
+        jogos_titulo = "⏳ PRÓXIMO JOGO"
+        jogos_sub = f"{lbl_jogos} · horário de Brasília — hoje ninguém joga"
+        header_sub = lbl_jogos
     small = "font-family:Segoe UI,system-ui;font-size:11px;color:#bfe3d2;font-weight:600;letter-spacing:0"
     ball = img_b64("trionda.png")
     ball_header = (f'<img src="{ball}" alt="" style="width:62px;height:62px;flex:0 0 auto">' if ball else "")
@@ -544,7 +578,7 @@ def build_html(last_round, next_round, res_day, up_day):
                 f'<span style="flex:1;height:2px;background:rgba(244,196,48,.25);border-radius:2px"></span>{extra}</div>')
 
     res_extra = f'<span style="{small}">{lbl_res}</span>' if lbl_res else ""
-    jogos_extra = f'<span style="{small}">{lbl_jogos} · horário de Brasília</span>'
+    jogos_extra = f'<span style="{small}">{jogos_sub}</span>'
     return f"""<!doctype html><html><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
@@ -557,7 +591,7 @@ def build_html(last_round, next_round, res_day, up_day):
     <div style="flex:1;min-width:0">
       <div style="font-size:12px;letter-spacing:3px;color:#f4c430;font-weight:800">BOLÃO MIHA 2026</div>
       <div style="font-family:Anton,sans-serif;font-size:42px;line-height:.95;letter-spacing:1px">A RODADA</div>
-      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{('Hoje · ' + lbl_jogos) if lbl_jogos else lbl_res} · por Ricardo Mihalik</div>
+      <div style="font-size:12.5px;color:#bfe3d2;margin-top:4px">{header_sub} · por Ricardo Mihalik</div>
     </div>
     {ball_header}
   </div>
@@ -566,7 +600,7 @@ def build_html(last_round, next_round, res_day, up_day):
     <div style="display:grid;gap:7px">{resultados}</div>
     {sec("🔥 CURIOSIDADES")}
     {curis_html}
-    {sec("📅 JOGOS DE HOJE", jogos_extra)}
+    {sec(jogos_titulo, jogos_extra)}
     <div style="display:grid;gap:7px">{jogos}</div>
   </div>
   <div style="position:relative;z-index:1;background:#0c4a35;padding:12px 20px;font-size:12px;color:#bfe3d2;text-align:center;border-top:1px solid rgba(255,255,255,.1)">⚽ Classificação ao vivo no site do bolão · boa sorte! 🏆</div>
@@ -591,7 +625,10 @@ def main():
     # todos os dias. (O workflow só publica se hoje.png existir.)
     if up_day is None and res_day:
         try:
-            if (dt.date.today() - dt.date.fromisoformat(res_day)).days > 3:
+            # dt.date.today() é NAIVE (pega o fuso do relógio local de quem roda) — troca por
+            # today_agenda_day() (sempre UTC explícito) pra não divergir da mesma noção de "hoje"
+            # usada em build_html() logo abaixo.
+            if (dt.date.fromisoformat(today_agenda_day()) - dt.date.fromisoformat(res_day)).days > 3:
                 print(f"Torneio encerrado (último dia com jogo: {res_day}) — sem pôster novo.")
                 return
         except Exception:
