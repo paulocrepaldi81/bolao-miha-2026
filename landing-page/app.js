@@ -159,21 +159,22 @@ const HISTORY = [
 
 const TAGLINES = [
   "Hora de derrubar a Casa Mihalik.",
-  "Mata-mata é igual o 6-7: ninguém entende, mas todo mundo grita.",
   "Seu palpite tá igual o Endrick: aquecendo no banco esperando entrar.",
   "Nem o Mounjaro do Ronaldo enxuga o peso da sua tabela.",
-  "No bolão da família não tem tigrinho: tem tabela, vergonha e zoeira.",
   "Assistiu pela CazéTV, gritou com o Casimiro, mas na hora do palpite gelou.",
   "Sua confiança é igual narrador na abertura: jurou que era mascote, era Labubu.",
   "O cara entrou no ônibus agora, nem tá em pé e já quer sentar na janela.",
-  // referências do mata-mata 2026 (Vozinha, meme Vini Jr/Haaland) — trocar à vontade
-  "O Vozinha tem 40 anos e não vaza nada. Seu palpite tem 3 dias e já afundou.",
-  "Aos 40 anos o Vozinha virou sensação da Copa. Aos 3 acertos, você virou piada do grupo.",
-  "Vini Jr e Haaland recriaram meme antes do jogo. Seu palpite recriou foi vexame.",
-  "Ninguém segura o Vozinha no gol. Ninguém segura a zebra que virou sua tabela.",
-  "Sua confiança começou igual parede do Vozinha. Seu resultado terminou igual sua torcida: vazado.",
-  "JÁ ERA! Seu palpite não foi eliminado — ele pediu pra se aposentar de vergonha."
+  "JÁ ERA! Seu palpite não foi eliminado — ele pediu pra se aposentar de vergonha.",
+  // referências das Quartas 2026 (Brasil eliminado nas oitavas) — trocar à vontade
+  "Acabou o sonho do hexa.",
+  "As 4 eras da seleção: Era Pelé, Era Romário, Era Ronaldo e... já era.",
+  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vini Jr."
 ];
+// piada de pergunta-resposta pede mais tempo de leitura que as outras (setup + virada)
+const TAGLINE_LONG_MS = 6200;
+const LONG_TAGLINES = new Set([
+  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vini Jr."
+]);
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026
 const FLAGS = {
@@ -628,7 +629,6 @@ function render(){
   renderMovement();
   // stats
   renderNumberStats();
-  renderWisdom();
   renderCurrentGameStats();
   // corrida pelo título — modelo simples: pontos atuais × máximo ainda possível
   const ranked = [...P].sort((a,b)=> b.score - a.score || (b.max_possible??0)-(a.max_possible??0));
@@ -953,24 +953,6 @@ function renderNumberStats(){
     </div>`);
   }
   el.innerHTML = cards.join('') || '<div class="lb-empty">Sem números ainda — os jogos decidem.</div>';
-}
-
-// "Sabedoria das multidões": o placar-consenso (mediana do palpite de todo o bolão) erra menos
-// que o apostador médio? Vem pronto do motor (fun_stats.compute_wisdom) — só exibe.
-function renderWisdom(){
-  const el=document.getElementById('wisdomCard'); if(!el) return;
-  const w=DATA.wisdom;
-  if(!w){ el.innerHTML='<div class="lb-empty">Ainda sem jogos suficientes pra medir isso.</div>'; return; }
-  const better=w.pct_better>=0;
-  const bc=w.best_call, wc=w.worst_call;
-  const call=(c,ico,lab)=>`<div class="extra">${ico} ${lab}: ${flag(c.home)}${esc(c.home)} <b>${c.real[0]}×${c.real[1]}</b> ${esc(c.away)}${flagA(c.away)} — o bolão previu ${c.consensus[0]}×${c.consensus[1]} (mediana).</div>`;
-  el.innerHTML=`<div class="stat ${better?'stat-good':'stat-cold'}" style="grid-column:1/-1">
-    <div class="ico">🧠</div><div class="lab">A sabedoria do bolão</div>
-    <div class="val"><b>${better?'−':'+'}${Math.abs(w.pct_better)}%</b><span class="u">de erro vs. o apostador médio</span></div>
-    <div class="who">${better?'O "placar-consenso" (mediana dos 88 palpites) erra MENOS que qualquer um sozinho':'Dessa vez o apostador médio venceu o consenso'} · ${w.games_evaluated} jogos avaliados</div>
-    ${call(bc,'✅','Onde o consenso mais acertou')}
-    ${call(wc,'😅','Onde o consenso mais errou')}
-  </div>`;
 }
 
 // Categorias Extras — três estados claros (Definido/Parcial/Em aberto) + quem pontuou
@@ -1470,8 +1452,18 @@ function taglinePool(){
   }
   return pool;
 }
-function rotate(){ const pool=taglinePool(); tEl.textContent = pool[ti % pool.length]; ti++; }
-rotate(); setInterval(rotate, 4200);
+// auto-agendado (não setInterval fixo) — assim a piada de pergunta-resposta pode ficar mais
+// tempo na tela sem atrapalhar o ritmo das outras.
+let tTimer=null;
+function rotate(){
+  const pool=taglinePool();
+  const text = pool[ti % pool.length];
+  tEl.textContent = text;
+  ti++;
+  if(tTimer) clearTimeout(tTimer);
+  tTimer = setTimeout(rotate, LONG_TAGLINES.has(text) ? TAGLINE_LONG_MS : 4200);
+}
+rotate();
 
 // boot: carrega o placar direto do GitHub (não consome deploys da Netlify);
 // fallback: data.json local (deploy antigo / file:// / offline).

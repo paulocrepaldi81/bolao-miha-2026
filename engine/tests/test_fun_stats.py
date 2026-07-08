@@ -1,6 +1,6 @@
 """
-Testes das estatísticas divertidas (gêmeo de aposta, sabedoria do bolão, perfil quente/frio,
-jornada de ranking). Rode: cd engine && python3 -m pytest tests -q
+Testes das estatísticas divertidas (gêmeo de aposta, perfil quente/frio, jornada de ranking,
+clássico de vizinhos, novela das ultrapassagens). Rode: cd engine && python3 -m pytest tests -q
 """
 import os
 import sys
@@ -39,26 +39,6 @@ def test_twins_exige_cobertura_minima():
     bets = [_bet("A", {"G1": (1, 0)}), _bet("B", {"G1": (1, 0)})]
     out = FS.compute_twins(bets)
     assert out["A"]["twin"] is None and out["A"]["rival"] is None
-
-
-def test_wisdom_consenso_cravado():
-    catalog = [{"match_id": "G1", "home": "Brasil", "away": "Argentina"}]
-    results = {"G1": {"status": "finished", "home_score": 2, "away_score": 1}}
-    # mediana do bolão bate 2x1 exato; indivíduos variam ao redor
-    bets = [_bet("A", {"G1": (2, 1)}), _bet("B", {"G1": (2, 1)}),
-            _bet("C", {"G1": (0, 0)}), _bet("D", {"G1": (4, 3)})]
-    w = FS.compute_wisdom(bets, results, catalog)
-    assert w["games_evaluated"] == 1
-    assert w["consensus_avg_error"] == 0.0   # mediana (2,1) == real (2,1)
-    assert w["individual_avg_error"] > 0     # C e D erraram
-    assert w["pct_better"] == 100.0          # consenso 100% melhor (erro 0)
-
-
-def test_wisdom_sem_jogo_encerrado_retorna_none():
-    catalog = [{"match_id": "G1", "home": "Brasil", "away": "Argentina"}]
-    results = {"G1": {"status": "scheduled"}}
-    bets = [_bet("A", {"G1": (2, 1)})]
-    assert FS.compute_wisdom(bets, results, catalog) is None
 
 
 def test_goal_profile_quente_e_frio():

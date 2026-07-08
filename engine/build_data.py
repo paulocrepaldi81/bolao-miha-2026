@@ -434,7 +434,6 @@ def main():
         p["fun"] = {"twin": twins.get(p["alias"], {}).get("twin"),
                     "rival": twins.get(p["alias"], {}).get("rival"),
                     "goal_profile": goal_profile.get(p["alias"])}
-    wisdom = FUN.compute_wisdom(bets, results, catalog)
     history_dates, rank_series = FUN.compute_rank_history(history, [p["alias"] for p in participants])
     for p in participants:
         p["fun"]["rank_series"] = rank_series.get(p["alias"], [])
@@ -488,7 +487,6 @@ def main():
         "knockout_form_round": ko_form_round,
         "movement": movement,
         "stats": stats,
-        "wisdom": wisdom,
         "history_dates": history_dates,
         "probability": {"method": "Modelo simples: pontos máximos possíveis e 'matematicamente vivo'. "
                                   "Sem simulação de força de seleção no lançamento.", "simulations": 0},

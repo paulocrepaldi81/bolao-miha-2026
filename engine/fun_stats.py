@@ -40,53 +40,6 @@ def compute_twins(bets):
     return out
 
 
-def compute_wisdom(bets, results, catalog):
-    """'Sabedoria das multidões': compara o erro do PLACAR-CONSENSO (mediana do placar apostado
-    pelo bolão inteiro) contra o erro MÉDIO INDIVIDUAL, nos jogos de GRUPO já encerrados. Se o
-    consenso erra menos, é o efeito clássico de wisdom-of-the-crowd. Retorna None se não houver
-    jogo encerrado (fail-safe — categoria só aparece quando há dado real).
-    """
-    cat_by_id = {m["match_id"]: m for m in catalog}
-    consensus_errs, individual_errs, deltas = [], [], []
-    for mid, m in cat_by_id.items():
-        r = results.get(mid, {})
-        if r.get("status") != "finished" or r.get("home_score") is None:
-            continue
-        rh, ra = r["home_score"], r["away_score"]
-        homes, aways = [], []
-        for b in bets:
-            gp = b.get("group_preds", {}).get(mid)
-            if gp:
-                homes.append(gp[0])
-                aways.append(gp[1])
-        if not homes:
-            continue
-        ch, ca = statistics.median(homes), statistics.median(aways)
-        c_err = abs(rh - ch) + abs(ra - ca)
-        i_err = statistics.mean(abs(rh - h) + abs(ra - a) for h, a in zip(homes, aways))
-        consensus_errs.append(c_err)
-        individual_errs.append(i_err)
-        deltas.append((i_err - c_err, mid, rh, ra, ch, ca, m.get("home"), m.get("away")))
-    if not consensus_errs:
-        return None
-    mc, mi = statistics.mean(consensus_errs), statistics.mean(individual_errs)
-    pct_better = (1 - mc / mi) * 100 if mi else 0.0
-
-    def _entry(e):
-        _, mid, rh, ra, ch, ca, home, away = e
-        return {"match_id": mid, "home": home, "away": away,
-                "real": [rh, ra], "consensus": [round(ch, 1), round(ca, 1)]}
-    deltas.sort(reverse=True)   # maior delta primeiro = onde o consenso mais "ganhou"
-    return {
-        "games_evaluated": len(consensus_errs),
-        "consensus_avg_error": round(mc, 3),
-        "individual_avg_error": round(mi, 3),
-        "pct_better": round(pct_better, 1),
-        "best_call": _entry(deltas[0]),
-        "worst_call": _entry(deltas[-1]),
-    }
-
-
 def compute_goal_profile(bets):
     """Perfil de apostador pela média de gols apostados por jogo de GRUPO (casa+fora, dividido
     pelo nº de jogos preenchidos — não a soma bruta, pra não penalizar aposta incompleta). Exige
