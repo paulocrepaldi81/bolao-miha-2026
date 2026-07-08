@@ -53,6 +53,11 @@ def fetch_espn_events():
     """{match_id: {date, completed, events:[{kind,team,player,minute,order}]}} para todos os jogos."""
     from fetch_results import EN_PT
     from catalog import get_catalog
+    # TODO (mesma classe do bug corrigido em mais_goleadora/menos_vazada, 07/jul): `pairs` só
+    # cobre os 72 jogos de grupo -> 1º expulso/1º gol contra de mata-mata nunca entrariam no
+    # cálculo. INERTE hoje só porque os dois fatos já travaram em facts.json durante a fase de
+    # grupos (antes de existir jogo de mata-mata) — se precisar recalcular do zero um dia, ou
+    # numa próxima edição do bolão, precisa somar os confrontos de knockout_fixtures.json aqui.
     pairs = {frozenset((m["home"], m["away"])): m for m in get_catalog()}
     out = {}
     scorers = {}   # artilharia (ESPN, completa): {nome: {"goals": n, "team": pt}} acumulada
@@ -114,9 +119,54 @@ def fetch_espn_events():
     return out, scorers
 
 
+def compute_tournament_extras(all_finished):
+    """Curiosidades de TORNEIO INTEIRO (grupo + mata-mata encerrado, sem pênaltis): maior nº de
+    gols num jogo, equipe mais goleadora, equipe menos vazada — todas com EMPATE EXPLÍCITO (lista
+    TODOS os empatados, nunca escolhe 1 arbitrariamente). Puro, sem I/O — recebe `all_finished` já
+    montada: lista de (m, r) com m={"home","away"}, r={"home_score","away_score"}. Fail-safe:
+    lista vazia -> {} (nenhuma chave setada, main() não sobrescreve com vazio)."""
+    if not all_finished:
+        return {}
+
+    def _join(items, cap=6):
+        return ", ".join(items[:cap]) + (f" +{len(items) - cap}" if len(items) > cap else "")
+
+    gols_jogo = lambda r: int(r["home_score"]) + int(r["away_score"])
+    mxg = max(gols_jogo(r) for _, r in all_finished)
+    jogos_mxg = [f"{m['home']} {r['home_score']}×{r['away_score']} {m['away']}"
+                 for m, r in all_finished if gols_jogo(r) == mxg]
+    out = {"mais_gols_jogo": (f"{mxg} gols ({jogos_mxg[0]})" if len(jogos_mxg) == 1
+                              else f"{mxg} gols — {len(jogos_mxg)} jogos: " + "; ".join(jogos_mxg[:4])
+                                   + (f" +{len(jogos_mxg) - 4}" if len(jogos_mxg) > 4 else ""))}
+
+    gp, gc = {}, {}
+    for m, r in all_finished:
+        h, a = int(r["home_score"]), int(r["away_score"])
+        gp[m["home"]] = gp.get(m["home"], 0) + h
+        gp[m["away"]] = gp.get(m["away"], 0) + a
+        gc[m["home"]] = gc.get(m["home"], 0) + a
+        gc[m["away"]] = gc.get(m["away"], 0) + h
+
+    mxsco = max(gp.values())
+    tops = sorted([t for t, g in gp.items() if g == mxsco])
+    out["mais_goleadora"] = (f"{tops[0]} ({mxsco} gols)" if len(tops) == 1
+                             else f"{len(tops)} seleções com {mxsco} gols: " + _join(tops))
+
+    mnc = min(gc.values())
+    least = sorted([t for t, c in gc.items() if c == mnc])
+    if len(least) == 1:
+        out["menos_vazada"] = f"{least[0]} ({mnc} sofrido(s))"
+    elif mnc == 0:
+        out["menos_vazada"] = f"{len(least)} seleções ainda sem sofrer gol: " + _join(least)
+    else:
+        out["menos_vazada"] = f"{len(least)} seleções com {mnc} sofrido(s): " + _join(least)
+    return out
+
+
 def main():
     from catalog import get_catalog
     from fetch_results import EN_PT, load_results
+    from build_data import load_knockout_results   # reusa o loader do motor principal (sem pênaltis)
 
     token = os.environ.get("FOOTBALL_DATA_TOKEN", "").strip()
     facts = load_json(FACTS, {})
@@ -126,10 +176,32 @@ def main():
     results, _ = load_results()
     changed_facts = False
 
+    # jogos de MATA-MATA já encerrados (placar até a prorrogação, sem pênaltis — ver
+    # load_knockout_results) entram nas 3 curiosidades de TORNEIO INTEIRO abaixo (mais_gols_jogo/
+    # mais_goleadora/menos_vazada). ACHADO REAL (07/jul): sem isso, o parcial ficava PARADO nos
+    # 72 jogos de grupo mesmo com 24 jogos de mata-mata já encerrados — chegou a exibir um time
+    # já eliminado ("México") como líder de "sem sofrer gol" depois dele já ter perdido de virada
+    # no mata-mata. `m` aqui é só {"home","away"} (o bloco abaixo não usa mais nada de `m`).
+    ko_results = load_knockout_results(os.path.join(DATA, "knockout_results.csv"))
+    ko_fix = load_json(os.path.join(DATA, "knockout_fixtures.json"), {})
+    ko_finished = []
+    for slot, r in ko_results.items():
+        if r.get("status") != "finished" or r.get("home_score") is None:
+            continue
+        fx = ko_fix.get(slot) or {}
+        home, away = fx.get("home"), fx.get("away")
+        if home and away:
+            ko_finished.append(({"home": home, "away": away}, r))
+
     # ---------- 1) Derivados dos placares ----------
     finished = [(m, results[m["match_id"]]) for m in catalog
                 if results.get(m["match_id"], {}).get("status") == "finished"
                 and results[m["match_id"]].get("home_score") not in (None, "")]
+    # empates_1f é EXPLICITAMENTE só da 1ª fase -> continua usando só "finished" (grupos).
+    # As 3 curiosidades de torneio inteiro usam "all_finished" (grupos + mata-mata encerrado).
+    # Sem risco de duplicata: as duas listas vêm de namespaces de id disjuntos por construção
+    # (match_id de grupo tipo "A1" vs. slot de mata-mata tipo "R32-01" nunca colidem).
+    all_finished = finished + ko_finished
     if finished:
         draws = sum(1 for _, r in finished if int(r["home_score"]) == int(r["away_score"]))
         partials["empates_1f"] = f"{draws} até agora ({len(finished)}/72 jogos da 1ª fase)"
@@ -138,54 +210,17 @@ def main():
             changed_facts = True
             print(f"✔ DEFINIDO empates_1f = {draws} (72/72 jogos encerrados)")
 
-        # join honesto de uma lista de empatados (lista até 6 e resume o resto)
-        def _join(items, cap=6):
-            return ", ".join(items[:cap]) + (f" +{len(items) - cap}" if len(items) > cap else "")
+    partials.update(compute_tournament_extras(all_finished))
 
-        # MAIS GOLS NUM JOGO (com empate)
-        gols_jogo = lambda r: int(r["home_score"]) + int(r["away_score"])
-        mxg = max(gols_jogo(r) for _, r in finished)
-        jogos_mxg = [f"{m['home']} {r['home_score']}×{r['away_score']} {m['away']}"
-                     for m, r in finished if gols_jogo(r) == mxg]
-        partials["mais_gols_jogo"] = (f"{mxg} gols ({jogos_mxg[0]})" if len(jogos_mxg) == 1
-                                      else f"{mxg} gols — {len(jogos_mxg)} jogos: " + "; ".join(jogos_mxg[:4])
-                                           + (f" +{len(jogos_mxg) - 4}" if len(jogos_mxg) > 4 else ""))
-
-        gp, gc = {}, {}
-        for m, r in finished:
-            h, a = int(r["home_score"]), int(r["away_score"])
-            gp[m["home"]] = gp.get(m["home"], 0) + h
-            gp[m["away"]] = gp.get(m["away"], 0) + a
-            gc[m["home"]] = gc.get(m["home"], 0) + a
-            gc[m["away"]] = gc.get(m["away"], 0) + h
-
-        # MAIS GOLEADORA (com empate)
-        mxsco = max(gp.values())
-        tops = sorted([t for t, g in gp.items() if g == mxsco])
-        partials["mais_goleadora"] = (f"{tops[0]} ({mxsco} gols)" if len(tops) == 1
-                                      else f"{len(tops)} seleções com {mxsco} gols: " + _join(tops))
-
-        # MENOS VAZADA (com empate; só entre quem já jogou — gc só tem quem entrou em campo)
-        mnc = min(gc.values())
-        least = sorted([t for t, c in gc.items() if c == mnc])
-        if len(least) == 1:
-            partials["menos_vazada"] = f"{least[0]} ({mnc} sofrido(s))"
-        elif mnc == 0:
-            partials["menos_vazada"] = f"{len(least)} seleções ainda sem sofrer gol: " + _join(least)
-        else:
-            partials["menos_vazada"] = f"{len(least)} seleções com {mnc} sofrido(s): " + _join(least)
-
-        # GUARDRAIL (C4): ao fechar a 1ª fase NÃO cravamos mais_goleadora/menos_vazada/
-        # mais_gols_jogo — pela regra oficial elas contam o torneio INTEIRO (incluindo prorrogação
-        # no mata-mata), então congelar no valor de grupos seria errado. Ficam abertas para
-        # resolução (manual ou v2 com o catálogo do mata-mata) ao fim da Copa. empates_1f é
-        # "1ª fase" e já foi cravado acima — esse sim fecha em 72/72.
-        if len(finished) == len(catalog):
-            pendentes = [k for k in ("mais_goleadora", "menos_vazada", "mais_gols_jogo",
-                                     "jogos_penaltis", "azarao") if facts.get(k) in (None, "")]
-            if pendentes:
-                print("ℹ 1ª fase encerrada. Curiosidades de torneio inteiro/mata-mata pendentes de "
-                      "resolução MANUAL ao fim da Copa (contam prorrogação): " + ", ".join(pendentes))
+    # GUARDRAIL (C4): mesmo com grupo+mata-mata combinados acima, NÃO cravamos mais_goleadora/
+    # menos_vazada/mais_gols_jogo em facts.json — pela regra oficial elas só fecham de vez ao fim
+    # da Copa (resolução manual do organizador). empates_1f é "1ª fase" e já foi cravado acima.
+    if finished and len(finished) == len(catalog):
+        pendentes = [k for k in ("mais_goleadora", "menos_vazada", "mais_gols_jogo",
+                                 "jogos_penaltis", "azarao") if facts.get(k) in (None, "")]
+        if pendentes:
+            print("ℹ 1ª fase encerrada. Curiosidades de torneio inteiro/mata-mata pendentes de "
+                  "resolução MANUAL ao fim da Copa (contam prorrogação): " + ", ".join(pendentes))
 
     # ---------- 2) Artilharia: calculada via ESPN logo após buscar os lances (seção 3). ----------
 
