@@ -159,21 +159,16 @@ const HISTORY = [
 
 const TAGLINES = [
   "Hora de derrubar a Casa Mihalik.",
-  "Seu palpite tá igual o Endrick: aquecendo no banco esperando entrar.",
   "Nem o Mounjaro do Ronaldo enxuga o peso da sua tabela.",
-  "Assistiu pela CazéTV, gritou com o Casimiro, mas na hora do palpite gelou.",
-  "Sua confiança é igual narrador na abertura: jurou que era mascote, era Labubu.",
-  "O cara entrou no ônibus agora, nem tá em pé e já quer sentar na janela.",
-  "JÁ ERA! Seu palpite não foi eliminado — ele pediu pra se aposentar de vergonha.",
   // referências das Quartas 2026 (Brasil eliminado nas oitavas) — trocar à vontade
   "Acabou o sonho do hexa.",
   "As 4 eras da seleção: Era Pelé, Era Romário, Era Ronaldo e... já era.",
-  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vini Jr."
+  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vinil Jr."
 ];
 // piada de pergunta-resposta pede mais tempo de leitura que as outras (setup + virada)
 const TAGLINE_LONG_MS = 6200;
 const LONG_TAGLINES = new Set([
-  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vini Jr."
+  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vinil Jr."
 ]);
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026
@@ -1439,9 +1434,7 @@ document.getElementById('matchMore').addEventListener('click',()=>{
 let ti=0; const tEl=document.getElementById('tagline');
 // Frases da LANTERNA: dinâmicas — usam o último colocado ATUAL. textContent (sem risco XSS).
 const LANTERNA_LINES = [
-  "🔦 {x} brilhando na lanterna: luz própria.",
-  "🔦 Temos campeão da lanterna: {x}. O bolão todo torce… pra você ficar.",
-  "🔦 {x} de novo na lanterna? Já dá pra pagar aluguel."
+  "🔦 {x} brilhando na lanterna: luz própria."
 ];
 function taglinePool(){
   const pool = [...TAGLINES];
