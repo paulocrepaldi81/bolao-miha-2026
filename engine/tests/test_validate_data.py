@@ -38,7 +38,7 @@ def _baseline():
     }
 
 
-def _run(tmp_path, monkeypatch, data, catalogo=CATALOGO_FAKE, bets_json=None):
+def _run(tmp_path, monkeypatch, data, catalogo=CATALOGO_FAKE, bets_json=None, knockout_forms=None):
     """Escreve `data` num data.json temporário, aponta OUT/DATA/get_catalog pra lá, roda main()
     e devolve o código de saída (sys.exit) — nunca deixa main() escrever no data.json REAL."""
     out = tmp_path / "data.json"
@@ -46,6 +46,8 @@ def _run(tmp_path, monkeypatch, data, catalogo=CATALOGO_FAKE, bets_json=None):
     data_dir = tmp_path / "data"; data_dir.mkdir(exist_ok=True)
     if bets_json is not None:
         (data_dir / "bets_extracted.json").write_text(json.dumps({"bets": bets_json}), encoding="utf-8")
+    if knockout_forms is not None:
+        (data_dir / "knockout_forms.json").write_text(json.dumps(knockout_forms), encoding="utf-8")
     monkeypatch.setattr(V, "OUT", str(out))
     monkeypatch.setattr(V, "DATA", str(data_dir))
     monkeypatch.setattr(V, "REPORT", str(data_dir / "audit_report.txt"))
@@ -120,6 +122,29 @@ def test_stat_apontando_apelido_inexistente_bloqueia(tmp_path, monkeypatch):
 def test_nbets_diferente_de_apostas_extraidas_bloqueia(tmp_path, monkeypatch):
     d = _baseline()   # 1 participante no data.json, mas bets_extracted.json diz que tem 2
     assert _run(tmp_path, monkeypatch, d, bets_json=[{"alias": "Fulano"}, {"alias": "Ciclano"}]) == 1
+
+
+def _baseline_with_ko(slot="QF-01", kickoff="2026-07-09T17:00:00-03:00"):
+    d = _baseline()
+    d["matches"].append({
+        "match_id": slot, "phase": "QF", "slot": slot, "status": "scheduled",
+        "home_score": None, "away_score": None, "kickoff_sao_paulo": kickoff,
+    })
+    return d
+
+
+def test_prazo_do_mata_mata_depois_do_kickoff_bloqueia(tmp_path, monkeypatch):
+    # PRIVACIDADE: se o prazo (18h) vier DEPOIS do kickoff (17h), os cards agregados de "jogo de
+    # agora" poderiam mostrar o placar de alguém antes do prazo de atualizar fechar -- bloqueia.
+    d = _baseline_with_ko()
+    kf = {"rounds": [{"round": "QF", "deadline": "2026-07-09 18:00"}]}
+    assert _run(tmp_path, monkeypatch, d, knockout_forms=kf) == 1
+
+
+def test_prazo_do_mata_mata_antes_do_kickoff_nao_bloqueia(tmp_path, monkeypatch):
+    d = _baseline_with_ko()
+    kf = {"rounds": [{"round": "QF", "deadline": "2026-07-09 12:00"}]}   # ANTES do kickoff (17h) -> ok
+    assert _run(tmp_path, monkeypatch, d, knockout_forms=kf) == 0
 
 
 def test_avisos_nao_bloqueiam_movimento_vazio_e_extras_indefinidas(tmp_path, monkeypatch):

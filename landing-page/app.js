@@ -1201,9 +1201,13 @@ const maNorm = s => (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').t
 
 function maPickRow(e){
   const m=e.m, played=m.status==='finished';
-  const exact = played && e.ph===m.home_score && e.pa===m.away_score;
+  // PRIVACIDADE: mata-mata com prazo ainda aberto vem com ph/pa NULOS do motor (build_data.py
+  // já esconde o placar antes de publicar o data.json — não dá pra "vazar via devtools" porque
+  // o valor real nem existe no JSON ainda). O selo de mudou/manteve continua visível.
+  const hidden = e.ph==null;
+  const exact = !hidden && played && e.ph===m.home_score && e.pa===m.away_score;
   let cls='wait', txt='⏳';
-  if(played){
+  if(played && !hidden){
     if(e.pts===0){cls='zero'; txt='0';}
     else if(exact){cls='exato'; txt='⭐ +'+e.pts;}
     else {cls='win'; txt='✓ +'+e.pts;}
@@ -1215,16 +1219,21 @@ function maPickRow(e){
   const chg = e.changed===undefined ? ''
     : (e.changed ? ' · <small style="color:#5FE08A">✏️ você atualizou</small>'
                  : ' · <small style="color:var(--ink-faint)">🔒 original</small>');
-  const orig = (e.changed && e.orig) ? ` <small style="color:var(--ink-faint)">(antes: ${e.orig[0]}×${e.orig[1]})</small>` : '';
+  const orig = (!hidden && e.changed && e.orig) ? ` <small style="color:var(--ink-faint)">(antes: ${e.orig[0]}×${e.orig[1]})</small>` : '';
+  const scoreHTML = hidden
+    ? `<b style="color:var(--ink-faint)" title="Palpite já registrado — fica trancado até o prazo da fase, pra ninguém copiar do outro antes de decidir o seu.">🔒 X×X</b>`
+    : `<b>${e.ph}×${e.pa}</b>`;
   let res;
-  if(played){
+  if(hidden){
+    res = e.hiddenReason==='unconfigured' ? 'prazo desta fase ainda não configurado' : 'oculto até o prazo fechar';
+  } else if(played){
     let nota='';
     if(m.decided_by==='pen' && m.pen_home!=null) nota=` <small style="color:var(--ink-faint)">(pênaltis ${m.pen_home}×${m.pen_away}) · vale o placar até a prorrogação</small>`;
     res = `saiu <b>${m.home_score}×${m.away_score}</b>${nota}`;
   } else res = (m.status==='live' ? '🔴 em andamento' : 'aguardando o jogo');
   return `<div class="ma-pick">
     <div>
-      <div class="teams"><small>${fase}${chg}${sp}</small><br>${flag(m.home_team)}${m.home_team} <b>${e.ph}×${e.pa}</b> ${m.away_team}${flagA(m.away_team)}${orig}</div>
+      <div class="teams"><small>${fase}${chg}${sp}</small><br>${flag(m.home_team)}${m.home_team} ${scoreHTML} ${m.away_team}${flagA(m.away_team)}${orig}</div>
       <div class="guess">${res}</div>
     </div>
     <span class="ma-pts ${cls}">${txt}</span>
@@ -1330,7 +1339,8 @@ function renderMinhaAposta(){
     // ---- 🏆 Meus palpites — MATA-MATA (no topo: é o que importa agora) ----
     // confronto REAL (só slots com times definidos) + o placar que VAI VALER (used = Form OU original).
     const koEntries=Object.entries(picks.knockout||{}).map(([slot,k])=>(
-        {mid:slot, m:mm[slot], ph:k.used[0], pa:k.used[1], pts:k.pts, changed:k.changed, orig:k.orig}))
+        {mid:slot, m:mm[slot], ph:k.used?k.used[0]:null, pa:k.used?k.used[1]:null, pts:k.pts,
+         changed:k.changed, orig:k.orig, hiddenReason:k.hidden_reason}))
       .filter(e=>e.m)
       // NÃO-jogados primeiro (a fase que importa agora, ex.: oitavas), depois os encerrados —
       // senão a fase atual fica soterrada sob os jogos já disputados. Dentro de cada grupo, por horário.
@@ -1366,8 +1376,16 @@ function renderMinhaAposta(){
         }
         koRows+=maPickRow(e);
       }
+      // PRIVACIDADE: enquanto o prazo da fase não fecha, o motor esconde o placar de mata-mata
+      // de TODO MUNDO (você incluído — o site não tem login pra saber que é você mesmo olhando).
+      // Explica a regra 1x no topo (não repete em cada linha) só quando existe algo oculto.
+      const anyHidden = koEntries.some(e=>e.ph==null);
+      const hiddenNote = anyHidden
+        ? `<div style="font-size:11.5px;color:var(--ink-dim);line-height:1.4;margin:2px 0 10px">🔒 Os placares do mata-mata ficam guardados a sete chaves até o prazo de cada fase fechar — assim ninguém espia (ou copia) o palpite de ninguém antes de decidir o seu. Depois do prazo, revela tudo pra todo mundo, inclusive você.</div>
+           <div style="font-size:11px;color:var(--ink-faint);margin-bottom:10px">✉️ Não lembra o que mandou? Pode reenviar o Form de novo sem problema — vale sempre o ÚLTIMO envio dentro do prazo.</div>`
+        : '';
       h+=`<div class="ma-sec"><h4>🏆 Meus palpites — mata-mata <span style="float:right;color:var(--gold);font-weight:700;font-size:13px">+${koPts} pts</span></h4>
-        ${koRows}${koBtn}</div>`;
+        ${hiddenNote}${koRows}${koBtn}</div>`;
     }
     const entries=Object.entries(picks.groups||{}).map(([mid,a])=>({mid,m:mm[mid],ph:a[0],pa:a[1],pts:a[2]}))
       .filter(e=>e.m).sort((a,b)=> new Date(a.m.kickoff_sao_paulo||0)-new Date(b.m.kickoff_sao_paulo||0));

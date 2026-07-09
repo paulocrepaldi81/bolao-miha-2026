@@ -200,6 +200,42 @@ def load_knockout_form(path, roster_aliases):
     return merged
 
 
+def load_knockout_deadlines(path):
+    """slot -> datetime do prazo EFETIVO (slot_deadlines > deadline da rodada), pra TODOS os
+    slots de CADA rodada cadastrada em knockout_forms.json (não só os que já têm Form enviado).
+    Usado só pra decidir QUANDO revelar o placar de mata-mata em 'Minha Aposta': antes de dar pra
+    ATUALIZAR palpite via Form, mostrar o placar de alguém deixava qualquer um espiar o palpite
+    do outro e mudar o seu em cima disso (achado real, 09/jul) — agora o placar fica oculto até o
+    prazo fechar. Slot sem rodada cadastrada ainda -> ausente daqui (fica oculto por padrão em
+    quem consome isso, fail-closed)."""
+    out = {}
+    if not os.path.exists(path):
+        return out
+    try:
+        cfg = json.load(open(path, encoding="utf-8"))
+    except Exception:
+        return out
+    for rd in cfg.get("rounds", []):
+        rid, dl = rd.get("round"), rd.get("deadline")
+        if not (rid and dl):
+            continue
+        try:
+            base_dl = datetime.strptime(dl, "%Y-%m-%d %H:%M")
+        except ValueError:
+            continue
+        slot_dls = {}
+        for slot, sdl in (rd.get("slot_deadlines") or {}).items():
+            try:
+                slot_dls[slot] = datetime.strptime(sdl, "%Y-%m-%d %H:%M")
+            except (ValueError, TypeError):
+                continue
+        for slot, _, _ in C.KNOCKOUT_CELLS:
+            slot_round = "FIN" if slot in ("FIN", "TER") else slot.split("-")[0]
+            if slot_round == rid:
+                out[slot] = slot_dls.get(slot, base_dl)
+    return out
+
+
 def _divergence_persisted(c, persist=3):
     """True se a MESMA divergência já apareceu em >= `persist` checagens seguidas. Lê o `streak`
     que o passo 'Avaliar divergência' grava em alert_state.json (o mesmo que o e-mail usa) — assim
@@ -294,6 +330,7 @@ def main():
     # Falha-fechada: CSV do form indisponível/quebrado → ninguém recebe override → vale o original.
     ko_results = load_knockout_results(os.path.join(DATA, "knockout_results.csv"))
     ko_form = load_knockout_form(os.path.join(DATA, "knockout_forms.json"), [s["alias"] for s in scored])
+    ko_deadlines = load_knockout_deadlines(os.path.join(DATA, "knockout_forms.json"))
     ko_fix = {}
     try:
         with open(os.path.join(DATA, "knockout_fixtures.json"), encoding="utf-8") as f:
@@ -402,6 +439,8 @@ def main():
     bet_by_alias = {b["alias"]: b for b in bets}
     scored_by_alias = {s["alias"]: s for s in scored}
     cat_home = {m["match_id"]: m["home"] for m in catalog}   # mando da planilha por jogo
+    now_sp = datetime.now(SP).replace(tzinfo=None)
+    KO_REVEAL_BUFFER = timedelta(minutes=1)   # ver comentário de privacidade mais abaixo
     for p in participants:
         b = bet_by_alias.get(p["alias"]); s = scored_by_alias.get(p["alias"])
         if not b:
@@ -424,8 +463,22 @@ def main():
         knockout = {}
         for slot, (h, a) in eff.items():
             o = ko_orig.get(slot)
-            knockout[slot] = {"orig": list(o) if o else [h, a], "used": [h, a],
-                              "changed": slot in form_a, "pts": ko_by.get(slot)}
+            # PRIVACIDADE (achado real, 09/jul): agora que dá pra ATUALIZAR o palpite do mata-mata
+            # até o prazo, mostrar o placar de qualquer um na "Minha Aposta" (busca livre por
+            # apelido, sem login) deixava qualquer pessoa espiar o palpite do rival e mudar o seu
+            # em cima disso. Esconde orig/used até 1min depois do prazo — OU até o jogo já ter
+            # resultado real (fail-safe: se o organizador esquecer de cadastrar o prazo da fase a
+            # tempo, um jogo já ENCERRADO não fica oculto pra sempre, já que não protege mais nada).
+            dl = ko_deadlines.get(slot)
+            finished = (ko_results.get(slot) or {}).get("status") == "finished"
+            revealed = finished or bool(dl and now_sp > dl + KO_REVEAL_BUFFER)
+            knockout[slot] = {
+                "orig": (list(o) if o else [h, a]) if revealed else None,
+                "used": [h, a] if revealed else None,
+                "changed": slot in form_a,
+                "pts": ko_by.get(slot),
+                "hidden_reason": None if revealed else ("pending" if dl else "unconfigured"),
+            }
         p["picks"] = {"groups": groups, "final": b["final"], "extras": b["extras"], "knockout": knockout}
 
     # ---- estatísticas "divertidas" (fun_stats.py) — não afetam pontuação, só a landing ----

@@ -108,13 +108,36 @@ def main():
     # foi ligada -> palpites valem o ORIGINAL). Não bloqueia, mas alerta o organizador (runbook).
     if ko_M:
         try:
-            kf = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                              "data", "knockout_forms.json"), encoding="utf-8"))
+            kf = json.load(open(os.path.join(DATA, "knockout_forms.json"), encoding="utf-8"))
             kf_rounds = {r.get("round") for r in (kf.get("rounds") or []) if r.get("csv")}
         except Exception:
             kf_rounds = set()
         for ph in sorted({m.get("phase") for m in ko_M if m.get("phase")} - kf_rounds):
             W(False, f"mata-mata: fase {ph} tem jogos mas SEM Form configurado — palpites valem o original (ver forms/RUNBOOK-fases.md)")
+    # CRÍTICO: o prazo de cada slot de mata-mata tem que ficar ANTES do kickoff real. Os cards
+    # agregados de "jogo de agora" (gameBlockHTML em app.js) só são seguros porque presumem essa
+    # ordem sempre (o jogo só vira "ao vivo"/"próximo" DEPOIS que o prazo de atualizar palpite já
+    # fechou) — se um slot furar isso (deadline mal configurado, kickoff adiantado), o placar de
+    # mata-mata de alguém pode aparecer nos agregados ANTES do prazo terminar. Bloqueia o publish.
+    if ko_M:
+        try:
+            from build_data import load_knockout_deadlines
+            from datetime import datetime as _dt
+            ko_dl = load_knockout_deadlines(os.path.join(DATA, "knockout_forms.json"))
+            furos = []
+            for m in ko_M:
+                slot, dl, kk = m.get("slot"), ko_dl.get(m.get("slot")), m.get("kickoff_sao_paulo")
+                if not (dl and kk):
+                    continue
+                try:
+                    kickoff = _dt.fromisoformat(kk).replace(tzinfo=None)
+                except Exception:
+                    continue
+                if kickoff <= dl:
+                    furos.append(f"{slot}: prazo {dl} não é ANTES do kickoff {kickoff}")
+            C(not furos, f"mata-mata: prazo de slot(s) sem folga antes do próprio kickoff (risco de vazar palpite nos agregados) — corrija slot_deadlines: {furos[:5]}")
+        except Exception:
+            pass   # checagem best-effort — nunca derruba o script por conta própria de um import
     C(all(m.get("match_id") for m in M), "há jogo sem match_id")
     badfin = [m.get("match_id") for m in M
               if m.get("status") == "finished" and (m.get("home_score") is None or m.get("away_score") is None)]
