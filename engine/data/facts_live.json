@@ -31,6 +31,11 @@
         "equipe": "Inglaterra"
       },
       {
+        "nome": "Ousmane Dembélé",
+        "gols": 5,
+        "equipe": "França"
+      },
+      {
         "nome": "Ismael Saibari",
         "gols": 4,
         "equipe": "Marrocos"
@@ -54,11 +59,6 @@
         "nome": "Mikel Oyarzabal",
         "gols": 4,
         "equipe": "Espanha"
-      },
-      {
-        "nome": "Ousmane Dembélé",
-        "gols": 4,
-        "equipe": "França"
       },
       {
         "nome": "Vinícius Júnior",
