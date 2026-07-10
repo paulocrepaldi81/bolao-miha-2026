@@ -71,6 +71,11 @@
         "equipe": "Holanda"
       },
       {
+        "nome": "Charles De Ketelaere",
+        "gols": 3,
+        "equipe": "Bélgica"
+      },
+      {
         "nome": "Cody Gakpo",
         "gols": 3,
         "equipe": "Holanda"
@@ -79,11 +84,6 @@
         "nome": "Cristiano Ronaldo",
         "gols": 3,
         "equipe": "Portugal"
-      },
-      {
-        "nome": "Deniz Undav",
-        "gols": 3,
-        "equipe": "Alemanha"
       }
     ],
     "jogos_penaltis": "4 até agora (25/32 jogos de mata-mata encerrados)"
