@@ -278,5 +278,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "SF-01": {
+  "home": "França",
+  "away": "Espanha",
+  "kickoff": "2026-07-14T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
