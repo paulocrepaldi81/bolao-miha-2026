@@ -281,5 +281,14 @@
       "kickoff": "2026-07-12T01:00Z",
       "special": true
     }
+  ],
+  "SF": [
+    {
+      "slot": "SF-01",
+      "home": "França",
+      "away": "Espanha",
+      "kickoff": null,
+      "special": false
+    }
   ]
 }

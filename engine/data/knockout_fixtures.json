@@ -253,9 +253,9 @@
   "home": "Espanha",
   "away": "Bélgica",
   "kickoff": "2026-07-10T19:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Espanha",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  },
