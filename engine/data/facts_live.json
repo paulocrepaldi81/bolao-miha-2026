@@ -31,6 +31,11 @@
         "equipe": "Inglaterra"
       },
       {
+        "nome": "Jude Bellingham",
+        "gols": 5,
+        "equipe": "Inglaterra"
+      },
+      {
         "nome": "Ousmane Dembélé",
         "gols": 5,
         "equipe": "França"
@@ -44,11 +49,6 @@
         "nome": "Ismaïla Sarr",
         "gols": 4,
         "equipe": "Senegal"
-      },
-      {
-        "nome": "Jude Bellingham",
-        "gols": 4,
-        "equipe": "Inglaterra"
       },
       {
         "nome": "Julián Quiñones",
