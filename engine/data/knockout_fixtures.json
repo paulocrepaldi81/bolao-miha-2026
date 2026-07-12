@@ -288,5 +288,15 @@
   "decided_by": null,
   "pen_home": null,
   "pen_away": null
+ },
+ "SF-02": {
+  "home": "Inglaterra",
+  "away": "Argentina",
+  "kickoff": "2026-07-15T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
