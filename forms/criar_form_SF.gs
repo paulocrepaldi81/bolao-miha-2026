@@ -1,48 +1,48 @@
 /**
  * BOLÃO MIHA 2026 — Gerador do Google Form do MATA-MATA (SF / SEMIFINAL)
  * ---------------------------------------------------------------------------------------
- * TEMPLATE — pronto pra rodar, só falta preencher os 2 confrontos reais quando as Quartas
- * terminarem (ainda não dá pra saber quem joga a semifinal). Cópia fiel do criar_form_QF.gs —
- * só muda FASE, os 2 confrontos e o texto do prazo (RUNBOOK-fases.md).
+ * Cópia fiel do criar_form_QF.gs — só mudaram FASE, os 2 confrontos e o texto do prazo.
+ *
+ * Os 2 confrontos das semis já são reais e DEFINITIVOS (chaveamento fechado, conferido em
+ * engine/data/knockout_bracket.json): França×Espanha e Inglaterra×Argentina ⭐ (especial). Os
+ * 2 jogos começam depois do meio-dia de 14/07 (o prazo) — SF-01 tem 4h de folga (16h), SF-02
+ * quase 28h (15/07 16h) — conferido com o painel de agentes, sem exceção de slot_deadlines
+ * necessária. PRONTO PRA RODAR, sem editar nada.
  *
  * COMO USAR (leva ~3 min):
- *  1) Quando as Quartas acabarem, rode `cd engine && python3 resolve_bracket.py --dry-run` —
- *     ele imprime os 2 confrontos da semifinal já resolvidos (SF-01 e SF-02). Copie os nomes
- *     reais das seleções pro array MATCHES abaixo, na mesma ordem (SF-01 = Jogo 1, SF-02 = Jogo 2).
- *  2) Abra https://script.google.com  ->  Novo projeto.
- *  3) Apague tudo e cole ESTE arquivo inteiro (depois de editar o MATCHES).
- *  4) Menu: Executar -> criarFormularioSF. Autorize quando pedir.
- *  5) No painel "Registros de execução" vão aparecer 3 links: PUBLICO (mandar no zap),
+ *  1) Abra https://script.google.com  ->  Novo projeto.
+ *  2) Apague tudo e cole ESTE arquivo inteiro (os 2 jogos já estão prontos, sem editar nada).
+ *  3) Menu: Executar -> criarFormularioSF. Autorize quando pedir.
+ *  4) No painel "Registros de execução" vão aparecer 3 links: PUBLICO (mandar no zap),
  *     EDITAR (seu) e PLANILHA (respostas). Guarde os três.
- *  6) >>> IMPORTANTÍSSIMO <<< na PLANILHA de respostas: Arquivo -> Configurações ->
+ *  5) >>> IMPORTANTÍSSIMO <<< na PLANILHA de respostas: Arquivo -> Configurações ->
  *     Fuso horário -> (GMT-03:00) São Paulo. Faça 1 envio de teste e confira que o
- *     carimbo bate com a hora real de Brasília.
- *  7) Na planilha: Arquivo -> Compartilhar -> Publicar na web -> aba de respostas +
+ *     carimbo bate com a hora real de Brasília. (Se o fuso estiver errado, o robô
+ *     descarta apostas legítimas em silêncio — é o risco nº1.)
+ *  6) Na planilha: Arquivo -> Compartilhar -> Publicar na web -> aba de respostas +
  *     "Valores separados por vírgula (.csv)" -> Publicar. Copie a URL .csv e me mande
  *     (junto com o link PÚBLICO), pra eu ligar a rodada SF no knockout_forms.json.
  *
- * ANTES DE RODAR: reconfira se os 2 jogos da semifinal kickam DEPOIS do meio-dia de 14/07 (o
- * prazo). Se algum começar de manhã, precisa de slot_deadlines específico (ver R32 como exemplo
- * no RUNBOOK-fases.md).
+ * Os confrontos já vêm com as SELEÇÕES REAIS da semifinal, na ordem/mando dos slots SF-01/02.
+ * NÃO reordene os jogos (o "Jogo N" tem que casar com o slot SF-NN).
  *
- * REGRA DE PRAZO (RUNBOOK-fases.md): prazo ÚNICO — as duas semis fecham TERÇA 14/07 AO
- * MEIO-DIA (12h, GMT-3, Brasília) — meio-dia do próprio dia do 1º jogo, mesma regra usada
- * desde as Quartas (antes era 23h da véspera). Quem não mexer num jogo (branco ou "Manter meu
- * palpite original") fica com o placar da APOSTA ORIGINAL da planilha.
+ * REGRA DE PRAZO (RUNBOOK-fases.md, mesma desde as Quartas): prazo ÚNICO — as duas semis
+ * fecham TERÇA 14/07 AO MEIO-DIA (12h, GMT-3, Brasília) — meio-dia do próprio dia do 1º jogo
+ * (SF-01 kicka 16h, 4h de folga). Quem não mexer num jogo (branco ou "Manter meu palpite
+ * original") fica com o placar da APOSTA ORIGINAL da planilha. A trava real é feita pelo robô.
  */
 
-// ====== EDITE AQUI ANTES DE RODAR ======
+// ====== EDITE AQUI (só se precisar) ======
 var FASE = 'Mata-mata · Semifinal';
 
 // Pasta do Google Drive onde o Form e a planilha de respostas serão salvos (a mesma das fases anteriores).
 var PASTA_ID = '16F9MjNdz7dIZqmbZjNOSxCEkj1K9-nph';
 
-// >>> SUBSTITUA os placeholders pelos 2 confrontos reais (saída de resolve_bracket.py --dry-run)
-// assim que as Quartas terminarem. SF-01 = venc(QF-01) × venc(QF-02); SF-02 = venc(QF-03) × venc(QF-04).
-// Mandante = vencedor do slot ÍMPAR (mesma orientação do palpite original) — não inverta a ordem.
+// Confrontos REAIS das semis — ordem = slot SF-NN, home = mandante (orientação do bracket).
+// Os 2 já são definitivos (chaveamento fechado).
 var MATCHES = [
-  { n: 1, home: 'Vencedor QF-01', away: 'Vencedor QF-02', quando: 'a definir' }, // SF-01
-  { n: 2, home: 'Vencedor QF-03', away: 'Vencedor QF-04', quando: 'a definir' }, // SF-02
+  { n: 1, home: 'França',     away: 'Espanha',   quando: '14/07 · 16h00' }, // SF-01
+  { n: 2, home: 'Inglaterra', away: 'Argentina', quando: '15/07 · 16h00' }, // SF-02 (⭐ especial)
 ];
 
 // 88 apostas (apelidos). Cada aposta = 1 envio. Quem tem mais de uma, preenche 1 vez por apelido.
