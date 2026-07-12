@@ -289,6 +289,13 @@
       "away": "Espanha",
       "kickoff": null,
       "special": false
+    },
+    {
+      "slot": "SF-02",
+      "home": "Inglaterra",
+      "away": "Argentina",
+      "kickoff": "2026-07-15T19:00Z",
+      "special": true
     }
   ]
 }

@@ -2,7 +2,7 @@
   "partials": {
     "empates_1f": "20 até agora (72/72 jogos da 1ª fase)",
     "mais_gols_jogo": "8 gols (Alemanha 7×1 Curaçao)",
-    "mais_goleadora": "França (16 gols)",
+    "mais_goleadora": "Argentina (17 gols)",
     "menos_vazada": "2 seleções com 1 sofrido(s): Colômbia, Espanha",
     "artilheiro_nome": "Empatados em 1º: 2 com 8 gols — Kylian Mbappé (França), Lionel Messi (Argentina)",
     "artilheiro_equipe": "empate: Argentina, França (8 gols cada)",
@@ -86,7 +86,7 @@
         "equipe": "Portugal"
       }
     ],
-    "jogos_penaltis": "4 até agora (27/32 jogos de mata-mata encerrados)"
+    "jogos_penaltis": "4 até agora (28/32 jogos de mata-mata encerrados)"
   },
   "scanned": [
     537327,
@@ -109,5 +109,5 @@
     "order": 408.0
   },
   "af_scanned": [],
-  "_ko_finished_peak": 27
+  "_ko_finished_peak": 28
 }
