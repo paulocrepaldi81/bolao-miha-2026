@@ -36,6 +36,11 @@
         "equipe": "Inglaterra"
       },
       {
+        "nome": "Mikel Oyarzabal",
+        "gols": 5,
+        "equipe": "Espanha"
+      },
+      {
         "nome": "Ousmane Dembélé",
         "gols": 5,
         "equipe": "França"
@@ -54,11 +59,6 @@
         "nome": "Julián Quiñones",
         "gols": 4,
         "equipe": "México"
-      },
-      {
-        "nome": "Mikel Oyarzabal",
-        "gols": 4,
-        "equipe": "Espanha"
       },
       {
         "nome": "Vinícius Júnior",
