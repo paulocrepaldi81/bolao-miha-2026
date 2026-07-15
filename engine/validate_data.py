@@ -112,7 +112,12 @@ def main():
             kf_rounds = {r.get("round") for r in (kf.get("rounds") or []) if r.get("csv")}
         except Exception:
             kf_rounds = set()
-        for ph in sorted({m.get("phase") for m in ko_M if m.get("phase")} - kf_rounds):
+        # a fase "TER" (3º lugar) não tem rodada própria em knockout_forms.json — ela vem no
+        # MESMO Form/rodada "FIN" (mesmo prazo da Final). Sem este mapeamento, o slot TER
+        # aparecia como "fase sem Form configurado" mesmo quando FIN já cobre os dois jogos
+        # (mesma lógica de build_data.py::load_knockout_deadlines).
+        phases = {("FIN" if m.get("phase") == "TER" else m.get("phase")) for m in ko_M if m.get("phase")}
+        for ph in sorted(phases - kf_rounds):
             W(False, f"mata-mata: fase {ph} tem jogos mas SEM Form configurado — palpites valem o original (ver forms/RUNBOOK-fases.md)")
     # CRÍTICO: o prazo de cada slot de mata-mata tem que ficar ANTES do kickoff real. Os cards
     # agregados de "jogo de agora" (gameBlockHTML em app.js) só são seguros porque presumem essa

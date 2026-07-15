@@ -104,12 +104,16 @@ def test_sem_apostas_nao_quebra(tmp_path, monkeypatch):
 def test_mata_mata_oculto_antes_do_prazo(tmp_path, monkeypatch):
     # PRIVACIDADE (achado real, 09/jul): antes do prazo, o placar do mata-mata (used/orig) tem
     # que ficar oculto -- senão dá pra espiar o palpite do rival e mudar o seu antes do Form fechar.
-    from datetime import datetime, timedelta
+    # BUG DE TESTE corrigido (15/jul): usar datetime.now() (hora da MÁQUINA que roda o teste) em
+    # vez de datetime.now(BD.SP) fazia o teste falhar/passar por acidente sempre que a máquina
+    # não estivesse no fuso de São Paulo (ex.: CI/dev em outro fuso) -- o código de produção
+    # sempre compara contra datetime.now(SP), então o teste precisa gerar o fixture na MESMA base.
+    from datetime import timedelta
     data_dir, out = _setup(tmp_path, monkeypatch, bets=[
         {"alias": "Fulano", "file": "f.xlsx", "group_preds": {},
          "final": {}, "extras": {}, "issues": [], "knockout_orig": {"R32-01": [2, 1]}},
     ])
-    futuro = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d %H:%M")
+    futuro = (BD.datetime.now(BD.SP).replace(tzinfo=None) + timedelta(hours=2)).strftime("%Y-%m-%d %H:%M")
     (data_dir / "knockout_forms.json").write_text(json.dumps(
         {"rounds": [{"round": "R32", "deadline": futuro, "csv": ""}]}), encoding="utf-8")
     BD.main()
@@ -120,12 +124,12 @@ def test_mata_mata_oculto_antes_do_prazo(tmp_path, monkeypatch):
 
 
 def test_mata_mata_revela_depois_do_prazo(tmp_path, monkeypatch):
-    from datetime import datetime, timedelta
+    from datetime import timedelta
     data_dir, out = _setup(tmp_path, monkeypatch, bets=[
         {"alias": "Fulano", "file": "f.xlsx", "group_preds": {},
          "final": {}, "extras": {}, "issues": [], "knockout_orig": {"R32-01": [2, 1]}},
     ])
-    passado = (datetime.now() - timedelta(hours=2)).strftime("%Y-%m-%d %H:%M")
+    passado = (BD.datetime.now(BD.SP).replace(tzinfo=None) - timedelta(hours=2)).strftime("%Y-%m-%d %H:%M")
     (data_dir / "knockout_forms.json").write_text(json.dumps(
         {"rounds": [{"round": "R32", "deadline": passado, "csv": ""}]}), encoding="utf-8")
     BD.main()

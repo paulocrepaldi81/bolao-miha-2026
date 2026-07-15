@@ -124,6 +124,29 @@ def test_nbets_diferente_de_apostas_extraidas_bloqueia(tmp_path, monkeypatch):
     assert _run(tmp_path, monkeypatch, d, bets_json=[{"alias": "Fulano"}, {"alias": "Ciclano"}]) == 1
 
 
+def test_fase_TER_coberta_pela_rodada_FIN_nao_gera_aviso_falso(tmp_path, monkeypatch):
+    # BUG corrigido (15/jul): TER (3º lugar) não tem rodada própria em knockout_forms.json --
+    # vem no MESMO Form da FIN (mesmo prazo). Antes do fix, isso gerava um aviso falso de "fase
+    # sem Form configurado" mesmo com FIN já cobrindo os dois jogos.
+    d = _baseline()
+    d["matches"].append({"match_id": "TER", "phase": "TER", "slot": "TER", "status": "scheduled",
+                         "home_score": None, "away_score": None,
+                         "kickoff_sao_paulo": "2026-07-18T18:00:00-03:00"})
+    kf = {"rounds": [{"round": "FIN", "deadline": "2026-07-18 12:00",
+                      "csv": "http://exemplo.com/fin.csv"}]}
+    assert _run(tmp_path, monkeypatch, d, knockout_forms=kf) == 0
+    report = (tmp_path / "data" / "audit_report.txt").read_text(encoding="utf-8")
+    assert "fase TER" not in report
+
+
+def test_fase_realmente_sem_form_ainda_gera_aviso(tmp_path, monkeypatch):
+    # confere que o aviso ainda dispara pra uma fase de verdade sem Form (não é regressão muda)
+    d = _baseline_with_ko(slot="QF-01")
+    assert _run(tmp_path, monkeypatch, d) == 0   # é só AVISO, não bloqueia
+    report = (tmp_path / "data" / "audit_report.txt").read_text(encoding="utf-8")
+    assert "fase QF tem jogos mas SEM Form configurado" in report
+
+
 def _baseline_with_ko(slot="QF-01", kickoff="2026-07-09T17:00:00-03:00"):
     d = _baseline()
     d["matches"].append({
