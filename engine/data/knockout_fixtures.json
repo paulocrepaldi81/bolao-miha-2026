@@ -298,5 +298,25 @@
   "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
+ },
+ "TER": {
+  "home": "França",
+  "away": "Inglaterra",
+  "kickoff": "2026-07-18T21:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
+ },
+ "FIN": {
+  "home": "Espanha",
+  "away": "Argentina",
+  "kickoff": "2026-07-19T19:00Z",
+  "status": "scheduled",
+  "winner": null,
+  "decided_by": null,
+  "pen_home": null,
+  "pen_away": null
  }
 }
