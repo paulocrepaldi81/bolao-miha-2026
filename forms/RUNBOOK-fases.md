@@ -76,27 +76,30 @@ fica em "parcial ao vivo" pra sempre e só vira **definitivo** quando o organiza
 valor real em `facts.json` (o motor nunca sobrescreve um campo já preenchido, então isso é 100%
 seguro de fazer a qualquer momento, mesmo antes do fim, se algum fato já estiver decidido).
 
-**Depois que a Final + Disputa de 3º Lugar (`FIN`/`TER`) encerrarem, preencha em `facts.json`:**
+**Depois que a Final + Disputa de 3º Lugar (`FIN`/`TER`) encerrarem, o robô já cuida disto sozinho:**
 
-1. `champion`, `vice`, `third` — os 3 nomes de seleção. **Não há dedução automática** (ao
-   contrário da v1 em Excel, que lia a célula do chaveamento) — o motor lê SÓ o que estiver
-   aqui. Sem isso, ninguém recebe os 15/10/5 pts de "Classificação Final" e a tela de
-   Encerramento (`renderClosing`, landing) fica escondida pra sempre (ela só aparece quando
-   `FIN`/`TER` estão encerrados no chaveamento — mas o prêmio em si depende de `real_final`
-   estar preenchido pra render corretamente).
-2. `artilheiro_nome`, `artilheiro_equipe`, `artilheiro_gols` — o motor só calcula PARCIAL (via
+0. `champion`, `vice`, `third` — **AUTOMÁTICO desde 15/07** (`fetch_facts.py::compute_final_classification`):
+   assim que a ESPN marcar `FIN`/`TER` como encerrados em `knockout_fixtures.json`, o robô lê o
+   campo `winner` (que já reflete o resultado real, inclusive pênaltis) e preenche os 3 campos
+   sozinho no próximo ciclo (~5 min) — a tela de Encerramento passa a mostrar o campeão certo sem
+   precisar editar nada. Só mexa manualmente se, por algum motivo, precisar CORRIGIR um valor
+   (o motor nunca sobrescreve um campo já preenchido — nem o que ele mesmo escreveu).
+
+**Ainda preencha manualmente em `facts.json`** (sem dedução automática):
+
+1. `artilheiro_nome`, `artilheiro_equipe`, `artilheiro_gols` — o motor só calcula PARCIAL (via
    football-data `/scorers`, plano grátis, pode ficar incompleto perto do fim). Confirme o
    artilheiro oficial da Copa numa fonte confiável (FIFA/ESPN) e digite os 3 campos.
-3. `mais_goleadora`, `menos_vazada`, `mais_gols_jogo` — "torneio inteiro" (grupo + mata-mata).
+2. `mais_goleadora`, `menos_vazada`, `mais_gols_jogo` — "torneio inteiro" (grupo + mata-mata).
    O motor só mostra parcial ao vivo (`compute_tournament_extras`, nunca escreve em
    `facts.json` sozinho). Confira o parcial mais recente na seção Extras da landing e
    confirme/ajuste o valor final (empate = liste todos, formato lista JSON: `["Time A", "Time B"]`).
-4. `jogos_penaltis` — idem: só tem parcial ao vivo (`compute_penalty_partial`, contagem "N até
+3. `jogos_penaltis` — idem: só tem parcial ao vivo (`compute_penalty_partial`, contagem "N até
    agora"). Confirme o número final (é numérico, ex.: `3`) depois do último jogo de mata-mata.
-5. `azarao` — decisão manual do organizador desde sempre (o time da lista de zebras que foi
+4. `azarao` — decisão manual do organizador desde sempre (o time da lista de zebras que foi
    mais longe) — sem partial nenhum, sempre foi só no fim.
-6. **NÃO mexa** em `empates_1f`, `equipe_1o_expulso`, `equipe_1o_gol_contra` — esses 3 o robô
-   já travou sozinho durante a fase de grupos (auto-definitivos, não ficam em parcial).
+5. **NÃO mexa** em `empates_1f`, `equipe_1o_expulso`, `equipe_1o_gol_contra`, `champion`, `vice`,
+   `third` — esses 6 o robô já trava/preenche sozinho (auto-definitivos, não ficam em parcial).
 
 Depois de editar `facts.json`, é só esperar o próximo ciclo do robô (ou rodar `build_data.py`
 manualmente) — ele repontua tudo e a landing (Categorias Extras + tela de Encerramento) atualiza
