@@ -297,5 +297,23 @@
       "kickoff": "2026-07-15T19:00Z",
       "special": true
     }
+  ],
+  "FIN": [
+    {
+      "slot": "FIN",
+      "home": "Espanha",
+      "away": "Argentina",
+      "kickoff": "2026-07-19T19:00Z",
+      "special": false
+    }
+  ],
+  "TER": [
+    {
+      "slot": "TER",
+      "home": "França",
+      "away": "Inglaterra",
+      "kickoff": "2026-07-18T21:00Z",
+      "special": true
+    }
   ]
 }
