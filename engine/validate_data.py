@@ -156,6 +156,24 @@ def main():
             insane.append(f"{m.get('match_id')}: {m.get('home_team')} {hs}×{as_} {m.get('away_team')}")
     W(not insane, f"placar implausível — confira a fonte (glitch?): {insane[:5]}")
 
+    # ---- CLASSIFICAÇÃO FINAL (fim de Copa) ----
+    # campeão/vice/3º, quando preenchidos (manual pelo organizador OU automático via ESPN em
+    # fetch_facts.py::compute_final_classification), têm que ser nomes de seleção REAIS
+    # conhecidos — pega typo silencioso (ex.: acento errado num override manual) antes de zerar
+    # os 15/10/5 pts de todo mundo, a categoria de maior peso do bolão.
+    final_result = d.get("final_result") or {}
+    if any(final_result.get(k) not in (None, "") for k in ("champion", "vice", "third")):
+        try:
+            from fetch_results import TEAM_EN
+            valid_teams = set(TEAM_EN.keys())
+        except Exception:
+            valid_teams = None
+        if valid_teams:
+            for k in ("champion", "vice", "third"):
+                v = final_result.get(k)
+                if v not in (None, ""):
+                    C(v in valid_teams, f"final_result.{k}='{v}' não é um nome de seleção conhecido (typo em facts.json?)")
+
     # ---- CATEGORIAS EXTRAS ----
     C(len(ex) == len(CFG.EXTRA_CELLS), f"nº de categorias extras ({len(ex)}) != {len(CFG.EXTRA_CELLS)}")
     # vencedores só podem existir quando a categoria tem valor real definido

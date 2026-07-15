@@ -172,6 +172,29 @@ def compute_penalty_partial(ko_fix, total_slots):
     return f"{pens} até agora ({len(finished)}/{total_slots} jogos de mata-mata encerrados)"
 
 
+def compute_final_classification(ko_fix):
+    """Campeão/vice/3º REAIS (não o palpite de ninguém) a partir do resultado oficial dos slots
+    FIN/TER, já decidido pela ESPN. `winner` (gravado por fetch_knockout.py) reflete quem REALMENTE
+    avançou/venceu — INCLUSIVE por pênaltis: confirmado com dado real desta Copa (R32-01 terminou
+    empatado no placar que pontua, mas winner="Paraguai", batendo com pen_home/pen_away) — é um
+    booleano de CHAVEAMENTO da própria ESPN, desacoplado do placar que score_knockout usa (esse
+    sim ignora pênaltis, por regra do bolão). Puro, sem I/O. Fail-safe: só retorna as chaves já
+    decididas (FIN ainda não encerrado -> nem champion nem vice aparecem; idem TER/third)."""
+    out = {}
+    fin = ko_fix.get("FIN") or {}
+    if fin.get("status") == "finished" and fin.get("winner"):
+        champ = fin["winner"]
+        home, away = fin.get("home"), fin.get("away")
+        vice = away if champ == home else home
+        if vice:
+            out["champion"] = champ
+            out["vice"] = vice
+    ter = ko_fix.get("TER") or {}
+    if ter.get("status") == "finished" and ter.get("winner"):
+        out["third"] = ter["winner"]
+    return out
+
+
 def main():
     from catalog import get_catalog
     from fetch_results import EN_PT, load_results
@@ -211,6 +234,18 @@ def main():
     pen_partial = compute_penalty_partial(ko_fix, len(C.KNOCKOUT_CELLS))
     if pen_partial:
         partials["jogos_penaltis"] = pen_partial
+
+    # CLASSIFICAÇÃO FINAL (fim de Copa): campeão/vice/3º direto da ESPN, assim que FIN/TER
+    # encerrarem — pedido do dono ("mesma fonte que os placares, tempo real, 100% de acurácia").
+    # Fecha um risco real (achado do Agente 5 numa revisão anterior): sem isso, a tela de
+    # Encerramento do site aparecia automaticamente assim que os jogos terminassem, mas mostrando
+    # o campeão ERRADO até alguém editar facts.json na mão. Mesmo padrão de sempre: só preenche
+    # campo ainda null, NUNCA sobrescreve valor que o organizador já tenha digitado manualmente.
+    for k, v in compute_final_classification(ko_fix).items():
+        if facts.get(k) is None:
+            facts[k] = v
+            changed_facts = True
+            print(f"✔ DEFINIDO {k} = {v} (fonte: ESPN, via knockout_fixtures.json)")
 
     ko_finished = []
     for slot, r in ko_results.items():

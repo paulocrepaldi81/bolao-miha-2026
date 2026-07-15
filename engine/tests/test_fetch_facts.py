@@ -85,3 +85,58 @@ def test_penalty_partial_bracket_vazio_retorna_none():
 def test_penalty_partial_zero_penaltis_ainda_mostra_contagem():
     ko_fix = {"R32-01": {"status": "finished", "decided_by": "normal"}}
     assert FF.compute_penalty_partial(ko_fix, 32) == "0 até agora (1/32 jogos de mata-mata encerrados)"
+
+
+# ---- compute_final_classification: campeão/vice/3º REAIS via ESPN (não o palpite de ninguém) ----
+
+def test_classificacao_final_vazia_sem_FIN_nem_TER():
+    assert FF.compute_final_classification({}) == {}
+
+
+def test_classificacao_final_FIN_ausente_nao_gera_champion():
+    ko_fix = {"TER": {"status": "finished", "winner": "França", "home": "França", "away": "Inglaterra"}}
+    out = FF.compute_final_classification(ko_fix)
+    assert "champion" not in out and "vice" not in out
+    assert out["third"] == "França"
+
+
+def test_classificacao_final_FIN_nao_encerrado_ainda_nao_gera_nada():
+    ko_fix = {"FIN": {"status": "scheduled", "winner": None, "home": "Espanha", "away": "Argentina"}}
+    assert FF.compute_final_classification(ko_fix) == {}
+
+
+def test_classificacao_final_FIN_encerrado_sem_winner_ainda_nao_gera_nada():
+    # ESPN pode marcar 'finished' um instante antes de popular o 'winner' -- fail-safe, espera
+    ko_fix = {"FIN": {"status": "finished", "winner": None, "home": "Espanha", "away": "Argentina"}}
+    assert FF.compute_final_classification(ko_fix) == {}
+
+
+def test_classificacao_final_so_FIN_TER_ainda_pendente():
+    # Final decidida antes do 3º lugar (times diferentes) -- champion/vice já saem, third não
+    ko_fix = {"FIN": {"status": "finished", "winner": "Espanha", "home": "Espanha", "away": "Argentina"}}
+    out = FF.compute_final_classification(ko_fix)
+    assert out == {"champion": "Espanha", "vice": "Argentina"}
+
+
+def test_classificacao_final_vice_e_o_time_perdedor_nao_o_mandante():
+    # o vencedor é o AWAY (Argentina) -- vice tem que ser o HOME (Espanha), não sempre "o outro campo fixo"
+    ko_fix = {"FIN": {"status": "finished", "winner": "Argentina", "home": "Espanha", "away": "Argentina"}}
+    out = FF.compute_final_classification(ko_fix)
+    assert out["champion"] == "Argentina" and out["vice"] == "Espanha"
+
+
+def test_classificacao_final_completa_FIN_e_TER():
+    ko_fix = {
+        "FIN": {"status": "finished", "winner": "Espanha", "home": "Espanha", "away": "Argentina"},
+        "TER": {"status": "finished", "winner": "Inglaterra", "home": "França", "away": "Inglaterra"},
+    }
+    assert FF.compute_final_classification(ko_fix) == {
+        "champion": "Espanha", "vice": "Argentina", "third": "Inglaterra"}
+
+
+def test_classificacao_final_reflete_vencedor_pos_penaltis():
+    # dado real desta Copa (R32-01): placar que pontua fica empatado, mas o winner da ESPN já
+    # reflete quem avançou de verdade nos pênaltis -- a função só lê o campo, não recalcula nada.
+    ko_fix = {"TER": {"status": "finished", "winner": "Paraguai", "home": "Paraguai", "away": "Alemanha",
+                      "decided_by": "pen", "pen_home": 4, "pen_away": 3}}
+    assert FF.compute_final_classification(ko_fix)["third"] == "Paraguai"

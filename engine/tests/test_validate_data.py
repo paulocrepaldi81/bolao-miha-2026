@@ -114,6 +114,23 @@ def test_categoria_com_vencedor_sem_valor_real_bloqueia(tmp_path, monkeypatch):
     assert _run(tmp_path, monkeypatch, d) == 1
 
 
+def test_campeao_com_nome_de_selecao_invalido_bloqueia(tmp_path, monkeypatch):
+    # pega typo silencioso (manual ou de uma futura automação via ESPN) antes de zerar os
+    # 15/10/5 pts de todo mundo -- a categoria de maior peso do bolão.
+    d = _baseline(); d["final_result"] = {"champion": "Espanhã", "vice": "Argentina", "third": None}
+    assert _run(tmp_path, monkeypatch, d) == 1
+
+
+def test_campeao_com_nomes_validos_nao_bloqueia(tmp_path, monkeypatch):
+    d = _baseline(); d["final_result"] = {"champion": "Espanha", "vice": "Argentina", "third": "Inglaterra"}
+    assert _run(tmp_path, monkeypatch, d) == 0
+
+
+def test_final_result_vazio_nao_bloqueia_fase_de_grupos(tmp_path, monkeypatch):
+    d = _baseline(); d["final_result"] = {"champion": None, "vice": None, "third": None}
+    assert _run(tmp_path, monkeypatch, d) == 0
+
+
 def test_stat_apontando_apelido_inexistente_bloqueia(tmp_path, monkeypatch):
     d = _baseline(); d["stats"]["best_exact"]["alias"] = "Ninguem Com Esse Nome"
     assert _run(tmp_path, monkeypatch, d) == 1
