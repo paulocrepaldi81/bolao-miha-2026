@@ -76,14 +76,14 @@
         "equipe": "Holanda"
       },
       {
+        "nome": "Bukayo Saka",
+        "gols": 3,
+        "equipe": "Inglaterra"
+      },
+      {
         "nome": "Charles De Ketelaere",
         "gols": 3,
         "equipe": "Bélgica"
-      },
-      {
-        "nome": "Cody Gakpo",
-        "gols": 3,
-        "equipe": "Holanda"
       }
     ],
     "jogos_penaltis": "4 até agora (30/32 jogos de mata-mata encerrados)"
