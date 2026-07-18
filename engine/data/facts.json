@@ -2,7 +2,7 @@
   "_comment": "Fatos das categorias extras + classificação final real. Preencha conforme forem definidos (a maioria só no fim). null = ainda não definido (não pontua).",
   "champion": null,
   "vice": null,
-  "third": null,
+  "third": "Inglaterra",
   "artilheiro_nome": null,
   "artilheiro_equipe": null,
   "artilheiro_gols": null,
@@ -13,5 +13,10 @@
   "jogos_penaltis": null,
   "equipe_1o_expulso": "África do Sul",
   "equipe_1o_gol_contra": "Paraguai",
-  "azarao": ["África do Sul", "Austrália", "RD Congo", "Cabo Verde"]
+  "azarao": [
+    "África do Sul",
+    "Austrália",
+    "RD Congo",
+    "Cabo Verde"
+  ]
 }

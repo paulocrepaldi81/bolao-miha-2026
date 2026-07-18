@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-07-18T20:00:34.030969-03:00",
+  "checked_at": "2026-07-18T20:05:23.422750-03:00",
   "source_a": "ESPN",
   "source_b": "football-data.org",
   "source_b_ok": true,
@@ -8,5 +8,7 @@
   "agree": 98,
   "discrepancies": [],
   "resolvidas": [],
-  "pendente_2a_fonte": []
+  "pendente_2a_fonte": [
+    "TER"
+  ]
 }

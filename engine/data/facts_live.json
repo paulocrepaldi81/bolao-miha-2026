@@ -1,8 +1,8 @@
 {
   "partials": {
     "empates_1f": "20 até agora (72/72 jogos da 1ª fase)",
-    "mais_gols_jogo": "8 gols (Alemanha 7×1 Curaçao)",
-    "mais_goleadora": "Argentina (19 gols)",
+    "mais_gols_jogo": "10 gols (França 4×6 Inglaterra)",
+    "mais_goleadora": "2 seleções com 20 gols: França, Inglaterra",
     "menos_vazada": "2 seleções com 1 sofrido(s): Colômbia, Espanha",
     "artilheiro_nome": "Kylian Mbappé (França) — 10 gol(s)",
     "artilheiro_equipe": "França",
@@ -26,12 +26,12 @@
         "equipe": "Noruega"
       },
       {
-        "nome": "Harry Kane",
-        "gols": 6,
+        "nome": "Jude Bellingham",
+        "gols": 7,
         "equipe": "Inglaterra"
       },
       {
-        "nome": "Jude Bellingham",
+        "nome": "Harry Kane",
         "gols": 6,
         "equipe": "Inglaterra"
       },
@@ -86,7 +86,7 @@
         "equipe": "Bélgica"
       }
     ],
-    "jogos_penaltis": "4 até agora (30/32 jogos de mata-mata encerrados)"
+    "jogos_penaltis": "4 até agora (31/32 jogos de mata-mata encerrados)"
   },
   "scanned": [
     537327,
@@ -109,5 +109,5 @@
     "order": 408.0
   },
   "af_scanned": [],
-  "_ko_finished_peak": 30
+  "_ko_finished_peak": 31
 }
