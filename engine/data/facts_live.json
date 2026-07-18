@@ -36,14 +36,14 @@
         "equipe": "Inglaterra"
       },
       {
+        "nome": "Ousmane Dembélé",
+        "gols": 6,
+        "equipe": "França"
+      },
+      {
         "nome": "Mikel Oyarzabal",
         "gols": 5,
         "equipe": "Espanha"
-      },
-      {
-        "nome": "Ousmane Dembélé",
-        "gols": 5,
-        "equipe": "França"
       },
       {
         "nome": "Ismael Saibari",
