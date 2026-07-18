@@ -66,6 +66,11 @@
         "equipe": "Brasil"
       },
       {
+        "nome": "Bradley Barcola",
+        "gols": 3,
+        "equipe": "França"
+      },
+      {
         "nome": "Brian Brobbey",
         "gols": 3,
         "equipe": "Holanda"
@@ -79,11 +84,6 @@
         "nome": "Cody Gakpo",
         "gols": 3,
         "equipe": "Holanda"
-      },
-      {
-        "nome": "Cristiano Ronaldo",
-        "gols": 3,
-        "equipe": "Portugal"
       }
     ],
     "jogos_penaltis": "4 até agora (30/32 jogos de mata-mata encerrados)"
