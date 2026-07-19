@@ -149,6 +149,7 @@ let DATA = PRECOPA;
 
 // ---------- HALL DA FAMA: pódios das edições anteriores (dados reais) ----------
 const HISTORY = [
+  {year:2026, host:"EUA/Canadá/México", flag:"🇺🇸🇨🇦🇲🇽", podium:["Pati Mihalik","João Sergio","Thiago Profili 1910"]},
   {year:2022, host:"Catar",         flag:"🇶🇦", podium:["Alexandre Tauszig","Charles Miller","Guilherme Marcondes"]},
   {year:2018, host:"Rússia",        flag:"🇷🇺", podium:["Fabio Terzian","Pedro Marcondes","Ricardo Kerr"]},
   {year:2014, host:"Brasil",        flag:"🇧🇷", podium:["Paulo Crepaldi","Ricardo Mihalik","Fernando Mihalik"]},
@@ -157,19 +158,15 @@ const HISTORY = [
   {year:2002, host:"Coreia/Japão",  flag:"🇰🇷🇯🇵", podium:["Rafael Liberman","Wagner Jacot","Roberto Mihalik"]}
 ];
 
+// Copa e bolão ENCERRADOS (19/07/2026, Espanha campeã) — taglines de torcida/fase
+// ("hexa", Ancelotti etc.) aposentadas; a da vez é o fechamento, com o troféu ficando
+// em casa mesmo — payoff da antiga "Hora de derrubar a Casa Mihalik." (Pati Mihalik levou
+// Campeã do Bolão + Bom de Palpite: a Casa nunca caiu).
 const TAGLINES = [
-  "Hora de derrubar a Casa Mihalik.",
-  "Nem o Mounjaro do Ronaldo enxuga o peso da sua tabela.",
-  // referências das Quartas 2026 (Brasil eliminado nas oitavas) — trocar à vontade
-  "Acabou o sonho do hexa.",
-  "As 4 eras da seleção: Era Pelé, Era Romário, Era Ronaldo e... já era.",
-  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vinil Jr."
+  "A Copa acabou. A Casa Mihalik nunca caiu."
 ];
-// piada de pergunta-resposta pede mais tempo de leitura que as outras (setup + virada)
 const TAGLINE_LONG_MS = 6200;
-const LONG_TAGLINES = new Set([
-  "Por que o Ancelotti comprou um toca-discos pequeno? Porque ele queria um Vinil Jr."
-]);
+const LONG_TAGLINES = new Set([]);
 
 // Bandeiras (emoji) das 48 seleções da Copa 2026
 const FLAGS = {
@@ -596,8 +593,17 @@ function render(){
   } else {
     if(cdTimer) clearInterval(cdTimer);
     document.getElementById('countdown').hidden = true;
-    document.getElementById('nextMatch').innerHTML = `<span>—</span><span class="sc">×</span><span>—</span>`;
-    document.getElementById('nextWhen').textContent = 'Aguardando a definição dos próximos jogos.';
+    // Copa realmente ACABOU (campeão definido, achado do Agente 5): sem isso, o hero ficava
+    // pra sempre com "aguardando a definição dos próximos jogos" bem do lado do card de
+    // Encerrado — parecia que ainda tinha jogo vindo. Distinto do gap normal entre fases
+    // (ex.: Oitavas -> Quartas), que nunca tem campeão definido ainda.
+    const copaAcabou = !!(DATA.final_result && DATA.final_result.champion);
+    document.getElementById('nextMatch').innerHTML = copaAcabou
+      ? `<span>🏆</span><span class="sc">fim</span><span>🏆</span>`
+      : `<span>—</span><span class="sc">×</span><span>—</span>`;
+    document.getElementById('nextWhen').textContent = copaAcabou
+      ? 'A Copa acabou — valeu, 2026! Nos vemos em 2030.'
+      : 'Aguardando a definição dos próximos jogos.';
   }
   // radar de JOGO ESPECIAL (verde = vale 5 pts): alerta no hero + countdown destacado
   const nextSpecial = (DATA.matches||[])

@@ -27,6 +27,7 @@ SP = timezone(timedelta(hours=-3))   # America/Sao_Paulo (GMT-3)
 
 # Pódios das edições anteriores (Hall da Fama) — dados confirmados pelo organizador
 HALL_DA_FAMA = [
+    {"year": 2026, "host": "EUA/Canadá/México", "flag": "🇺🇸🇨🇦🇲🇽", "podium": ["Pati Mihalik", "João Sergio", "Thiago Profili 1910"]},
     {"year": 2022, "host": "Catar",         "flag": "🇶🇦", "podium": ["Alexandre Tauszig", "Charles Miller", "Guilherme Marcondes"]},
     {"year": 2018, "host": "Rússia",        "flag": "🇷🇺", "podium": ["Fabio Terzian", "Pedro Marcondes", "Ricardo Kerr"]},
     {"year": 2014, "host": "Brasil",        "flag": "🇧🇷", "podium": ["Paulo Crepaldi", "Ricardo Mihalik", "Fernando Mihalik"]},
