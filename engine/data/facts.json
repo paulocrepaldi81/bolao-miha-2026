@@ -1,7 +1,7 @@
 {
   "_comment": "Fatos das categorias extras + classificação final real. Preencha conforme forem definidos (a maioria só no fim). null = ainda não definido (não pontua).",
-  "champion": null,
-  "vice": null,
+  "champion": "Espanha",
+  "vice": "Argentina",
   "third": "Inglaterra",
   "artilheiro_nome": null,
   "artilheiro_equipe": null,

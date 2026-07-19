@@ -313,9 +313,9 @@
   "home": "Espanha",
   "away": "Argentina",
   "kickoff": "2026-07-19T19:00Z",
-  "status": "live",
-  "winner": null,
-  "decided_by": null,
+  "status": "finished",
+  "winner": "Espanha",
+  "decided_by": "normal",
   "pen_home": null,
   "pen_away": null
  }
